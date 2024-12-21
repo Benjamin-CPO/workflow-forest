@@ -38,43 +38,63 @@ interface Client {
 }
 
 export const ProjectEditForm = ({
-  title,
-  description,
-  dueDate,
-  figmaWorkfile,
-  figmaReviewFile,
-  status,
-  clientId,
+  title: initialTitle,
+  description: initialDescription,
+  dueDate: initialDueDate,
+  figmaWorkfile: initialFigmaWorkfile,
+  figmaReviewFile: initialFigmaReviewFile,
+  status: initialStatus,
+  clientId: initialClientId,
   onSave,
   onCancel,
 }: ProjectEditFormProps) => {
   const [clients, setClients] = useState<Client[]>([]);
+  const [formData, setFormData] = useState({
+    title: initialTitle,
+    description: initialDescription,
+    dueDate: initialDueDate,
+    figmaWorkfile: initialFigmaWorkfile,
+    figmaReviewFile: initialFigmaReviewFile,
+    status: initialStatus,
+    clientId: initialClientId,
+  });
 
   useEffect(() => {
     const storedClients = JSON.parse(localStorage.getItem('clients') || '[]');
     setClients(storedClients);
   }, []);
 
+  const handleSave = () => {
+    onSave(formData);
+  };
+
+  const handleChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   return (
     <div className="flex-1 space-y-4">
       <Input
-        value={title}
-        onChange={(e) => onSave({ ...getFormData(), title: e.target.value })}
+        value={formData.title}
+        onChange={(e) => handleChange('title', e.target.value)}
         placeholder="Project title"
         className="text-2xl font-bold"
       />
       <Textarea
-        value={description}
-        onChange={(e) => onSave({ ...getFormData(), description: e.target.value })}
+        value={formData.description}
+        onChange={(e) => handleChange('description', e.target.value)}
         placeholder="Project description (You can use [link text](url) for links)"
         className="resize-none"
       />
       <div className="grid gap-2">
         <Label>Project Status</Label>
         <Select
-          value={status || 'none'}
+          value={formData.status || 'none'}
           onValueChange={(value: 'priority' | 'on-hold' | 'none') => 
-            onSave({ ...getFormData(), status: value === 'none' ? null : value })
+            handleChange('status', value === 'none' ? null : value)
           }
         >
           <SelectTrigger>
@@ -90,9 +110,9 @@ export const ProjectEditForm = ({
       <div className="grid gap-2">
         <Label>Client</Label>
         <Select
-          value={clientId?.toString() || 'no-client'}
+          value={formData.clientId?.toString() || 'no-client'}
           onValueChange={(value) => 
-            onSave({ ...getFormData(), clientId: value === 'no-client' ? undefined : Number(value) })
+            handleChange('clientId', value === 'no-client' ? undefined : Number(value))
           }
         >
           <SelectTrigger>
@@ -110,26 +130,26 @@ export const ProjectEditForm = ({
       </div>
       <Input
         type="date"
-        value={dueDate.split(",")[0]}
-        onChange={(e) => onSave({ ...getFormData(), dueDate: e.target.value })}
+        value={formData.dueDate.split(",")[0]}
+        onChange={(e) => handleChange('dueDate', e.target.value)}
         className="w-full"
       />
       <Input
         type="url"
-        value={figmaWorkfile}
-        onChange={(e) => onSave({ ...getFormData(), figmaWorkfile: e.target.value })}
+        value={formData.figmaWorkfile}
+        onChange={(e) => handleChange('figmaWorkfile', e.target.value)}
         placeholder="Figma Workfile URL"
         className="w-full"
       />
       <Input
         type="url"
-        value={figmaReviewFile}
-        onChange={(e) => onSave({ ...getFormData(), figmaReviewFile: e.target.value })}
+        value={formData.figmaReviewFile}
+        onChange={(e) => handleChange('figmaReviewFile', e.target.value)}
         placeholder="Figma Review File URL"
         className="w-full"
       />
       <div className="flex gap-2">
-        <Button onClick={() => onSave(getFormData())}>
+        <Button onClick={handleSave}>
           <Check className="h-4 w-4 mr-2" />
           Save
         </Button>
@@ -140,16 +160,4 @@ export const ProjectEditForm = ({
       </div>
     </div>
   );
-
-  function getFormData() {
-    return {
-      title,
-      description,
-      dueDate,
-      figmaWorkfile,
-      figmaReviewFile,
-      status,
-      clientId,
-    };
-  }
 };
