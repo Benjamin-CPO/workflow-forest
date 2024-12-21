@@ -39,11 +39,15 @@ export const ClientProjectsTable = () => {
     const storedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
     
     // Initialize projects with order if not present and ensure correct status type
-    const projectsWithOrder = storedProjects.map((project: Project, index: number) => ({
-      ...project,
-      order: project.order ?? index,
-      status: project.status === 'priority' ? 'priority' as const : null
-    }));
+    const projectsWithOrder = storedProjects
+      .filter((project: any): project is Project => {
+        return project && typeof project.id === 'number';
+      })
+      .map((project: Project, index: number) => ({
+        ...project,
+        order: project.order ?? index,
+        status: project.status === 'priority' ? 'priority' as const : null
+      }));
 
     // Set priority for single projects
     const updatedProjects = projectsWithOrder.map((project: Project) => {
@@ -200,7 +204,7 @@ export const ClientProjectsTable = () => {
             </TableHeader>
             <TableBody>
               <TableRow className="align-top">
-                {filteredProjectsByClient.map(({ client, projects }) => (
+                {filteredProjectsByClient.map(({ client, projects: clientProjects }) => (
                   <td key={client.id} className="p-2 min-w-[250px] w-[250px]">
                     <Droppable droppableId={client.id.toString()}>
                       {(provided) => (
@@ -209,28 +213,32 @@ export const ClientProjectsTable = () => {
                           {...provided.droppableProps}
                           className="space-y-2"
                         >
-                          {projects.length === 0 ? (
+                          {clientProjects.length === 0 ? (
                             <div className="text-sm text-muted-foreground">
                               No projects {client.id === -1 ? 'without client' : 'for this client'}
                             </div>
                           ) : (
-                            projects.map((project, index) => (
-                              <Draggable
-                                key={project.id}
-                                draggableId={project.id.toString()}
-                                index={index}
-                              >
-                                {(provided) => (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                  >
-                                    <ProjectCard {...project} />
-                                  </div>
-                                )}
-                              </Draggable>
-                            ))
+                            clientProjects
+                              .filter((project): project is Project => 
+                                project !== undefined && project !== null && typeof project.id === 'number'
+                              )
+                              .map((project, index) => (
+                                <Draggable
+                                  key={project.id}
+                                  draggableId={project.id.toString()}
+                                  index={index}
+                                >
+                                  {(provided) => (
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                    >
+                                      <ProjectCard {...project} />
+                                    </div>
+                                  )}
+                                </Draggable>
+                              ))
                           )}
                           {provided.placeholder}
                         </div>
