@@ -1,10 +1,8 @@
-import { Toaster } from "@/components/ui/toaster";
-import { ProjectHeader } from "@/components/projects/ProjectHeader";
-import { ProjectProgress } from "@/components/projects/ProjectProgress";
-import { TaskManagement } from "@/components/tasks/TaskManagement";
-import { ChatSection } from "@/components/chat/ChatSection";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { ProjectInfo } from "@/components/projects/ProjectInfo";
+import { MilestoneManager } from "@/components/projects/MilestoneManager";
 
 interface Task {
   id: number;
@@ -34,7 +32,6 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const projectId = Number(id);
   
-  // Get project from localStorage instead of hardcoded array
   const initialProject = (() => {
     const savedProjects = localStorage.getItem('projects');
     if (!savedProjects) return undefined;
@@ -48,7 +45,6 @@ const ProjectDetails = () => {
     const savedMilestones = localStorage.getItem(`project-${id}-milestones`);
     return savedMilestones ? JSON.parse(savedMilestones) : project?.milestones || [];
   });
-  const [isChatExpanded, setIsChatExpanded] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -62,9 +58,9 @@ const ProjectDetails = () => {
 
   const allTasks = milestones.flatMap(milestone => milestone.tasks);
 
-  const handleProjectUpdate = (data: { 
-    title: string; 
-    description: string; 
+  const handleProjectUpdate = (data: {
+    title: string;
+    description: string;
     dueDate: string;
     figmaWorkfile?: string;
     figmaReviewFile?: string;
@@ -84,34 +80,16 @@ const ProjectDetails = () => {
 
   return (
     <div className="container py-6 min-h-screen flex flex-col">
-      <ProjectHeader 
-        title={project.title}
-        description={project.description}
-        dueDate={project.dueDate}
-        figmaWorkfile={project.figmaWorkfile}
-        figmaReviewFile={project.figmaReviewFile}
-        progress={allTasks.length > 0 ? (allTasks.filter(t => t.status === "completed").length / allTasks.length) * 100 : 0}
-        onUpdate={handleProjectUpdate}
+      <ProjectInfo
+        project={project}
+        tasks={allTasks}
+        onProjectUpdate={handleProjectUpdate}
       />
-
-      <div className="mt-6">
-        <ProjectProgress tasks={allTasks} />
-      </div>
-
-      <div className="flex gap-6 mt-6 flex-1 min-h-0">
-        <ChatSection 
-          projectMilestones={milestones} 
-          className="w-[60%] transition-all duration-300"
-          collapsedWidth="50px"
-          onExpandChange={setIsChatExpanded}
-        />
-        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[40%]' : 'flex-1'}`}>
-          <TaskManagement 
-            milestones={milestones}
-            setMilestones={setMilestones}
-          />
-        </div>
-      </div>
+      <MilestoneManager
+        milestones={milestones}
+        setMilestones={setMilestones}
+      />
+      <Toaster />
     </div>
   );
 };
