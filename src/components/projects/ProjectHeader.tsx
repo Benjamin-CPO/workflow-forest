@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import ReactMarkdown from 'react-markdown';
 
 interface ProjectHeaderProps {
   title: string;
@@ -82,7 +83,7 @@ export const ProjectHeader = ({
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Project description"
+                placeholder="Project description (You can use [link text](url) for links)"
                 className="resize-none"
               />
               <Input
@@ -106,7 +107,22 @@ export const ProjectHeader = ({
             <>
               <div>
                 <h1 className="text-2xl font-bold mb-2">{title}</h1>
-                <p className="text-muted-foreground mb-4">{description}</p>
+                <div className="text-muted-foreground mb-4">
+                  <ReactMarkdown
+                    components={{
+                      a: ({ node, ...props }) => (
+                        <a
+                          {...props}
+                          className="text-blue-500 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        />
+                      ),
+                    }}
+                  >
+                    {description}
+                  </ReactMarkdown>
+                </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4 mr-2" />
                   Due {dueDate}
