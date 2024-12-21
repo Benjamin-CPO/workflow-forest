@@ -89,10 +89,9 @@ export const ProjectDetails = () => {
   const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
   const progressSegments = calculateProgressColors(tasks);
   const status = getProjectStatus(progress);
-  const colors = statusColors[status];
 
   return (
-    <div className={`container py-6 ${colors.bg}`}>
+    <div className="container py-6">
       <ProjectHeader 
         title={project.title}
         description={project.description}
