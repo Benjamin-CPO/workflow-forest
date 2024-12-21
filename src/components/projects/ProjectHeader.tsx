@@ -1,7 +1,6 @@
 import { Calendar, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { statusColors, getProjectStatus } from "@/utils/statusColors";
 
 interface ProjectHeaderProps {
   title: string;
@@ -12,8 +11,6 @@ interface ProjectHeaderProps {
 
 export const ProjectHeader = ({ title, description, dueDate, progress }: ProjectHeaderProps) => {
   const navigate = useNavigate();
-  const status = getProjectStatus(progress);
-  const colors = statusColors[status];
 
   return (
     <div>
@@ -26,7 +23,7 @@ export const ProjectHeader = ({ title, description, dueDate, progress }: Project
         Back to Projects
       </Button>
 
-      <div className={`p-6 rounded-lg ${colors.bg}`}>
+      <div className="bg-accent p-6 rounded-lg">
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground mb-4">{description}</p>
         <div className="flex items-center text-sm text-muted-foreground">
