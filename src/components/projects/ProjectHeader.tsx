@@ -94,7 +94,7 @@ export const ProjectHeader = ({
         </Button>
       </div>
 
-      <div className="bg-background rounded-lg">
+      <div className="bg-accent rounded-lg">
         <div className="flex justify-between items-start">
           {isEditing ? (
             <ProjectEditForm
