@@ -22,13 +22,14 @@ export const AddTaskDialog = ({ isOpen, onOpenChange, onSubmit, milestones }: Ad
     defaultValues: {
       title: "",
       dueDate: "",
-      milestoneId: milestones[0]?.id || 0,
+      milestoneId: milestones[0]?.id.toString() || "0",
     },
   });
 
   const handleSubmit = (data: { title: string; dueDate: string; milestoneId: string }) => {
     onSubmit({
-      ...data,
+      title: data.title,
+      dueDate: data.dueDate,
       milestoneId: parseInt(data.milestoneId),
     });
     form.reset();
@@ -75,7 +76,7 @@ export const AddTaskDialog = ({ isOpen, onOpenChange, onSubmit, milestones }: Ad
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Milestone</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value.toString()}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a milestone" />
