@@ -10,10 +10,10 @@ export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectPro
     <Select defaultValue={status} onValueChange={onStatusChange}>
       <SelectTrigger className="w-[180px]">
         <SelectValue>
-          <span className={`inline-flex items-center ${
-            status === "pending" ? "text-gray-500" :
-            status === "in-progress" ? "text-orange-500" :
-            status === "completed" ? "text-green-500" : ""
+          <span className={`inline-flex items-center px-2 py-1 rounded ${
+            status === "pending" ? "bg-gray-100 text-gray-700" :
+            status === "in-progress" ? "bg-orange-100 text-orange-700" :
+            status === "completed" ? "bg-green-100 text-green-700" : ""
           }`}>
             {status === "pending" ? "Pending" :
              status === "in-progress" ? "In Progress" :
@@ -23,13 +23,13 @@ export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectPro
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="pending">
-          <span className="text-gray-500">Pending</span>
+          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded">Pending</span>
         </SelectItem>
         <SelectItem value="in-progress">
-          <span className="text-orange-500">In Progress</span>
+          <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded">In Progress</span>
         </SelectItem>
         <SelectItem value="completed">
-          <span className="text-green-500">Completed</span>
+          <span className="bg-green-100 text-green-700 px-2 py-1 rounded">Completed</span>
         </SelectItem>
       </SelectContent>
     </Select>
