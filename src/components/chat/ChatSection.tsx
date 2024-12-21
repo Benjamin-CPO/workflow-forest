@@ -43,17 +43,12 @@ export const ChatSection = ({
     handleSendMessage,
     handleEditMessage,
     handleDeleteMessage
-  } = useChat({ projectId, projectMilestones });
+  } = useChat(projectId, projectMilestones);
 
   const handleExpandChange = (expanded: boolean) => {
     setIsExpanded(expanded);
     onExpandChange?.(expanded);
   };
-
-  useEffect(() => {
-    // Re-initialize chat when project milestones change
-    useChat({ projectId, projectMilestones });
-  }, [projectMilestones, projectId]);
 
   return (
     <div 

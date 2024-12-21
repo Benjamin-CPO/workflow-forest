@@ -8,8 +8,8 @@ interface Message {
   milestone: string;
 }
 
-interface ChatHookProps {
-  projectId: string;
+export const useChat = (
+  projectId: string,
   projectMilestones: Array<{
     id: number;
     title: string;
@@ -17,10 +17,8 @@ interface ChatHookProps {
       id: number;
       title: string;
     }>;
-  }>;
-}
-
-export const useChat = ({ projectId, projectMilestones }: ChatHookProps) => {
+  }>
+) => {
   const [newMessage, setNewMessage] = useState("");
   const [mentionOpen, setMentionOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
