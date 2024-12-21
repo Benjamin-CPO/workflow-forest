@@ -8,17 +8,23 @@ interface Project {
   progress: number;
   dueDate: string;
   clientId: number;
-  status?: 'priority' | 'on-hold' | null;
+  status?: 'priority' | null;
 }
 
 export const ProjectList = () => {
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    // Get projects from localStorage
+    // Get projects from localStorage and convert old status format to new one
     const storedProjects = localStorage.getItem('projects');
     if (storedProjects) {
-      setProjects(JSON.parse(storedProjects));
+      const parsedProjects = JSON.parse(storedProjects).map((project: Project) => ({
+        ...project,
+        status: project.status === 'priority' ? 'priority' : null
+      }));
+      setProjects(parsedProjects);
+      // Update localStorage with the new format
+      localStorage.setItem('projects', JSON.stringify(parsedProjects));
     }
   }, []);
 
