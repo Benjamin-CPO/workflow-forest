@@ -103,13 +103,11 @@ export const ProjectCard = ({
       >
         <CardHeader className="pb-2 flex flex-row items-start justify-between">
           <div className="space-y-2">
+            {getStatusBadge()}
             <CardTitle className="text-lg">{title}</CardTitle>
-            <div className="flex flex-col gap-2">
-              {getStatusBadge()}
-              <div className="flex items-center text-sm text-muted-foreground gap-1">
-                <Building2 className="h-4 w-4" />
-                {clientName}
-              </div>
+            <div className="flex items-center text-sm text-muted-foreground gap-1">
+              <Building2 className="h-4 w-4" />
+              {clientName}
             </div>
           </div>
           <Button
