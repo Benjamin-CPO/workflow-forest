@@ -40,9 +40,15 @@ const projects = [
     description: "Create a new mobile app for customer engagement",
     progress: 30,
     dueDate: "Apr 1, 2024",
-    tasks: [
-      { id: 1, title: "UI/UX Design", status: "completed", dueDate: "Mar 20, 2024" },
-      { id: 2, title: "Backend Integration", status: "pending", dueDate: "Mar 25, 2024" },
+    milestones: [
+      {
+        id: 1,
+        title: "Planning Phase",
+        tasks: [
+          { id: 1, title: "UI/UX Design", status: "completed", dueDate: "Mar 20, 2024" },
+          { id: 2, title: "Backend Integration", status: "pending", dueDate: "Mar 25, 2024" },
+        ],
+      },
     ],
   },
   {
@@ -51,9 +57,15 @@ const projects = [
     description: "Q2 marketing campaign for product launch",
     progress: 50,
     dueDate: "Mar 30, 2024",
-    tasks: [
-      { id: 1, title: "Content Creation", status: "in-progress", dueDate: "Mar 25, 2024" },
-      { id: 2, title: "Social Media Strategy", status: "pending", dueDate: "Mar 28, 2024" },
+    milestones: [
+      {
+        id: 1,
+        title: "Campaign Planning",
+        tasks: [
+          { id: 1, title: "Content Creation", status: "in-progress", dueDate: "Mar 25, 2024" },
+          { id: 2, title: "Social Media Strategy", status: "pending", dueDate: "Mar 28, 2024" },
+        ],
+      },
     ],
   },
 ];
