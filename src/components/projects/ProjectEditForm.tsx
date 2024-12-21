@@ -56,16 +56,16 @@ export const ProjectEditForm = ({
       <div className="grid gap-2">
         <Label>Project Status</Label>
         <Select
-          value={status || ''}
-          onValueChange={(value: 'priority' | 'on-hold' | '') => 
-            onSave({ ...getFormData(), status: value || null })
+          value={status || 'none'}
+          onValueChange={(value: 'priority' | 'on-hold' | 'none') => 
+            onSave({ ...getFormData(), status: value === 'none' ? null : value })
           }
         >
           <SelectTrigger>
             <SelectValue placeholder="Select project status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Regular Project</SelectItem>
+            <SelectItem value="none">Regular Project</SelectItem>
             <SelectItem value="priority">Priority Project</SelectItem>
             <SelectItem value="on-hold">Project on Hold</SelectItem>
           </SelectContent>
