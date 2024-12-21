@@ -2,6 +2,9 @@ import { useState } from "react";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Maximize2, Minimize2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ChatSectionProps {
   projectMilestones: Array<{
@@ -10,7 +13,6 @@ interface ChatSectionProps {
   }>;
 }
 
-// Temporary mock data with tagged messages
 const createInitialMessages = (milestones: Array<{ id: number; title: string }>, projectId: string) => {
   const savedMessages = localStorage.getItem(`project-${projectId}-messages`);
   if (savedMessages) {
@@ -42,8 +44,8 @@ export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [mentionOpen, setMentionOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(true);
 
-  // Mock data for suggestions - now using project-specific tasks
   const suggestions = {
     tasks: [
       { id: 1, title: "UI/UX Design" },
@@ -104,9 +106,24 @@ export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[500px] bg-background border rounded-lg">
-      <div className="p-4 border-b">
+    <div className={cn(
+      "flex flex-col bg-background border rounded-lg transition-all duration-300",
+      isExpanded ? "h-[500px]" : "h-[300px]"
+    )}>
+      <div className="p-4 border-b flex justify-between items-center">
         <h2 className="font-semibold">Project Chat</h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="ml-2"
+        >
+          {isExpanded ? (
+            <Minimize2 className="h-4 w-4" />
+          ) : (
+            <Maximize2 className="h-4 w-4" />
+          )}
+        </Button>
       </div>
       
       <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col">
