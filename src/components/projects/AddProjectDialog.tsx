@@ -19,6 +19,8 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [figmaWorkfile, setFigmaWorkfile] = useState("");
+  const [figmaReviewFile, setFigmaReviewFile] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,6 +33,8 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
       description,
       progress: 0,
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      figmaWorkfile,
+      figmaReviewFile,
     };
 
     // Add the new project to the projects array
@@ -74,6 +78,26 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter project description"
                 required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="figmaWorkfile">Figma Work File URL</Label>
+              <Input
+                id="figmaWorkfile"
+                type="url"
+                value={figmaWorkfile}
+                onChange={(e) => setFigmaWorkfile(e.target.value)}
+                placeholder="Enter Figma work file URL"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="figmaReviewFile">Figma Review File URL</Label>
+              <Input
+                id="figmaReviewFile"
+                type="url"
+                value={figmaReviewFile}
+                onChange={(e) => setFigmaReviewFile(e.target.value)}
+                placeholder="Enter Figma review file URL"
               />
             </div>
           </div>
