@@ -1,4 +1,4 @@
-import { Calendar, List, Plus, Users } from "lucide-react";
+import { List, Plus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -17,11 +17,6 @@ const items = [
     title: "All Projects",
     url: "/",
     icon: List,
-  },
-  {
-    title: "Calendar",
-    url: "/calendar",
-    icon: Calendar,
   },
   {
     title: "Clients",

@@ -1,4 +1,4 @@
-import { Bell, Calendar, List, Plus, Search, User, Users } from "lucide-react";
+import { Bell, List, Plus, Search, User, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { AddProjectDialog } from "@/components/projects/AddProjectDialog";
@@ -8,11 +8,6 @@ const navigationItems = [
     title: "All Projects",
     url: "/",
     icon: List,
-  },
-  {
-    title: "Calendar",
-    url: "/calendar",
-    icon: Calendar,
   },
   {
     title: "Clients",
