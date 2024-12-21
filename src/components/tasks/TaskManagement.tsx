@@ -30,27 +30,29 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const { toast } = useToast();
 
   const handleAddTask = (data: { title: string; dueDate: string }) => {
-    if (milestones.length === 0) {
-      const newMilestone = {
-        id: 1,
-        title: "General Tasks",
-        tasks: [],
-      };
-      setMilestones([newMilestone]);
-    }
-
     const newTask = {
-      id: Math.max(...milestones.flatMap(m => m.tasks.map(t => t.id)), 0) + 1,
+      id: Math.max(0, ...milestones.flatMap(m => m.tasks.map(t => t.id))) + 1,
       title: data.title,
       status: "pending",
       dueDate: data.dueDate,
     };
+
+    let updatedMilestones = [...milestones];
     
-    const updatedMilestones = milestones.map((milestone, index) => 
-      index === 0 
-        ? { ...milestone, tasks: [...milestone.tasks, newTask] }
-        : milestone
-    );
+    // If there are no milestones, create a default one
+    if (updatedMilestones.length === 0) {
+      updatedMilestones = [{
+        id: 1,
+        title: "General Tasks",
+        tasks: [newTask]
+      }];
+    } else {
+      // Add to the first milestone if it exists
+      updatedMilestones[0] = {
+        ...updatedMilestones[0],
+        tasks: [...updatedMilestones[0].tasks, newTask]
+      };
+    }
     
     setMilestones(updatedMilestones);
     toast({
