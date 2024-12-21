@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppBar } from "@/components/layout/AppBar";
 import Dashboard from "./pages/Dashboard";
 import ProjectDetails from "./pages/ProjectDetails";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AddClientDialog } from "@/components/clients/AddClientDialog";
 
 const queryClient = new QueryClient();
 
@@ -15,8 +18,18 @@ const Clients = () => {
   return (
     <div className="container py-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
-        <p className="text-muted-foreground">Manage your client relationships</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
+            <p className="text-muted-foreground">Manage your client relationships</p>
+          </div>
+          <AddClientDialog>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              New Client
+            </Button>
+          </AddClientDialog>
+        </div>
       </div>
       <div className="grid gap-4">
         {clients.map((client: { id: number; name: string }) => (

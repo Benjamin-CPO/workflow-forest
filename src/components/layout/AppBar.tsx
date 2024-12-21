@@ -1,8 +1,6 @@
-import { Bell, List, Plus, Search, User, Users } from "lucide-react";
+import { Bell, List, Search, User, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-import { AddProjectDialog } from "@/components/projects/AddProjectDialog";
-import { AddClientDialog } from "@/components/clients/AddClientDialog";
 
 const navigationItems = [
   {
@@ -31,24 +29,6 @@ export const AppBar = () => {
           </div>
 
           <div className="flex items-center space-x-6 mr-4">
-            {location.pathname === "/" && (
-              <AddProjectDialog>
-                <Button className="hidden md:flex" size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Project
-                </Button>
-              </AddProjectDialog>
-            )}
-            
-            {location.pathname === "/clients" && (
-              <AddClientDialog>
-                <Button className="hidden md:flex" size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Client
-                </Button>
-              </AddClientDialog>
-            )}
-            
             {navigationItems.map((item) => (
               <Link
                 key={item.title}
