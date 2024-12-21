@@ -33,8 +33,9 @@ export const ProjectColumn = ({ client, projects, tasks }: ProjectColumnProps) =
                 )
                 .map((project, index) => {
                   const projectTasks = getProjectTasks(project.id);
+                  const completedTasks = projectTasks.filter(t => t.status === "completed").length;
                   const progress = projectTasks.length > 0 
-                    ? (projectTasks.filter(t => t.status === "completed").length / projectTasks.length) * 100 
+                    ? (completedTasks / projectTasks.length) * 100 
                     : 0;
                   
                   return (
