@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { ProjectInfo } from "@/components/projects/ProjectInfo";
 import { MilestoneManager } from "@/components/projects/MilestoneManager";
+import { ChatSection } from "@/components/chat/ChatSection";
 
 interface Task {
   id: number;
@@ -85,10 +86,20 @@ const ProjectDetails = () => {
         tasks={allTasks}
         onProjectUpdate={handleProjectUpdate}
       />
-      <MilestoneManager
-        milestones={milestones}
-        setMilestones={setMilestones}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="lg:col-span-2">
+          <MilestoneManager
+            milestones={milestones}
+            setMilestones={setMilestones}
+          />
+        </div>
+        <div className="lg:col-span-1">
+          <ChatSection
+            projectMilestones={milestones}
+            className="w-full"
+          />
+        </div>
+      </div>
       <Toaster />
     </div>
   );
