@@ -1,6 +1,13 @@
 import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
 import { ProjectCard } from "./ProjectCard";
 import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Client {
   id: number;
@@ -20,6 +27,7 @@ interface Project {
 export const ClientProjectsTable = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedClientId, setSelectedClientId] = useState<string>("all");
 
   useEffect(() => {
     const storedClients = JSON.parse(localStorage.getItem('clients') || '[]');
@@ -28,16 +36,26 @@ export const ClientProjectsTable = () => {
     setProjects(storedProjects);
   }, []);
 
-  const projectsByClient = [
-    {
-      client: { id: -1, name: "No Client" },
-      projects: projects.filter(project => !project.clientId)
-    },
-    ...clients.map(client => ({
-      client,
-      projects: projects.filter(project => project.clientId === client.id)
-    }))
-  ];
+  const filteredProjectsByClient = selectedClientId === "all" 
+    ? [
+        {
+          client: { id: -1, name: "No Client" },
+          projects: projects.filter(project => !project.clientId)
+        },
+        ...clients.map(client => ({
+          client,
+          projects: projects.filter(project => project.clientId === client.id)
+        }))
+      ]
+    : selectedClientId === "-1"
+      ? [{
+          client: { id: -1, name: "No Client" },
+          projects: projects.filter(project => !project.clientId)
+        }]
+      : [{
+          client: clients.find(c => c.id === Number(selectedClientId)) || { id: -1, name: "Unknown" },
+          projects: projects.filter(project => project.clientId === Number(selectedClientId))
+        }];
 
   if (clients.length === 0 && projects.length === 0) {
     return (
@@ -48,43 +66,64 @@ export const ClientProjectsTable = () => {
   }
 
   return (
-    <div className="space-y-8 overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {projectsByClient.map(({ client }) => (
-              <TableHead 
-                key={client.id} 
-                className="text-left whitespace-nowrap min-w-[300px] w-[300px]"
-              >
+    <div className="space-y-8">
+      <div className="w-[300px]">
+        <Select
+          value={selectedClientId}
+          onValueChange={setSelectedClientId}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by client" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Clients</SelectItem>
+            <SelectItem value="-1">No Client</SelectItem>
+            {clients.map((client) => (
+              <SelectItem key={client.id} value={client.id.toString()}>
                 {client.name}
-              </TableHead>
+              </SelectItem>
             ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow className="align-top">
-            {projectsByClient.map(({ client, projects }) => (
-              <td key={client.id} className="p-4 min-w-[300px] w-[300px]">
-                <div className="space-y-4">
-                  {projects.length === 0 ? (
-                    <div className="text-sm text-muted-foreground">
-                      No projects {client.id === -1 ? 'without client' : 'for this client'}
-                    </div>
-                  ) : (
-                    projects.map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        {...project}
-                      />
-                    ))
-                  )}
-                </div>
-              </td>
-            ))}
-          </TableRow>
-        </TableBody>
-      </Table>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {filteredProjectsByClient.map(({ client }) => (
+                <TableHead 
+                  key={client.id} 
+                  className="text-left whitespace-nowrap min-w-[300px] w-[300px]"
+                >
+                  {client.name}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow className="align-top">
+              {filteredProjectsByClient.map(({ client, projects }) => (
+                <td key={client.id} className="p-4 min-w-[300px] w-[300px]">
+                  <div className="space-y-4">
+                    {projects.length === 0 ? (
+                      <div className="text-sm text-muted-foreground">
+                        No projects {client.id === -1 ? 'without client' : 'for this client'}
+                      </div>
+                    ) : (
+                      projects.map((project) => (
+                        <ProjectCard
+                          key={project.id}
+                          {...project}
+                        />
+                      ))
+                    )}
+                  </div>
+                </td>
+              ))}
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
