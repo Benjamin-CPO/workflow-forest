@@ -1,8 +1,10 @@
-import { Calendar } from "lucide-react";
+import { Calendar, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { useNavigate } from "react-router-dom";
 import { statusColors, getProjectStatus } from "@/utils/statusColors";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProjectCardProps {
   id: number;
@@ -10,13 +12,21 @@ interface ProjectCardProps {
   description: string;
   progress: number;
   dueDate: string;
+  onDelete?: (id: number) => void;
 }
 
-export const ProjectCard = ({ id, title, description, progress, dueDate }: ProjectCardProps) => {
+export const ProjectCard = ({ 
+  id, 
+  title, 
+  description, 
+  progress, 
+  dueDate,
+  onDelete 
+}: ProjectCardProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const status = getProjectStatus(progress);
 
-  // Calculate progress segments based on completion percentage
   const segments = [
     {
       color: progress === 100 ? 'bg-green-500' : 
@@ -26,13 +36,32 @@ export const ProjectCard = ({ id, title, description, progress, dueDate }: Proje
     }
   ];
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation when clicking delete
+    if (onDelete) {
+      onDelete(id);
+      toast({
+        title: "Project deleted",
+        description: `${title} has been deleted successfully.`
+      });
+    }
+  };
+
   return (
     <Card 
-      className="hover:shadow-md transition-shadow cursor-pointer"
+      className="hover:shadow-md transition-shadow cursor-pointer group"
       onClick={() => navigate(`/projects/${id}`)}
     >
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-2 flex flex-row items-start justify-between">
         <CardTitle className="text-lg">{title}</CardTitle>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="opacity-0 group-hover:opacity-100 transition-opacity -mt-2 -mr-2"
+          onClick={handleDelete}
+        >
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </Button>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">{description}</p>

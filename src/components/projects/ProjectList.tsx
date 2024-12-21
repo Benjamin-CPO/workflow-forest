@@ -20,6 +20,12 @@ export const ProjectList = () => {
     }
   }, []);
 
+  const handleDeleteProject = (id: number) => {
+    const updatedProjects = projects.filter(project => project.id !== id);
+    setProjects(updatedProjects);
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
+  };
+
   if (projects.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-8">
@@ -31,7 +37,11 @@ export const ProjectList = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => (
-        <ProjectCard key={project.id} {...project} />
+        <ProjectCard 
+          key={project.id} 
+          {...project} 
+          onDelete={handleDeleteProject}
+        />
       ))}
     </div>
   );
