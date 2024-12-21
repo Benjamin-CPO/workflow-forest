@@ -59,7 +59,6 @@ export const ProjectCard = ({
         <ProjectDeleteButton projectTitle={title} onDelete={handleDelete} />
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">{description}</p>
         <div className="space-y-3">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
