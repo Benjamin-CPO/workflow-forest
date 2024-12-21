@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { ProjectProgress } from "@/components/projects/ProjectProgress";
 import { TaskManagement } from "@/components/tasks/TaskManagement";
+import { ChatSection } from "@/components/chat/ChatSection";
 
 interface Task {
   id: number;
@@ -117,6 +118,8 @@ const ProjectDetails = () => {
     return <div>Project not found</div>;
   }
 
+  const allTasks = milestones.flatMap(milestone => milestone.tasks);
+
   const handleProjectUpdate = (data: { 
     title: string; 
     description: string; 
@@ -138,8 +141,6 @@ const ProjectDetails = () => {
     localStorage.setItem('projects', JSON.stringify(updatedProjects));
   };
 
-  const allTasks = milestones.flatMap(milestone => milestone.tasks);
-
   return (
     <div className="container py-6">
       <ProjectHeader 
@@ -152,12 +153,20 @@ const ProjectDetails = () => {
         onUpdate={handleProjectUpdate}
       />
 
-      <div className="space-y-6 mt-6">
+      <div className="mt-6">
         <ProjectProgress tasks={allTasks} />
-        <TaskManagement 
-          milestones={milestones}
-          setMilestones={setMilestones}
-        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-6 mt-6">
+        <div className="space-y-6">
+          <TaskManagement 
+            milestones={milestones}
+            setMilestones={setMilestones}
+          />
+        </div>
+        <div>
+          <ChatSection />
+        </div>
       </div>
     </div>
   );
