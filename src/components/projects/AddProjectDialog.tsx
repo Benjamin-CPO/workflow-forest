@@ -35,13 +35,28 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       figmaWorkfile,
       figmaReviewFile,
+      milestones: [
+        {
+          id: 1,
+          title: "Planning",
+          tasks: []
+        }
+      ]
     };
 
     // Add the new project to the projects array
-    // In a real app, this would be handled by a proper state management solution
     const projects = JSON.parse(localStorage.getItem('projects') || '[]');
     projects.push(newProject);
     localStorage.setItem('projects', JSON.stringify(projects));
+
+    // Initialize chat messages for the new project
+    const initialMessages = {
+      'planning': [] // Initialize with the default milestone
+    };
+    localStorage.setItem(`project-${newProject.id}-messages`, JSON.stringify(initialMessages));
+
+    // Initialize milestones for the new project
+    localStorage.setItem(`project-${newProject.id}-milestones`, JSON.stringify(newProject.milestones));
 
     setOpen(false);
     toast.success("Project created successfully");
