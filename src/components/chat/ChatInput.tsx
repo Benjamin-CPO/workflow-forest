@@ -56,7 +56,7 @@ export const ChatInput = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       handleSendMessage();
     }
@@ -70,8 +70,8 @@ export const ChatInput = ({
             ref={inputRef}
             value={newMessage}
             onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            placeholder="Type @ to mention tasks or milestones..."
+            onKeyDown={handleKeyPress}
+            placeholder="Type @ to mention tasks or milestones... (Ctrl+Enter to send)"
             className="flex-1"
           />
           <Popover open={mentionOpen} onOpenChange={setMentionOpen}>
