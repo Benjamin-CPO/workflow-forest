@@ -8,10 +8,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { Progress } from "@/components/ui/progress";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
+import { MultiColorProgress } from "@/components/ui/multi-color-progress";
+import { calculateProgressColors } from "@/utils/progressUtils";
 
-// Temporary mock data - in a real app, this would come from an API
 const projects = [
   {
     id: 1,
@@ -89,6 +89,7 @@ export const ProjectDetails = () => {
   // Calculate progress based on completed tasks
   const completedTasks = tasks.filter(task => task.status === "completed").length;
   const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
+  const progressSegments = calculateProgressColors(tasks);
 
   return (
     <div className="container py-6">
@@ -118,7 +119,7 @@ export const ProjectDetails = () => {
             </span>
             <span className="text-sm font-medium">{Math.round(progress)}%</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <MultiColorProgress segments={progressSegments} className="h-2" />
         </div>
 
         <div className="space-y-4">
