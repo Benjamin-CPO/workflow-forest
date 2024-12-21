@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { ChatMessage } from "./ChatMessage";
-import { ChatInput } from "./ChatInput";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ChatHeader } from "./ChatHeader";
+import { ChatContent } from "./ChatContent";
+import { ChatInput } from "./ChatInput";
 
 interface ChatSectionProps {
   projectMilestones: Array<{
@@ -24,7 +22,6 @@ const createInitialMessages = (milestones: Array<{ id: number; title: string }>,
     return JSON.parse(savedMessages);
   }
 
-  // Initialize storage with empty arrays for each milestone
   const initialMessages = milestones.reduce((acc, milestone) => {
     acc[milestone.title.toLowerCase().replace(/\s+/g, '-')] = [];
     return acc;
@@ -36,7 +33,6 @@ const createInitialMessages = (milestones: Array<{ id: number; title: string }>,
     milestone: string;
   }>>);
 
-  // Save initial state to localStorage
   localStorage.setItem(storageKey, JSON.stringify(initialMessages));
   return initialMessages;
 };
@@ -48,18 +44,16 @@ export const ChatSection = ({
   onExpandChange 
 }: ChatSectionProps) => {
   const projectId = window.location.pathname.split('/')[2];
-
+  const [isExpanded, setIsExpanded] = useState(true);
   const [messagesByMilestone, setMessagesByMilestone] = useState(() => 
     createInitialMessages(projectMilestones, projectId)
   );
-
   const [currentMilestone, setCurrentMilestone] = useState(() => 
     projectMilestones[0]?.title.toLowerCase().replace(/\s+/g, '-') || ''
   );
   const [newMessage, setNewMessage] = useState("");
   const [mentionOpen, setMentionOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(true);
 
   const suggestions = {
     tasks: [
@@ -67,6 +61,11 @@ export const ChatSection = ({
       { id: 2, title: "Backend Integration" }
     ],
     milestones: projectMilestones
+  };
+
+  const handleExpandChange = (expanded: boolean) => {
+    setIsExpanded(expanded);
+    onExpandChange?.(expanded);
   };
 
   const handleMentionSelect = (type: 'Task' | 'Milestone', title: string) => {
@@ -118,7 +117,6 @@ export const ChatSection = ({
   };
 
   useEffect(() => {
-    // Ensure storage is initialized when milestones change
     setMessagesByMilestone(createInitialMessages(projectMilestones, projectId));
   }, [projectMilestones, projectId]);
 
@@ -129,70 +127,18 @@ export const ChatSection = ({
         isExpanded ? className : "w-[50px]"
       )}
     >
-      <div className="p-4 border-b flex justify-between items-center">
-        {isExpanded ? (
-          <>
-            <h2 className="font-semibold">Project Chat</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsExpanded(false)}
-              className="ml-2"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-          </>
-        ) : (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsExpanded(true)}
-            className="w-full"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
+      <ChatHeader isExpanded={isExpanded} onExpandChange={handleExpandChange} />
       
       {isExpanded && (
         <>
-          <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col min-h-0">
-            <div className="px-4 border-b">
-              <TabsList>
-                {projectMilestones.map((milestone) => (
-                  <TabsTrigger 
-                    key={milestone.id} 
-                    value={milestone.title.toLowerCase().replace(/\s+/g, '-')}
-                  >
-                    {milestone.title}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
-
-            {projectMilestones.map((milestone) => {
-              const milestoneKey = milestone.title.toLowerCase().replace(/\s+/g, '-');
-              return (
-                <TabsContent 
-                  key={milestone.id} 
-                  value={milestoneKey} 
-                  className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 h-[400px]"
-                >
-                  {messagesByMilestone[milestoneKey]?.map((msg) => (
-                    <ChatMessage
-                      key={msg.id}
-                      id={msg.id}
-                      message={msg.message}
-                      sender={msg.sender}
-                      timestamp={msg.timestamp}
-                      onEdit={handleEditMessage}
-                      onDelete={handleDeleteMessage}
-                    />
-                  ))}
-                </TabsContent>
-              );
-            })}
-          </Tabs>
+          <ChatContent
+            projectMilestones={projectMilestones}
+            currentMilestone={currentMilestone}
+            setCurrentMilestone={setCurrentMilestone}
+            messagesByMilestone={messagesByMilestone}
+            handleEditMessage={handleEditMessage}
+            handleDeleteMessage={handleDeleteMessage}
+          />
 
           <ChatInput
             newMessage={newMessage}
