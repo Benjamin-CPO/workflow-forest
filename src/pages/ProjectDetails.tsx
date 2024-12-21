@@ -23,6 +23,8 @@ interface Project {
   description: string;
   progress: number;
   dueDate: string;
+  figmaWorkfile?: string;
+  figmaReviewFile?: string;
   milestones: Milestone[];
 }
 
@@ -33,6 +35,8 @@ const projects = [
     description: "Complete overhaul of the company website with new branding",
     progress: 75,
     dueDate: "Mar 15, 2024",
+    figmaWorkfile: "https://figma.com/file/example-workfile",
+    figmaReviewFile: "https://figma.com/file/example-review",
     milestones: [
       {
         id: 1,
@@ -58,6 +62,8 @@ const projects = [
     description: "Create a new mobile app for customer engagement",
     progress: 30,
     dueDate: "Apr 1, 2024",
+    figmaWorkfile: "https://figma.com/file/example-workfile",
+    figmaReviewFile: "https://figma.com/file/example-review",
     milestones: [
       {
         id: 1,
@@ -75,6 +81,8 @@ const projects = [
     description: "Q2 marketing campaign for product launch",
     progress: 50,
     dueDate: "Mar 30, 2024",
+    figmaWorkfile: "https://figma.com/file/example-workfile",
+    figmaReviewFile: "https://figma.com/file/example-review",
     milestones: [
       {
         id: 1,
@@ -109,7 +117,13 @@ const ProjectDetails = () => {
     return <div>Project not found</div>;
   }
 
-  const handleProjectUpdate = (data: { title: string; description: string; dueDate: string }) => {
+  const handleProjectUpdate = (data: { 
+    title: string; 
+    description: string; 
+    dueDate: string;
+    figmaWorkfile?: string;
+    figmaReviewFile?: string;
+  }) => {
     setProject({
       ...project,
       ...data
@@ -132,6 +146,8 @@ const ProjectDetails = () => {
         title={project.title}
         description={project.description}
         dueDate={project.dueDate}
+        figmaWorkfile={project.figmaWorkfile}
+        figmaReviewFile={project.figmaReviewFile}
         progress={allTasks.length > 0 ? (allTasks.filter(t => t.status === "completed").length / allTasks.length) * 100 : 0}
         onUpdate={handleProjectUpdate}
       />

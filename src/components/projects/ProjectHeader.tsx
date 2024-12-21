@@ -12,13 +12,23 @@ interface ProjectHeaderProps {
   description: string;
   dueDate: string;
   progress: number;
-  onUpdate?: (data: { title: string; description: string; dueDate: string }) => void;
+  figmaWorkfile?: string;
+  figmaReviewFile?: string;
+  onUpdate?: (data: { 
+    title: string; 
+    description: string; 
+    dueDate: string;
+    figmaWorkfile?: string;
+    figmaReviewFile?: string;
+  }) => void;
 }
 
 export const ProjectHeader = ({ 
   title: initialTitle, 
   description: initialDescription, 
-  dueDate: initialDueDate, 
+  dueDate: initialDueDate,
+  figmaWorkfile: initialFigmaWorkfile = '',
+  figmaReviewFile: initialFigmaReviewFile = '',
   progress,
   onUpdate 
 }: ProjectHeaderProps) => {
@@ -28,6 +38,8 @@ export const ProjectHeader = ({
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [dueDate, setDueDate] = useState(initialDueDate);
+  const [figmaWorkfile, setFigmaWorkfile] = useState(initialFigmaWorkfile);
+  const [figmaReviewFile, setFigmaReviewFile] = useState(initialFigmaReviewFile);
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -43,6 +55,8 @@ export const ProjectHeader = ({
       title,
       description,
       dueDate,
+      figmaWorkfile,
+      figmaReviewFile,
     });
 
     setIsEditing(false);
@@ -56,6 +70,8 @@ export const ProjectHeader = ({
     setTitle(initialTitle);
     setDescription(initialDescription);
     setDueDate(initialDueDate);
+    setFigmaWorkfile(initialFigmaWorkfile);
+    setFigmaReviewFile(initialFigmaReviewFile);
     setIsEditing(false);
   };
 
@@ -92,6 +108,20 @@ export const ProjectHeader = ({
                 onChange={(e) => setDueDate(e.target.value)}
                 className="w-full"
               />
+              <Input
+                type="url"
+                value={figmaWorkfile}
+                onChange={(e) => setFigmaWorkfile(e.target.value)}
+                placeholder="Figma Workfile URL"
+                className="w-full"
+              />
+              <Input
+                type="url"
+                value={figmaReviewFile}
+                onChange={(e) => setFigmaReviewFile(e.target.value)}
+                placeholder="Figma Review File URL"
+                className="w-full"
+              />
               <div className="flex gap-2">
                 <Button onClick={handleSave}>
                   <Check className="h-4 w-4 mr-2" />
@@ -105,9 +135,9 @@ export const ProjectHeader = ({
             </div>
           ) : (
             <>
-              <div>
-                <h1 className="text-2xl font-bold mb-2">{title}</h1>
-                <div className="text-muted-foreground mb-4">
+              <div className="space-y-4 w-full">
+                <h1 className="text-2xl font-bold">{title}</h1>
+                <div className="text-muted-foreground">
                   <ReactMarkdown
                     components={{
                       a: ({ node, ...props }) => (
@@ -127,6 +157,30 @@ export const ProjectHeader = ({
                   <Calendar className="h-4 w-4 mr-2" />
                   Due {dueDate}
                 </div>
+                {(figmaWorkfile || figmaReviewFile) && (
+                  <div className="space-y-2">
+                    {figmaWorkfile && (
+                      <a
+                        href={figmaWorkfile}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm text-blue-500 hover:underline"
+                      >
+                        📝 Figma Workfile
+                      </a>
+                    )}
+                    {figmaReviewFile && (
+                      <a
+                        href={figmaReviewFile}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm text-blue-500 hover:underline"
+                      >
+                        👀 Figma Review File
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
               <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
                 <Edit2 className="h-4 w-4" />
