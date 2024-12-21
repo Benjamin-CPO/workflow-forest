@@ -4,6 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 // Temporary mock data - in a real app, this would come from an API
 const projects = [
@@ -60,10 +65,32 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const project = projects.find((p) => p.id === Number(id));
+  const [tasks, setTasks] = useState(project?.tasks || []);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const form = useForm({
+    defaultValues: {
+      title: "",
+      dueDate: "",
+    },
+  });
 
   if (!project) {
     return <div>Project not found</div>;
   }
+
+  const onSubmit = (data: { title: string; dueDate: string }) => {
+    const newTask = {
+      id: tasks.length + 1,
+      title: data.title,
+      status: "pending",
+      dueDate: data.dueDate,
+    };
+    
+    setTasks([...tasks, newTask]);
+    form.reset();
+    setIsDialogOpen(false);
+  };
 
   return (
     <div className="container py-6">
@@ -88,7 +115,49 @@ const ProjectDetails = () => {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Tasks</h2>
-          <Button>Add Task</Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>Add Task</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Task</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Task Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter task title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="dueDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Due Date</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full">
+                    Add Task
+                  </Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Table>
@@ -100,7 +169,7 @@ const ProjectDetails = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {project.tasks.map((task) => (
+            {tasks.map((task) => (
               <TableRow key={task.id}>
                 <TableCell>{task.title}</TableCell>
                 <TableCell>
