@@ -57,7 +57,11 @@ export const ChatContent = ({
             key={milestone.id} 
             value={milestoneKey} 
             className="flex-1 overflow-y-auto p-4 space-y-4 mt-0"
-            style={{ height: 'calc(100% - 45px)' }}
+            style={{ 
+              height: 'calc(100% - 45px)',
+              overflowY: 'auto',
+              scrollBehavior: 'smooth'
+            }}
           >
             <div className="space-y-4">
               {messagesByMilestone[milestoneKey]?.length === 0 ? (
