@@ -31,7 +31,7 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
   const columns = [
     { status: "pending", label: "Pending", bgColor: "bg-gray-100", textColor: "text-gray-700" },
     { status: "in-progress", label: "In Progress", bgColor: "bg-orange-100", textColor: "text-orange-700" },
-    { status: "need-review", label: "Need Review", bgColor: "bg-blue-100", textColor: "text-blue-700" },
+    { status: "need-feedback", label: "Need Feedback", bgColor: "bg-blue-100", textColor: "text-blue-700" },
     { status: "need-revision", label: "Need Revision", bgColor: "bg-red-100", textColor: "text-red-700" },
     { status: "completed", label: "Completed", bgColor: "bg-green-100", textColor: "text-green-700" }
   ];
