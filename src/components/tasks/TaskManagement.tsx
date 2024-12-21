@@ -104,25 +104,29 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Tasks</h2>
-        <div className="flex gap-2">
-          <Button onClick={() => setIsDialogOpen(true)}>Add Task</Button>
-          <Button variant="outline" onClick={() => setIsMilestoneDialogOpen(true)}>
-            Add Milestone
-          </Button>
+    <div className="h-full flex flex-col">
+      <div className="sticky top-0 bg-background z-10 p-4 border-b">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Tasks</h2>
+          <div className="flex gap-2">
+            <Button onClick={() => setIsDialogOpen(true)}>Add Task</Button>
+            <Button variant="outline" onClick={() => setIsMilestoneDialogOpen(true)}>
+              Add Milestone
+            </Button>
+          </div>
         </div>
       </div>
 
-      <MilestoneTasks
-        milestones={milestones}
-        onStatusChange={handleStatusChange}
-        onTaskClick={(task) => {
-          setSelectedTask(task);
-          setIsEditDialogOpen(true);
-        }}
-      />
+      <div className="flex-1 overflow-auto p-4">
+        <MilestoneTasks
+          milestones={milestones}
+          onStatusChange={handleStatusChange}
+          onTaskClick={(task) => {
+            setSelectedTask(task);
+            setIsEditDialogOpen(true);
+          }}
+        />
+      </div>
 
       <AddTaskDialog
         isOpen={isDialogOpen}
