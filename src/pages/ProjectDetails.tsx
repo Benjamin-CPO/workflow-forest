@@ -86,19 +86,16 @@ const ProjectDetails = () => {
         tasks={allTasks}
         onProjectUpdate={handleProjectUpdate}
       />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-2">
-          <MilestoneManager
-            milestones={milestones}
-            setMilestones={setMilestones}
-          />
-        </div>
-        <div className="lg:col-span-1">
-          <ChatSection
-            projectMilestones={milestones}
-            className="w-full"
-          />
-        </div>
+      <div className="flex flex-col gap-6 mt-6">
+        <MilestoneManager
+          milestones={milestones}
+          setMilestones={setMilestones}
+        />
+        <ChatSection
+          projectMilestones={milestones}
+          className="w-full"
+          collapsedWidth="50px"
+        />
       </div>
       <Toaster />
     </div>
