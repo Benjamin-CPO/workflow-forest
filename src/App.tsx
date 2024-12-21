@@ -11,6 +11,13 @@ import ProjectDetails from "./pages/ProjectDetails";
 
 const queryClient = new QueryClient();
 
+const Clients = () => (
+  <div className="container py-6">
+    <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
+    <p className="text-muted-foreground">Manage your client relationships</p>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -25,6 +32,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/projects/:id" element={<ProjectDetails />} />
+                <Route path="/clients" element={<Clients />} />
               </Routes>
             </div>
           </div>
