@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
-import { ProjectClientInfo } from "./ProjectClientInfo";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
 import { Progress } from "@/components/ui/progress";
 
@@ -29,15 +28,6 @@ export const ProjectCard = ({
   onDelete 
 }: ProjectCardProps) => {
   const navigate = useNavigate();
-  const [clientName, setClientName] = useState<string>("");
-
-  useEffect(() => {
-    const clients = JSON.parse(localStorage.getItem('clients') || '[]');
-    const client = clients.find((c: { id: number }) => c.id === clientId);
-    if (client) {
-      setClientName(client.name);
-    }
-  }, [clientId]);
 
   const handleDelete = () => {
     onDelete?.(id);
@@ -54,7 +44,6 @@ export const ProjectCard = ({
         <div className="space-y-2">
           <ProjectStatusBadge status={status} />
           <CardTitle className="text-lg">{title}</CardTitle>
-          <ProjectClientInfo clientName={clientName} />
         </div>
         <ProjectDeleteButton projectTitle={title} onDelete={handleDelete} />
       </CardHeader>
