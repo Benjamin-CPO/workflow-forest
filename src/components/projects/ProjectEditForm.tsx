@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
 
 interface ProjectEditFormProps {
   title: string;
@@ -18,6 +19,7 @@ interface ProjectEditFormProps {
   figmaWorkfile: string;
   figmaReviewFile: string;
   status?: 'priority' | 'on-hold' | null;
+  clientId?: number;
   onSave: (data: {
     title: string;
     description: string;
@@ -25,8 +27,14 @@ interface ProjectEditFormProps {
     figmaWorkfile?: string;
     figmaReviewFile?: string;
     status?: 'priority' | 'on-hold' | null;
+    clientId?: number;
   }) => void;
   onCancel: () => void;
+}
+
+interface Client {
+  id: number;
+  name: string;
 }
 
 export const ProjectEditForm = ({
@@ -36,9 +44,17 @@ export const ProjectEditForm = ({
   figmaWorkfile,
   figmaReviewFile,
   status,
+  clientId,
   onSave,
   onCancel,
 }: ProjectEditFormProps) => {
+  const [clients, setClients] = useState<Client[]>([]);
+
+  useEffect(() => {
+    const storedClients = JSON.parse(localStorage.getItem('clients') || '[]');
+    setClients(storedClients);
+  }, []);
+
   return (
     <div className="flex-1 space-y-4">
       <Input
@@ -68,6 +84,27 @@ export const ProjectEditForm = ({
             <SelectItem value="none">Regular Project</SelectItem>
             <SelectItem value="priority">Priority Project</SelectItem>
             <SelectItem value="on-hold">Project on Hold</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid gap-2">
+        <Label>Client</Label>
+        <Select
+          value={clientId?.toString() || ''}
+          onValueChange={(value) => 
+            onSave({ ...getFormData(), clientId: value ? Number(value) : undefined })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a client" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">No Client</SelectItem>
+            {clients.map((client) => (
+              <SelectItem key={client.id} value={client.id.toString()}>
+                {client.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -112,6 +149,7 @@ export const ProjectEditForm = ({
       figmaWorkfile,
       figmaReviewFile,
       status,
+      clientId,
     };
   }
 };
