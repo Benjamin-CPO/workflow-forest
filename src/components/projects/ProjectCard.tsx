@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, GripVertical } from "lucide-react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
-import { Progress } from "@/components/ui/progress";
+import { MultiColorProgress } from "@/components/ui/multi-color-progress";
+import { calculateProgressColors } from "@/utils/progressUtils";
 import {
   Tooltip,
   TooltipContent,
@@ -20,6 +21,12 @@ interface ProjectCardProps {
   status?: 'priority' | null;
   clientId: number;
   onDelete?: (id: number) => void;
+  tasks?: Array<{
+    id: number;
+    title: string;
+    status: string;
+    dueDate: string;
+  }>;
 }
 
 export const ProjectCard = ({ 
@@ -30,13 +37,16 @@ export const ProjectCard = ({
   dueDate,
   status,
   clientId,
-  onDelete 
+  onDelete,
+  tasks = []
 }: ProjectCardProps) => {
   const navigate = useNavigate();
 
   const handleDelete = () => {
     onDelete?.(id);
   };
+
+  const progressSegments = calculateProgressColors(tasks);
 
   return (
     <Card 
@@ -73,7 +83,7 @@ export const ProjectCard = ({
               <span className="text-sm text-muted-foreground">Progress</span>
               <span className="text-sm font-medium">{progress}%</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <MultiColorProgress segments={progressSegments} className="h-2" />
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-1" />
