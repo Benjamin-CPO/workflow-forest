@@ -36,7 +36,7 @@ export const ChatContent = ({
   }, [messagesByMilestone]);
 
   return (
-    <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col min-h-0">
+    <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col h-full">
       <div className="px-4 border-b">
         <TabsList>
           {projectMilestones.map((milestone) => (
@@ -56,7 +56,8 @@ export const ChatContent = ({
           <TabsContent 
             key={milestone.id} 
             value={milestoneKey} 
-            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 min-h-[450px] max-h-[450px] flex flex-col justify-end"
+            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0"
+            style={{ height: 'calc(100% - 45px)' }}
           >
             <div className="space-y-4">
               {messagesByMilestone[milestoneKey]?.length === 0 ? (
