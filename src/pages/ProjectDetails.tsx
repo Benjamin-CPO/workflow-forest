@@ -1,16 +1,16 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
 import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { calculateProgressColors } from "@/utils/progressUtils";
+import { ProjectHeader } from "@/components/projects/ProjectHeader";
+import { statusColors, getProjectStatus } from "@/utils/statusColors";
 
 const projects = [
   {
@@ -51,7 +51,6 @@ const projects = [
 
 export const ProjectDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const project = projects.find((p) => p.id === Number(id));
   const [tasks, setTasks] = useState(project?.tasks || []);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -89,28 +88,19 @@ export const ProjectDetails = () => {
   const completedTasks = tasks.filter(task => task.status === "completed").length;
   const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
   const progressSegments = calculateProgressColors(tasks);
+  const status = getProjectStatus(progress);
+  const colors = statusColors[status];
 
   return (
-    <div className="container py-6">
-      <Button
-        variant="ghost"
-        className="mb-6"
-        onClick={() => navigate("/")}
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Projects
-      </Button>
+    <div className={`container py-6 ${colors.bg}`}>
+      <ProjectHeader 
+        title={project.title}
+        description={project.description}
+        dueDate={project.dueDate}
+        progress={progress}
+      />
 
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold mb-2">{project.title}</h1>
-          <p className="text-muted-foreground mb-4">{project.description}</p>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 mr-2" />
-            Due {project.dueDate}
-          </div>
-        </div>
-
+      <div className="space-y-6 mt-6">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">
