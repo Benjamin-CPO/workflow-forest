@@ -45,19 +45,25 @@ export const ChatContent = ({
           <TabsContent 
             key={milestone.id} 
             value={milestoneKey} 
-            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 max-h-[400px]"
+            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 min-h-[450px] max-h-[450px]"
           >
-            {messagesByMilestone[milestoneKey]?.map((msg) => (
-              <ChatMessage
-                key={msg.id}
-                id={msg.id}
-                message={msg.message}
-                sender={msg.sender}
-                timestamp={msg.timestamp}
-                onEdit={handleEditMessage}
-                onDelete={handleDeleteMessage}
-              />
-            ))}
+            {messagesByMilestone[milestoneKey]?.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                No messages yet
+              </div>
+            ) : (
+              messagesByMilestone[milestoneKey]?.map((msg) => (
+                <ChatMessage
+                  key={msg.id}
+                  id={msg.id}
+                  message={msg.message}
+                  sender={msg.sender}
+                  timestamp={msg.timestamp}
+                  onEdit={handleEditMessage}
+                  onDelete={handleDeleteMessage}
+                />
+              ))
+            )}
           </TabsContent>
         );
       })}

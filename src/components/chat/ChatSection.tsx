@@ -53,7 +53,7 @@ export const ChatSection = ({
   return (
     <div 
       className={cn(
-        "flex flex-col bg-background border rounded-lg transition-all duration-300 h-[600px]",
+        "flex flex-col bg-background border rounded-lg transition-all duration-300 h-[600px] min-h-[600px]",
         isExpanded ? className : "w-[50px]"
       )}
     >
