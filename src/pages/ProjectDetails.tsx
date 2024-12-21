@@ -1,16 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { MultiColorProgress } from "@/components/ui/multi-color-progress";
-import { calculateProgressColors } from "@/utils/progressUtils";
+import { useToast } from "@/components/ui/use-toast";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { TaskEditDialog } from "@/components/tasks/TaskEditDialog";
-import { useToast } from "@/components/ui/use-toast";
 import { MilestoneTasks } from "@/components/tasks/MilestoneTasks";
+import { AddTaskDialog } from "@/components/projects/AddTaskDialog";
+import { ProjectProgress } from "@/components/projects/ProjectProgress";
 
 const projects = [
   {
@@ -62,7 +58,7 @@ const projects = [
   },
 ];
 
-export const ProjectDetails = () => {
+const ProjectDetails = () => {
   const { id } = useParams();
   const project = projects.find((p) => p.id === Number(id));
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -84,26 +80,19 @@ export const ProjectDetails = () => {
     }
   }, [milestones, id]);
 
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      dueDate: "",
-    },
-  });
-
   if (!project) {
     return <div>Project not found</div>;
   }
 
-  const onSubmit = (data: { title: string; dueDate: string }) => {
+  const handleAddTask = (data: { title: string; dueDate: string }) => {
     const newTask = {
-      id: Math.max(...milestones.flatMap(m => m.tasks.map(t => t.id))) + 1,
+      id: Math.max(...milestones.flatMap(m => m.tasks.map(t => t.id)), 0) + 1,
       title: data.title,
       status: "pending",
       dueDate: data.dueDate,
     };
     
-    // Add to the first milestone by default (you might want to add milestone selection later)
+    // Add to the first milestone by default
     const updatedMilestones = milestones.map((milestone, index) => 
       index === 0 
         ? { ...milestone, tasks: [...milestone.tasks, newTask] }
@@ -111,8 +100,6 @@ export const ProjectDetails = () => {
     );
     
     setMilestones(updatedMilestones);
-    form.reset();
-    setIsDialogOpen(false);
     toast({
       title: "Task added",
       description: "New task has been added successfully.",
@@ -144,9 +131,6 @@ export const ProjectDetails = () => {
   };
 
   const allTasks = milestones.flatMap(milestone => milestone.tasks);
-  const completedTasks = allTasks.filter(task => task.status === "completed").length;
-  const progress = allTasks.length > 0 ? (completedTasks / allTasks.length) * 100 : 0;
-  const progressSegments = calculateProgressColors(allTasks);
 
   return (
     <div className="container py-6">
@@ -154,66 +138,16 @@ export const ProjectDetails = () => {
         title={project.title}
         description={project.description}
         dueDate={project.dueDate}
-        progress={progress}
+        progress={allTasks.length > 0 ? (allTasks.filter(t => t.status === "completed").length / allTasks.length) * 100 : 0}
       />
 
       <div className="space-y-6 mt-6">
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">
-              Progress ({completedTasks} of {allTasks.length} tasks completed)
-            </span>
-            <span className="text-sm font-medium">{Math.round(progress)}%</span>
-          </div>
-          <MultiColorProgress segments={progressSegments} className="h-2" />
-        </div>
+        <ProjectProgress tasks={allTasks} />
 
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Tasks</h2>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>Add Task</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Task</DialogTitle>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Task Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter task title" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="dueDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Due Date</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full">
-                      Add Task
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => setIsDialogOpen(true)}>Add Task</Button>
           </div>
 
           <MilestoneTasks
@@ -223,6 +157,12 @@ export const ProjectDetails = () => {
               setSelectedTask(task);
               setIsEditDialogOpen(true);
             }}
+          />
+
+          <AddTaskDialog
+            isOpen={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            onSubmit={handleAddTask}
           />
 
           <TaskEditDialog
