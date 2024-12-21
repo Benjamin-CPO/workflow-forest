@@ -154,7 +154,6 @@ export const ClientProjectsTable = () => {
                     key={client.id}
                     client={client}
                     projects={clientProjects}
-                    tasks={tasks}
                   />
                 ))}
               </TableRow>

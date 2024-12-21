@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { ProjectHeader } from "./ProjectHeader";
-import { ProjectProgress } from "./ProjectProgress";
 
 interface Task {
   id: number;
@@ -43,9 +41,6 @@ export const ProjectInfo = ({ project, tasks, onProjectUpdate }: ProjectInfoProp
         progress={tasks.length > 0 ? (tasks.filter(t => t.status === "completed").length / tasks.length) * 100 : 0}
         onUpdate={onProjectUpdate}
       />
-      <div className="mt-6">
-        <ProjectProgress tasks={tasks} />
-      </div>
     </div>
   );
 };
