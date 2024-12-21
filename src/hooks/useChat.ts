@@ -40,7 +40,7 @@ export const useChat = (
     return initialMessages;
   };
 
-  const [messagesByMilestone, setMessagesByMilestone] = useState(() => 
+  const [messagesByMilestone, setMessagesByMilestone] = useState<Record<string, Message[]>>(() => 
     createInitialMessages(projectMilestones)
   );
 
@@ -71,8 +71,9 @@ export const useChat = (
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
+    const storageKey = `project-${projectId}-messages`;
     const message = {
-      id: Object.values(messagesByMilestone).flat().length + 1,
+      id: Date.now(),
       message: newMessage,
       sender: "You",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -85,11 +86,12 @@ export const useChat = (
     };
 
     setMessagesByMilestone(updatedMessages);
-    localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
+    localStorage.setItem(storageKey, JSON.stringify(updatedMessages));
     setNewMessage("");
   };
 
   const handleEditMessage = (messageId: number, newMessageText: string) => {
+    const storageKey = `project-${projectId}-messages`;
     const updatedMessages = {
       ...messagesByMilestone,
       [currentMilestone]: messagesByMilestone[currentMilestone].map(msg =>
@@ -97,16 +99,17 @@ export const useChat = (
       )
     };
     setMessagesByMilestone(updatedMessages);
-    localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
+    localStorage.setItem(storageKey, JSON.stringify(updatedMessages));
   };
 
   const handleDeleteMessage = (messageId: number) => {
+    const storageKey = `project-${projectId}-messages`;
     const updatedMessages = {
       ...messagesByMilestone,
       [currentMilestone]: messagesByMilestone[currentMilestone].filter(msg => msg.id !== messageId)
     };
     setMessagesByMilestone(updatedMessages);
-    localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
+    localStorage.setItem(storageKey, JSON.stringify(updatedMessages));
   };
 
   return {
