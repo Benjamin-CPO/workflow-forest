@@ -1,21 +1,6 @@
-import { useState, useRef } from "react";
-import { Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { ChatMessage } from "./ChatMessage";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { ChatInput } from "./ChatInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Temporary mock data with tagged messages for each milestone
@@ -53,7 +38,6 @@ export const ChatSection = () => {
   const [newMessage, setNewMessage] = useState("");
   const [mentionOpen, setMentionOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   // Mock data for suggestions
   const suggestions = {
@@ -68,26 +52,11 @@ export const ChatSection = () => {
     ]
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setNewMessage(value);
-    setCursorPosition(e.target.selectionStart || 0);
-
-    // Check if we should show mentions
-    const lastAtSign = value.lastIndexOf('@', cursorPosition);
-    if (lastAtSign !== -1 && lastAtSign === value.length - 1) {
-      setMentionOpen(true);
-    } else {
-      setMentionOpen(false);
-    }
-  };
-
   const handleMentionSelect = (type: 'Task' | 'Milestone', title: string) => {
     const beforeMention = newMessage.slice(0, newMessage.lastIndexOf('@'));
     const mention = `@[${type}: ${title}] `;
     setNewMessage(beforeMention + mention);
     setMentionOpen(false);
-    inputRef.current?.focus();
   };
 
   const handleSendMessage = () => {
@@ -108,11 +77,20 @@ export const ChatSection = () => {
     setNewMessage("");
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
+  const handleEditMessage = (messageId: number, newMessageText: string) => {
+    setMessagesByMilestone(prev => ({
+      ...prev,
+      [currentMilestone]: prev[currentMilestone].map(msg =>
+        msg.id === messageId ? { ...msg, message: newMessageText } : msg
+      )
+    }));
+  };
+
+  const handleDeleteMessage = (messageId: number) => {
+    setMessagesByMilestone(prev => ({
+      ...prev,
+      [currentMilestone]: prev[currentMilestone].filter(msg => msg.id !== messageId)
+    }));
   };
 
   return (
@@ -133,9 +111,12 @@ export const ChatSection = () => {
           {messagesByMilestone.design?.map((msg) => (
             <ChatMessage
               key={msg.id}
+              id={msg.id}
               message={msg.message}
               sender={msg.sender}
               timestamp={msg.timestamp}
+              onEdit={handleEditMessage}
+              onDelete={handleDeleteMessage}
             />
           ))}
         </TabsContent>
@@ -144,62 +125,28 @@ export const ChatSection = () => {
           {messagesByMilestone.development?.map((msg) => (
             <ChatMessage
               key={msg.id}
+              id={msg.id}
               message={msg.message}
               sender={msg.sender}
               timestamp={msg.timestamp}
+              onEdit={handleEditMessage}
+              onDelete={handleDeleteMessage}
             />
           ))}
         </TabsContent>
       </Tabs>
 
-      <div className="p-4 border-t">
-        <div className="flex space-x-2">
-          <div className="relative flex-1">
-            <Input
-              ref={inputRef}
-              value={newMessage}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              placeholder="Type @ to mention tasks or milestones..."
-              className="flex-1"
-            />
-            <Popover open={mentionOpen} onOpenChange={setMentionOpen}>
-              <PopoverTrigger asChild>
-                <div />
-              </PopoverTrigger>
-              <PopoverContent className="p-0" align="start">
-                <Command>
-                  <CommandList>
-                    <CommandGroup heading="Tasks">
-                      {suggestions.tasks.map((task) => (
-                        <CommandItem
-                          key={task.id}
-                          onSelect={() => handleMentionSelect('Task', task.title)}
-                        >
-                          📋 {task.title}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                    <CommandGroup heading="Milestones">
-                      {suggestions.milestones.map((milestone) => (
-                        <CommandItem
-                          key={milestone.id}
-                          onSelect={() => handleMentionSelect('Milestone', milestone.title)}
-                        >
-                          🎯 {milestone.title}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-          <Button onClick={handleSendMessage} size="icon">
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <ChatInput
+        newMessage={newMessage}
+        setNewMessage={setNewMessage}
+        handleSendMessage={handleSendMessage}
+        mentionOpen={mentionOpen}
+        setMentionOpen={setMentionOpen}
+        suggestions={suggestions}
+        handleMentionSelect={handleMentionSelect}
+        cursorPosition={cursorPosition}
+        setCursorPosition={setCursorPosition}
+      />
     </div>
   );
 };
