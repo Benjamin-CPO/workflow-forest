@@ -4,17 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChatMessage } from "./ChatMessage";
 
-// Temporary mock data
+// Temporary mock data with tagged messages
 const initialMessages = [
   {
     id: 1,
-    message: "Hey team, how's the progress on the homepage design?",
+    message: "Hey team, how's the progress on @[Task: Design Homepage]?",
     sender: "John Doe",
     timestamp: "2:30 PM"
   },
   {
     id: 2,
-    message: "Looking good! I've just pushed the latest changes.",
+    message: "@[Milestone: Design Phase] is almost complete! I've just pushed the latest changes.",
     sender: "Jane Smith",
     timestamp: "2:32 PM"
   }
@@ -68,7 +68,7 @@ export const ChatSection = () => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Type a message..."
+            placeholder="Type @ to mention tasks or milestones..."
             className="flex-1"
           />
           <Button onClick={handleSendMessage} size="icon">
