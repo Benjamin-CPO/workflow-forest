@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +13,7 @@ interface ChatSectionProps {
   }>;
   className?: string;
   collapsedWidth?: string;
+  onExpandChange?: (expanded: boolean) => void;
 }
 
 const createInitialMessages = (milestones: Array<{ id: number; title: string }>, projectId: string) => {
@@ -33,7 +34,12 @@ const createInitialMessages = (milestones: Array<{ id: number; title: string }>,
   }>>);
 };
 
-export const ChatSection = ({ projectMilestones, className, collapsedWidth = "50px" }: ChatSectionProps) => {
+export const ChatSection = ({ 
+  projectMilestones, 
+  className, 
+  collapsedWidth = "50px",
+  onExpandChange 
+}: ChatSectionProps) => {
   const projectId = window.location.pathname.split('/')[2];
 
   const [messagesByMilestone, setMessagesByMilestone] = useState(() => 
@@ -102,6 +108,10 @@ export const ChatSection = ({ projectMilestones, className, collapsedWidth = "50
     setMessagesByMilestone(updatedMessages);
     localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
   };
+
+  useEffect(() => {
+    onExpandChange?.(isExpanded);
+  }, [isExpanded, onExpandChange]);
 
   return (
     <div 

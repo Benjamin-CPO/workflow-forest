@@ -108,6 +108,7 @@ const ProjectDetails = () => {
     const savedMilestones = localStorage.getItem(`project-${id}-milestones`);
     return savedMilestones ? JSON.parse(savedMilestones) : project?.milestones || [];
   });
+  const [isChatExpanded, setIsChatExpanded] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -162,8 +163,9 @@ const ProjectDetails = () => {
           projectMilestones={milestones} 
           className="w-[60%] transition-all duration-300"
           collapsedWidth="50px"
+          onExpandChange={setIsChatExpanded}
         />
-        <div className="w-[40%] transition-all duration-300">
+        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[40%]' : 'flex-1'}`}>
           <TaskManagement 
             milestones={milestones}
             setMilestones={setMilestones}
