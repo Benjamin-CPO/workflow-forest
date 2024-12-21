@@ -40,13 +40,13 @@ export const ProjectCard = ({
 
   return (
     <Card 
-      className={`hover:shadow-md transition-shadow cursor-pointer group h-[180px] ${
+      className={`hover:shadow-md transition-shadow cursor-pointer group h-[150px] ${
         status === 'priority' ? 'bg-orange-50' : ''
       }`}
       onClick={() => navigate(`/projects/${id}`)}
     >
-      <CardHeader className="pb-2 px-3 pt-3 flex flex-row items-start justify-between">
-        <div className="space-y-1 flex-1">
+      <CardHeader className="pb-1.5 px-2.5 pt-2.5 flex flex-row items-start justify-between">
+        <div className="space-y-0.5 flex-1">
           <ProjectStatusBadge status={status} />
           <TooltipProvider>
             <Tooltip>
@@ -63,8 +63,8 @@ export const ProjectCard = ({
         </div>
         <ProjectDeleteButton projectTitle={title} onDelete={handleDelete} />
       </CardHeader>
-      <CardContent className="px-3 pb-3">
-        <div className="space-y-2">
+      <CardContent className="px-2.5 pb-2.5">
+        <div className="space-y-1.5">
           <div className="space-y-1">
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Progress</span>
