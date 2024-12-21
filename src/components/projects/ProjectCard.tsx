@@ -1,4 +1,4 @@
-import { Calendar, Trash2, Star, Pause, Building2 } from "lucide-react";
+import { Calendar, Trash2, Star, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ interface ProjectCardProps {
   description: string;
   progress: number;
   dueDate: string;
-  status?: 'priority' | 'on-hold' | null;
+  status?: 'priority' | null;
   clientId: number;
   onDelete?: (id: number) => void;
 }
@@ -90,14 +90,6 @@ export const ProjectCard = ({
         </Badge>
       );
     }
-    if (status === 'on-hold') {
-      return (
-        <Badge variant="secondary" className="bg-[#8E9196] hover:bg-[#8E9196]/80 text-white gap-1">
-          <Pause className="h-3 w-3" />
-          Project on Hold
-        </Badge>
-      );
-    }
     return null;
   };
 
@@ -105,8 +97,7 @@ export const ProjectCard = ({
     <>
       <Card 
         className={`hover:shadow-md transition-shadow cursor-pointer group ${
-          status === 'priority' ? 'bg-orange-50' : 
-          status === 'on-hold' ? 'bg-gray-50' : ''
+          status === 'priority' ? 'bg-orange-50' : ''
         }`}
         onClick={() => navigate(`/projects/${id}`)}
       >

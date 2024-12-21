@@ -33,18 +33,16 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const [description, setDescription] = useState("");
   const [figmaWorkfile, setFigmaWorkfile] = useState("");
   const [figmaReviewFile, setFigmaReviewFile] = useState("");
-  const [status, setStatus] = useState<'priority' | 'on-hold' | null>(null);
+  const [status, setStatus] = useState<'priority' | null>(null);
   const [clientId, setClientId] = useState<string>("");
   const [clients, setClients] = useState<Client[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Load clients from localStorage
     const storedClients = localStorage.getItem('clients');
     if (storedClients) {
       setClients(JSON.parse(storedClients));
     } else {
-      // Initialize with some example clients if none exist
       const initialClients = [
         { id: 1, name: "Acme Corp" },
         { id: 2, name: "TechStart Inc" },
@@ -160,19 +158,18 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="status">Project Status</Label>
+              <Label htmlFor="status">Project Priority</Label>
               <Select
-                value={status || 'regular'}
-                onValueChange={(value: 'regular' | 'priority' | 'on-hold') => 
-                  setStatus(value === 'regular' ? null : value)}
+                value={status || 'queue'}
+                onValueChange={(value: 'priority' | 'queue') => 
+                  setStatus(value === 'queue' ? null : 'priority')}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select project status" />
+                  <SelectValue placeholder="Select project priority" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="regular">Regular Project</SelectItem>
+                  <SelectItem value="queue">In Queue</SelectItem>
                   <SelectItem value="priority">Priority Project</SelectItem>
-                  <SelectItem value="on-hold">Project on Hold</SelectItem>
                 </SelectContent>
               </Select>
             </div>

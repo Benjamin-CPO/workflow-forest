@@ -12,13 +12,18 @@ import {
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 
+interface Client {
+  id: number;
+  name: string;
+}
+
 interface ProjectEditFormProps {
   title: string;
   description: string;
   dueDate: string;
-  figmaWorkfile: string;
-  figmaReviewFile: string;
-  status?: 'priority' | 'on-hold' | null;
+  figmaWorkfile?: string;
+  figmaReviewFile?: string;
+  status?: 'priority' | null;
   clientId?: number;
   onSave: (data: {
     title: string;
@@ -26,15 +31,10 @@ interface ProjectEditFormProps {
     dueDate: string;
     figmaWorkfile?: string;
     figmaReviewFile?: string;
-    status?: 'priority' | 'on-hold' | null;
+    status?: 'priority' | null;
     clientId?: number;
   }) => void;
   onCancel: () => void;
-}
-
-interface Client {
-  id: number;
-  name: string;
 }
 
 export const ProjectEditForm = ({
@@ -90,20 +90,19 @@ export const ProjectEditForm = ({
         className="resize-none"
       />
       <div className="grid gap-2">
-        <Label>Project Status</Label>
+        <Label>Project Priority</Label>
         <Select
-          value={formData.status || 'none'}
-          onValueChange={(value: 'priority' | 'on-hold' | 'none') => 
-            handleChange('status', value === 'none' ? null : value)
+          value={formData.status || 'queue'}
+          onValueChange={(value: 'priority' | 'queue') => 
+            handleChange('status', value === 'queue' ? null : value)
           }
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select project status" />
+            <SelectValue placeholder="Select project priority" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="none">Regular Project</SelectItem>
+            <SelectItem value="queue">In Queue</SelectItem>
             <SelectItem value="priority">Priority Project</SelectItem>
-            <SelectItem value="on-hold">Project on Hold</SelectItem>
           </SelectContent>
         </Select>
       </div>
