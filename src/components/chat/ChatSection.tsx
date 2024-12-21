@@ -11,6 +11,8 @@ interface ChatSectionProps {
     id: number;
     title: string;
   }>;
+  className?: string;
+  collapsedWidth?: string;
 }
 
 const createInitialMessages = (milestones: Array<{ id: number; title: string }>, projectId: string) => {
@@ -31,8 +33,7 @@ const createInitialMessages = (milestones: Array<{ id: number; title: string }>,
   }>>);
 };
 
-export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
-  // Extract project ID from URL
+export const ChatSection = ({ projectMilestones, className, collapsedWidth = "50px" }: ChatSectionProps) => {
   const projectId = window.location.pathname.split('/')[2];
 
   const [messagesByMilestone, setMessagesByMilestone] = useState(() => 
@@ -103,10 +104,13 @@ export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
   };
 
   return (
-    <div className={cn(
-      "flex flex-col bg-background border rounded-lg transition-all duration-300",
-      isExpanded ? "w-full" : "w-[50px]"
-    )}>
+    <div 
+      className={cn(
+        "flex flex-col bg-background border rounded-lg transition-all duration-300",
+        isExpanded ? className : `w-[${collapsedWidth}]`
+      )}
+      style={{ width: isExpanded ? undefined : collapsedWidth }}
+    >
       <div className="p-4 border-b flex justify-between items-center">
         {isExpanded ? (
           <>

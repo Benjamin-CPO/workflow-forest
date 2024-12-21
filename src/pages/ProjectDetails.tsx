@@ -157,10 +157,12 @@ const ProjectDetails = () => {
       </div>
 
       <div className="grid grid-cols-[auto,1fr] gap-6 mt-6">
-        <div>
-          <ChatSection projectMilestones={milestones} />
-        </div>
-        <div className="space-y-6">
+        <ChatSection 
+          projectMilestones={milestones} 
+          className="w-[60%] transition-all duration-300 min-w-[50px]"
+          collapsedWidth="50px"
+        />
+        <div className="space-y-6 transition-all duration-300">
           <TaskManagement 
             milestones={milestones}
             setMilestones={setMilestones}
