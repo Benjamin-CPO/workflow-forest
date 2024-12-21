@@ -11,7 +11,12 @@ interface ChatSectionProps {
 }
 
 // Temporary mock data with tagged messages
-const createInitialMessages = (milestones: Array<{ id: number; title: string }>) => {
+const createInitialMessages = (milestones: Array<{ id: number; title: string }>, projectId: string) => {
+  const savedMessages = localStorage.getItem(`project-${projectId}-messages`);
+  if (savedMessages) {
+    return JSON.parse(savedMessages);
+  }
+
   return milestones.reduce((acc, milestone) => {
     acc[milestone.title.toLowerCase().replace(/\s+/g, '-')] = [];
     return acc;
@@ -25,8 +30,11 @@ const createInitialMessages = (milestones: Array<{ id: number; title: string }>)
 };
 
 export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
+  // Extract project ID from URL
+  const projectId = window.location.pathname.split('/')[2];
+
   const [messagesByMilestone, setMessagesByMilestone] = useState(() => 
-    createInitialMessages(projectMilestones)
+    createInitialMessages(projectMilestones, projectId)
   );
   const [currentMilestone, setCurrentMilestone] = useState(() => 
     projectMilestones[0]?.title.toLowerCase().replace(/\s+/g, '-') || ''
@@ -62,27 +70,37 @@ export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
       milestone: currentMilestone
     };
 
-    setMessagesByMilestone(prev => ({
-      ...prev,
-      [currentMilestone]: [...(prev[currentMilestone] || []), message]
-    }));
+    const updatedMessages = {
+      ...messagesByMilestone,
+      [currentMilestone]: [...(messagesByMilestone[currentMilestone] || []), message]
+    };
+
+    setMessagesByMilestone(updatedMessages);
+    // Save to localStorage
+    localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
     setNewMessage("");
   };
 
   const handleEditMessage = (messageId: number, newMessageText: string) => {
-    setMessagesByMilestone(prev => ({
-      ...prev,
-      [currentMilestone]: prev[currentMilestone].map(msg =>
+    const updatedMessages = {
+      ...messagesByMilestone,
+      [currentMilestone]: messagesByMilestone[currentMilestone].map(msg =>
         msg.id === messageId ? { ...msg, message: newMessageText } : msg
       )
-    }));
+    };
+    setMessagesByMilestone(updatedMessages);
+    // Save to localStorage
+    localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
   };
 
   const handleDeleteMessage = (messageId: number) => {
-    setMessagesByMilestone(prev => ({
-      ...prev,
-      [currentMilestone]: prev[currentMilestone].filter(msg => msg.id !== messageId)
-    }));
+    const updatedMessages = {
+      ...messagesByMilestone,
+      [currentMilestone]: messagesByMilestone[currentMilestone].filter(msg => msg.id !== messageId)
+    };
+    setMessagesByMilestone(updatedMessages);
+    // Save to localStorage
+    localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
   };
 
   return (
