@@ -13,7 +13,10 @@ export const ChatMessage = ({ message, sender, timestamp }: ChatMessageProps) =>
     let lastIndex = 0;
     let match;
 
+    console.log('Formatting message:', text);
+
     while ((match = tagPattern.exec(text)) !== null) {
+      console.log('Found match:', match);
       // Add text before the match
       if (match.index > lastIndex) {
         parts.push(text.slice(lastIndex, match.index));
@@ -38,6 +41,7 @@ export const ChatMessage = ({ message, sender, timestamp }: ChatMessageProps) =>
       parts.push(text.slice(lastIndex));
     }
 
+    console.log('Parsed parts:', parts);
     return <>{parts}</>;
   };
 
