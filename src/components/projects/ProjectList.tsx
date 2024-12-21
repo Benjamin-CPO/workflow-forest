@@ -7,6 +7,8 @@ interface Project {
   description: string;
   progress: number;
   dueDate: string;
+  clientId: number;
+  status?: 'priority' | 'on-hold' | null;
 }
 
 export const ProjectList = () => {
