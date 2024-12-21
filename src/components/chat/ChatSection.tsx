@@ -3,7 +3,7 @@ import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ChatSectionProps {
@@ -78,7 +78,6 @@ export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
     };
 
     setMessagesByMilestone(updatedMessages);
-    // Save to localStorage
     localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
     setNewMessage("");
   };
@@ -91,7 +90,6 @@ export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
       )
     };
     setMessagesByMilestone(updatedMessages);
-    // Save to localStorage
     localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
   };
 
@@ -101,80 +99,92 @@ export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
       [currentMilestone]: messagesByMilestone[currentMilestone].filter(msg => msg.id !== messageId)
     };
     setMessagesByMilestone(updatedMessages);
-    // Save to localStorage
     localStorage.setItem(`project-${projectId}-messages`, JSON.stringify(updatedMessages));
   };
 
   return (
     <div className={cn(
       "flex flex-col bg-background border rounded-lg transition-all duration-300",
-      isExpanded ? "h-[500px]" : "h-[300px]"
+      isExpanded ? "w-full" : "w-[50px]"
     )}>
       <div className="p-4 border-b flex justify-between items-center">
-        <h2 className="font-semibold">Project Chat</h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="ml-2"
-        >
-          {isExpanded ? (
-            <Minimize2 className="h-4 w-4" />
-          ) : (
-            <Maximize2 className="h-4 w-4" />
-          )}
-        </Button>
+        {isExpanded ? (
+          <>
+            <h2 className="font-semibold">Project Chat</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsExpanded(false)}
+              className="ml-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+          </>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsExpanded(true)}
+            className="w-full"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       
-      <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col">
-        <div className="px-4 border-b">
-          <TabsList>
-            {projectMilestones.map((milestone) => (
-              <TabsTrigger 
-                key={milestone.id} 
-                value={milestone.title.toLowerCase().replace(/\s+/g, '-')}
-              >
-                {milestone.title}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
+      {isExpanded && (
+        <>
+          <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col">
+            <div className="px-4 border-b">
+              <TabsList>
+                {projectMilestones.map((milestone) => (
+                  <TabsTrigger 
+                    key={milestone.id} 
+                    value={milestone.title.toLowerCase().replace(/\s+/g, '-')}
+                  >
+                    {milestone.title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
-        {projectMilestones.map((milestone) => {
-          const milestoneKey = milestone.title.toLowerCase().replace(/\s+/g, '-');
-          return (
-            <TabsContent 
-              key={milestone.id} 
-              value={milestoneKey} 
-              className="flex-1 overflow-y-auto p-4 space-y-4 mt-0"
-            >
-              {messagesByMilestone[milestoneKey]?.map((msg) => (
-                <ChatMessage
-                  key={msg.id}
-                  id={msg.id}
-                  message={msg.message}
-                  sender={msg.sender}
-                  timestamp={msg.timestamp}
-                  onEdit={handleEditMessage}
-                  onDelete={handleDeleteMessage}
-                />
-              ))}
-            </TabsContent>
-          );
-        })}
-      </Tabs>
+            {projectMilestones.map((milestone) => {
+              const milestoneKey = milestone.title.toLowerCase().replace(/\s+/g, '-');
+              return (
+                <TabsContent 
+                  key={milestone.id} 
+                  value={milestoneKey} 
+                  className="flex-1 overflow-y-auto p-4 space-y-4 mt-0"
+                >
+                  {messagesByMilestone[milestoneKey]?.map((msg) => (
+                    <ChatMessage
+                      key={msg.id}
+                      id={msg.id}
+                      message={msg.message}
+                      sender={msg.sender}
+                      timestamp={msg.timestamp}
+                      onEdit={handleEditMessage}
+                      onDelete={handleDeleteMessage}
+                    />
+                  ))}
+                </TabsContent>
+              );
+            })}
+          </Tabs>
 
-      <ChatInput
-        newMessage={newMessage}
-        setNewMessage={setNewMessage}
-        handleSendMessage={handleSendMessage}
-        mentionOpen={mentionOpen}
-        setMentionOpen={setMentionOpen}
-        suggestions={suggestions}
-        handleMentionSelect={handleMentionSelect}
-        cursorPosition={cursorPosition}
-        setCursorPosition={setCursorPosition}
-      />
+          <ChatInput
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            handleSendMessage={handleSendMessage}
+            mentionOpen={mentionOpen}
+            setMentionOpen={setMentionOpen}
+            suggestions={suggestions}
+            handleMentionSelect={handleMentionSelect}
+            cursorPosition={cursorPosition}
+            setCursorPosition={setCursorPosition}
+          />
+        </>
+      )}
     </div>
   );
 };
