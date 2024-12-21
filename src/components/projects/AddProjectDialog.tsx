@@ -49,7 +49,7 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
     projects.push(newProject);
     localStorage.setItem('projects', JSON.stringify(projects));
 
-    // Initialize chat messages for the new project
+    // Initialize chat messages for the new project with the default milestone
     const initialMessages = {
       'planning': [] // Initialize with the default milestone
     };
