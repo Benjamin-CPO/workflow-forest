@@ -7,6 +7,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppBar } from "@/components/layout/AppBar";
 import { AppSidebar } from "@/components/layout/Sidebar";
 import Dashboard from "./pages/Dashboard";
+import ProjectDetails from "./pages/ProjectDetails";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
               <AppBar />
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/projects/:id" element={<ProjectDetails />} />
               </Routes>
             </div>
           </div>

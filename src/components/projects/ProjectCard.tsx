@@ -1,17 +1,24 @@
 import { Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useNavigate } from "react-router-dom";
 
 interface ProjectCardProps {
+  id: number;
   title: string;
   description: string;
   progress: number;
   dueDate: string;
 }
 
-export const ProjectCard = ({ title, description, progress, dueDate }: ProjectCardProps) => {
+export const ProjectCard = ({ id, title, description, progress, dueDate }: ProjectCardProps) => {
+  const navigate = useNavigate();
+
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card 
+      className="hover:shadow-md transition-shadow cursor-pointer" 
+      onClick={() => navigate(`/projects/${id}`)}
+    >
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">{title}</CardTitle>
       </CardHeader>
