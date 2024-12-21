@@ -33,7 +33,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
   const { toast } = useToast();
 
-  const handleAddTask = (data: { title: string; dueDate: string }) => {
+  const handleAddTask = (data: { title: string; dueDate: string; milestoneId: number }) => {
     const newTask = {
       id: Math.max(0, ...milestones.flatMap(m => m.tasks.map(t => t.id))) + 1,
       title: data.title,
@@ -41,23 +41,12 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       dueDate: data.dueDate,
     };
 
-    let updatedMilestones = [...milestones];
-    
-    // If there are no milestones, create a default one
-    if (updatedMilestones.length === 0) {
-      updatedMilestones = [{
-        id: 1,
-        title: "General Tasks",
-        tasks: [newTask]
-      }];
-    } else {
-      // Add to the first milestone if it exists
-      updatedMilestones[0] = {
-        ...updatedMilestones[0],
-        tasks: [...updatedMilestones[0].tasks, newTask]
-      };
-    }
-    
+    const updatedMilestones = milestones.map(milestone =>
+      milestone.id === data.milestoneId
+        ? { ...milestone, tasks: [...milestone.tasks, newTask] }
+        : milestone
+    );
+
     setMilestones(updatedMilestones);
     toast({
       title: "Task added",
@@ -139,6 +128,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onSubmit={handleAddTask}
+        milestones={milestones}
       />
 
       <TaskEditDialog
