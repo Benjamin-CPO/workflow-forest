@@ -1,13 +1,6 @@
 import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
 import { ProjectCard } from "./ProjectCard";
 import { useEffect, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface Client {
@@ -98,35 +91,33 @@ export const ClientProjectsTable = () => {
             All Clients
           </label>
         </div>
-        {!selectedClientIds.includes("all") && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="no-client"
+              checked={selectedClientIds.includes("-1")}
+              onCheckedChange={() => handleClientToggle("-1")}
+            />
+            <label htmlFor="no-client" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              No Client
+            </label>
+          </div>
+          {clients.map((client) => (
+            <div key={client.id} className="flex items-center space-x-2">
               <Checkbox
-                id="no-client"
-                checked={selectedClientIds.includes("-1")}
-                onCheckedChange={() => handleClientToggle("-1")}
+                id={`client-${client.id}`}
+                checked={selectedClientIds.includes(client.id.toString())}
+                onCheckedChange={() => handleClientToggle(client.id.toString())}
               />
-              <label htmlFor="no-client" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                No Client
+              <label
+                htmlFor={`client-${client.id}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {client.name}
               </label>
             </div>
-            {clients.map((client) => (
-              <div key={client.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`client-${client.id}`}
-                  checked={selectedClientIds.includes(client.id.toString())}
-                  onCheckedChange={() => handleClientToggle(client.id.toString())}
-                />
-                <label
-                  htmlFor={`client-${client.id}`}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {client.name}
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
       </div>
       <div className="overflow-x-auto">
         <Table>
@@ -135,7 +126,7 @@ export const ClientProjectsTable = () => {
               {filteredProjectsByClient.map(({ client }) => (
                 <TableHead 
                   key={client.id} 
-                  className="text-left whitespace-nowrap min-w-[300px] w-[300px]"
+                  className="text-left whitespace-nowrap min-w-[350px] w-[350px]"
                 >
                   {client.name}
                 </TableHead>
@@ -145,7 +136,7 @@ export const ClientProjectsTable = () => {
           <TableBody>
             <TableRow className="align-top">
               {filteredProjectsByClient.map(({ client, projects }) => (
-                <td key={client.id} className="p-4 min-w-[300px] w-[300px]">
+                <td key={client.id} className="p-4 min-w-[350px] w-[350px]">
                   <div className="space-y-4">
                     {projects.length === 0 ? (
                       <div className="text-sm text-muted-foreground">

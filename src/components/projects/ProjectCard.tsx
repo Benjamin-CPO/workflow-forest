@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
-import { useEffect, useState } from "react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
 import { Progress } from "@/components/ui/progress";
@@ -35,15 +34,17 @@ export const ProjectCard = ({
 
   return (
     <Card 
-      className={`hover:shadow-md transition-shadow cursor-pointer group ${
+      className={`hover:shadow-md transition-shadow cursor-pointer group h-[200px] ${
         status === 'priority' ? 'bg-orange-50' : ''
       }`}
       onClick={() => navigate(`/projects/${id}`)}
     >
       <CardHeader className="pb-2 flex flex-row items-start justify-between">
-        <div className="space-y-2">
+        <div className="space-y-2 flex-1">
           <ProjectStatusBadge status={status} />
-          <CardTitle className="text-lg">{title}</CardTitle>
+          <CardTitle className="text-lg truncate" title={title}>
+            {title}
+          </CardTitle>
         </div>
         <ProjectDeleteButton projectTitle={title} onDelete={handleDelete} />
       </CardHeader>
