@@ -8,6 +8,10 @@ interface ChatSectionProps {
   projectMilestones: Array<{
     id: number;
     title: string;
+    tasks?: Array<{
+      id: number;
+      title: string;
+    }>;
   }>;
   className?: string;
   collapsedWidth?: string;
@@ -55,11 +59,16 @@ export const ChatSection = ({
   const [mentionOpen, setMentionOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
 
+  // Get all tasks from current project's milestones
+  const projectTasks = projectMilestones.flatMap(milestone => 
+    (milestone.tasks || []).map(task => ({
+      id: task.id,
+      title: task.title
+    }))
+  );
+
   const suggestions = {
-    tasks: [
-      { id: 1, title: "UI/UX Design" },
-      { id: 2, title: "Backend Integration" }
-    ],
+    tasks: projectTasks,
     milestones: projectMilestones
   };
 
