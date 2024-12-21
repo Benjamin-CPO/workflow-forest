@@ -8,9 +8,9 @@ import { useForm } from "react-hook-form";
 import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { calculateProgressColors } from "@/utils/progressUtils";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
-import { TasksTable } from "@/components/tasks/TasksTable";
 import { TaskEditDialog } from "@/components/tasks/TaskEditDialog";
 import { useToast } from "@/components/ui/use-toast";
+import { MilestoneTasks } from "@/components/tasks/MilestoneTasks";
 
 const projects = [
   {
@@ -19,10 +19,23 @@ const projects = [
     description: "Complete overhaul of the company website with new branding",
     progress: 75,
     dueDate: "Mar 15, 2024",
-    tasks: [
-      { id: 1, title: "Design Homepage", status: "completed", dueDate: "Mar 10, 2024" },
-      { id: 2, title: "Implement Contact Form", status: "in-progress", dueDate: "Mar 12, 2024" },
-      { id: 3, title: "Mobile Responsiveness", status: "pending", dueDate: "Mar 14, 2024" },
+    milestones: [
+      {
+        id: 1,
+        title: "Design Phase",
+        tasks: [
+          { id: 1, title: "Design Homepage", status: "completed", dueDate: "Mar 10, 2024" },
+          { id: 2, title: "Design Mobile Layout", status: "in-progress", dueDate: "Mar 12, 2024" },
+        ],
+      },
+      {
+        id: 2,
+        title: "Development Phase",
+        tasks: [
+          { id: 3, title: "Implement Contact Form", status: "in-progress", dueDate: "Mar 12, 2024" },
+          { id: 4, title: "Mobile Responsiveness", status: "pending", dueDate: "Mar 14, 2024" },
+        ],
+      },
     ],
   },
   {
@@ -55,22 +68,21 @@ export const ProjectDetails = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   
-  // Task editing state
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  // Initialize tasks from localStorage or fall back to project's default tasks
-  const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem(`project-${id}-tasks`);
-    return savedTasks ? JSON.parse(savedTasks) : project?.tasks || [];
+  // Initialize milestones from localStorage or fall back to project's default milestones
+  const [milestones, setMilestones] = useState(() => {
+    const savedMilestones = localStorage.getItem(`project-${id}-milestones`);
+    return savedMilestones ? JSON.parse(savedMilestones) : project?.milestones || [];
   });
 
-  // Save tasks to localStorage whenever they change
+  // Save milestones to localStorage whenever they change
   useEffect(() => {
     if (id) {
-      localStorage.setItem(`project-${id}-tasks`, JSON.stringify(tasks));
+      localStorage.setItem(`project-${id}-milestones`, JSON.stringify(milestones));
     }
-  }, [tasks, id]);
+  }, [milestones, id]);
 
   const form = useForm({
     defaultValues: {
@@ -85,13 +97,20 @@ export const ProjectDetails = () => {
 
   const onSubmit = (data: { title: string; dueDate: string }) => {
     const newTask = {
-      id: tasks.length + 1,
+      id: Math.max(...milestones.flatMap(m => m.tasks.map(t => t.id))) + 1,
       title: data.title,
       status: "pending",
       dueDate: data.dueDate,
     };
     
-    setTasks([...tasks, newTask]);
+    // Add to the first milestone by default (you might want to add milestone selection later)
+    const updatedMilestones = milestones.map((milestone, index) => 
+      index === 0 
+        ? { ...milestone, tasks: [...milestone.tasks, newTask] }
+        : milestone
+    );
+    
+    setMilestones(updatedMilestones);
     form.reset();
     setIsDialogOpen(false);
     toast({
@@ -101,24 +120,33 @@ export const ProjectDetails = () => {
   };
 
   const handleStatusChange = (taskId: number, newStatus: string) => {
-    setTasks(tasks.map(task => 
-      task.id === taskId ? { ...task, status: newStatus } : task
-    ));
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task =>
+        task.id === taskId ? { ...task, status: newStatus } : task
+      ),
+    }));
+    setMilestones(updatedMilestones);
   };
 
   const handleTaskEdit = (taskId: number, data: { title: string; status: string; dueDate: string }) => {
-    setTasks(tasks.map(task =>
-      task.id === taskId ? { ...task, ...data } : task
-    ));
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task =>
+        task.id === taskId ? { ...task, ...data } : task
+      ),
+    }));
+    setMilestones(updatedMilestones);
     toast({
       title: "Task updated",
       description: "Task has been updated successfully.",
     });
   };
 
-  const completedTasks = tasks.filter(task => task.status === "completed").length;
-  const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
-  const progressSegments = calculateProgressColors(tasks);
+  const allTasks = milestones.flatMap(milestone => milestone.tasks);
+  const completedTasks = allTasks.filter(task => task.status === "completed").length;
+  const progress = allTasks.length > 0 ? (completedTasks / allTasks.length) * 100 : 0;
+  const progressSegments = calculateProgressColors(allTasks);
 
   return (
     <div className="container py-6">
@@ -133,7 +161,7 @@ export const ProjectDetails = () => {
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">
-              Progress ({completedTasks} of {tasks.length} tasks completed)
+              Progress ({completedTasks} of {allTasks.length} tasks completed)
             </span>
             <span className="text-sm font-medium">{Math.round(progress)}%</span>
           </div>
@@ -188,8 +216,8 @@ export const ProjectDetails = () => {
             </Dialog>
           </div>
 
-          <TasksTable
-            tasks={tasks}
+          <MilestoneTasks
+            milestones={milestones}
             onStatusChange={handleStatusChange}
             onTaskClick={(task) => {
               setSelectedTask(task);
