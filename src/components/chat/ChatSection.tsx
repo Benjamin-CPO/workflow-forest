@@ -107,9 +107,8 @@ export const ChatSection = ({ projectMilestones, className, collapsedWidth = "50
     <div 
       className={cn(
         "flex flex-col bg-background border rounded-lg transition-all duration-300",
-        isExpanded ? className : `w-[${collapsedWidth}]`
+        isExpanded ? className : "w-[50px]"
       )}
-      style={{ width: isExpanded ? undefined : collapsedWidth }}
     >
       <div className="p-4 border-b flex justify-between items-center">
         {isExpanded ? (

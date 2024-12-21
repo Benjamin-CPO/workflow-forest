@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
 import { ProjectProgress } from "@/components/projects/ProjectProgress";
 import { TaskManagement } from "@/components/tasks/TaskManagement";
 import { ChatSection } from "@/components/chat/ChatSection";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 interface Task {
   id: number;
@@ -156,13 +157,13 @@ const ProjectDetails = () => {
         <ProjectProgress tasks={allTasks} />
       </div>
 
-      <div className="grid grid-cols-[auto,1fr] gap-6 mt-6">
+      <div className="flex gap-6 mt-6 w-full">
         <ChatSection 
           projectMilestones={milestones} 
-          className="w-[60%] transition-all duration-300 min-w-[50px]"
+          className="w-[60%] transition-all duration-300"
           collapsedWidth="50px"
         />
-        <div className="space-y-6 transition-all duration-300">
+        <div className="w-[40%] transition-all duration-300">
           <TaskManagement 
             milestones={milestones}
             setMilestones={setMilestones}
