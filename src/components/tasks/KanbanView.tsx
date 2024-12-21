@@ -73,16 +73,14 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
 
   return (
     <div className="space-y-4">
-      <div className="pt-4 px-4 border-t">
+      <div className="pt-8 px-4 border-t">
         <div className="flex gap-2 overflow-x-auto">
           {milestones.map(milestone => (
             <Button
               key={milestone.id}
-              variant="outline"
+              variant={selectedMilestoneIds.has(milestone.id) ? "default" : "outline"}
               onClick={() => toggleMilestone(milestone.id)}
-              className={`whitespace-nowrap ${
-                selectedMilestoneIds.has(milestone.id) ? "bg-muted text-muted-foreground" : ""
-              }`}
+              className="whitespace-nowrap"
             >
               {milestone.title}
             </Button>
