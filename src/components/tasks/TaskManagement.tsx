@@ -4,6 +4,8 @@ import { TaskEditDialog } from "./TaskEditDialog";
 import { MilestoneTasks } from "./MilestoneTasks";
 import { AddTaskDialog } from "@/components/projects/AddTaskDialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface Task {
   id: number;
@@ -27,6 +29,8 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
+  const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
   const { toast } = useToast();
 
   const handleAddTask = (data: { title: string; dueDate: string }) => {
@@ -61,6 +65,31 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     });
   };
 
+  const handleAddMilestone = () => {
+    if (!newMilestoneTitle.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a milestone title.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newMilestone: Milestone = {
+      id: Math.max(0, ...milestones.map(m => m.id)) + 1,
+      title: newMilestoneTitle,
+      tasks: [],
+    };
+
+    setMilestones([...milestones, newMilestone]);
+    setNewMilestoneTitle("");
+    setIsMilestoneDialogOpen(false);
+    toast({
+      title: "Milestone added",
+      description: "New milestone has been added successfully.",
+    });
+  };
+
   const handleStatusChange = (taskId: number, newStatus: string) => {
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
@@ -89,7 +118,12 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Tasks</h2>
-        <Button onClick={() => setIsDialogOpen(true)}>Add Task</Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setIsDialogOpen(true)}>Add Task</Button>
+          <Button variant="outline" onClick={() => setIsMilestoneDialogOpen(true)}>
+            Add Milestone
+          </Button>
+        </div>
       </div>
 
       <MilestoneTasks
@@ -116,6 +150,27 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
         }}
         onSave={handleTaskEdit}
       />
+
+      <Dialog open={isMilestoneDialogOpen} onOpenChange={setIsMilestoneDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Milestone</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              placeholder="Enter milestone title"
+              value={newMilestoneTitle}
+              onChange={(e) => setNewMilestoneTitle(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsMilestoneDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddMilestone}>Add Milestone</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
