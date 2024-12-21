@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { AddProjectDialog } from "@/components/projects/AddProjectDialog";
 
 const items = [
   {
@@ -34,10 +35,12 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <div className="px-4 py-2">
-          <Button className="w-full justify-start" size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            New Project
-          </Button>
+          <AddProjectDialog>
+            <Button className="w-full justify-start" size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              New Project
+            </Button>
+          </AddProjectDialog>
         </div>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
