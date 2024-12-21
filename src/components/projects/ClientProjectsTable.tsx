@@ -38,17 +38,18 @@ export const ClientProjectsTable = () => {
     const storedClients = JSON.parse(localStorage.getItem('clients') || '[]');
     const storedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
     
-    // Initialize projects with order if not present
+    // Initialize projects with order if not present and ensure correct status type
     const projectsWithOrder = storedProjects.map((project: Project, index: number) => ({
       ...project,
       order: project.order ?? index,
+      status: project.status === 'priority' ? 'priority' as const : null
     }));
 
     // Set priority for single projects
     const updatedProjects = projectsWithOrder.map((project: Project) => {
       const clientProjects = projectsWithOrder.filter(p => p.clientId === project.clientId);
       if (clientProjects.length === 1) {
-        return { ...project, status: 'priority' };
+        return { ...project, status: 'priority' as const };
       }
       return project;
     });
@@ -90,7 +91,7 @@ export const ClientProjectsTable = () => {
     const updatedClientProjects = clientProjects.map((project, index) => ({
       ...project,
       order: index,
-      status: index === 0 ? 'priority' : null
+      status: index === 0 ? ('priority' as const) : null
     }));
 
     // Combine and save
