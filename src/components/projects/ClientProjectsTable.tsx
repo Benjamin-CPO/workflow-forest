@@ -48,13 +48,15 @@ export const ClientProjectsTable = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">No Client</TableHead>
-            {clients.map((client) => (
-              <TableHead key={client.id} className="text-left">
+            {projectsByClient.map(({ client }) => (
+              <TableHead 
+                key={client.id} 
+                className="text-left whitespace-nowrap min-w-[300px] w-[300px]"
+              >
                 {client.name}
               </TableHead>
             ))}
@@ -63,7 +65,7 @@ export const ClientProjectsTable = () => {
         <TableBody>
           <TableRow className="align-top">
             {projectsByClient.map(({ client, projects }) => (
-              <td key={client.id} className="p-4">
+              <td key={client.id} className="p-4 min-w-[300px] w-[300px]">
                 <div className="space-y-4">
                   {projects.length === 0 ? (
                     <div className="text-sm text-muted-foreground">
