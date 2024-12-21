@@ -143,7 +143,7 @@ const ProjectDetails = () => {
   };
 
   return (
-    <div className="container py-6">
+    <div className="container py-6 min-h-screen flex flex-col">
       <ProjectHeader 
         title={project.title}
         description={project.description}
@@ -158,7 +158,7 @@ const ProjectDetails = () => {
         <ProjectProgress tasks={allTasks} />
       </div>
 
-      <div className="flex gap-6 mt-6 w-full">
+      <div className="flex gap-6 mt-6 flex-1 min-h-0">
         <ChatSection 
           projectMilestones={milestones} 
           className="w-[60%] transition-all duration-300"

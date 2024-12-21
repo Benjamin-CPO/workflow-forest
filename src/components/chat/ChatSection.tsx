@@ -116,7 +116,7 @@ export const ChatSection = ({
   return (
     <div 
       className={cn(
-        "flex flex-col bg-background border rounded-lg transition-all duration-300",
+        "flex flex-col bg-background border rounded-lg transition-all duration-300 h-full",
         isExpanded ? className : "w-[50px]"
       )}
     >
@@ -147,7 +147,7 @@ export const ChatSection = ({
       
       {isExpanded && (
         <>
-          <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col">
+          <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col min-h-0">
             <div className="px-4 border-b">
               <TabsList>
                 {projectMilestones.map((milestone) => (
