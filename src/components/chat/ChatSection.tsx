@@ -53,16 +53,19 @@ export const ChatSection = ({
   return (
     <div 
       className={cn(
-        "flex flex-col bg-background border rounded-lg transition-all duration-300 h-[600px]",
+        "flex flex-col bg-background border rounded-lg transition-all duration-300",
         isExpanded ? className : "w-[50px]"
       )}
-      style={{ maxHeight: "600px" }}
+      style={{ 
+        height: '600px',
+        maxHeight: '600px'
+      }}
     >
       <ChatHeader isExpanded={isExpanded} onExpandChange={handleExpandChange} />
       
       {isExpanded && (
         <>
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 min-h-0">
             <ChatContent
               projectMilestones={projectMilestones}
               currentMilestone={currentMilestone}

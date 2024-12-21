@@ -36,7 +36,11 @@ export const ChatContent = ({
   }, [messagesByMilestone]);
 
   return (
-    <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col h-full">
+    <Tabs 
+      value={currentMilestone} 
+      onValueChange={setCurrentMilestone} 
+      className="flex flex-col h-full"
+    >
       <div className="px-4 border-b">
         <TabsList>
           {projectMilestones.map((milestone) => (
@@ -50,42 +54,43 @@ export const ChatContent = ({
         </TabsList>
       </div>
 
-      {projectMilestones.map((milestone) => {
-        const milestoneKey = milestone.title.toLowerCase().replace(/\s+/g, '-');
-        return (
-          <TabsContent 
-            key={milestone.id} 
-            value={milestoneKey} 
-            className="flex-1 p-4 space-y-4 mt-0 overflow-y-auto"
-            style={{ 
-              height: 'calc(100vh - 300px)',
-              maxHeight: '500px',
-              scrollBehavior: 'smooth'
-            }}
-          >
-            <div className="space-y-4">
+      <div className="flex-1 min-h-0">
+        {projectMilestones.map((milestone) => {
+          const milestoneKey = milestone.title.toLowerCase().replace(/\s+/g, '-');
+          return (
+            <TabsContent 
+              key={milestone.id} 
+              value={milestoneKey} 
+              className="h-full p-4 space-y-4 mt-0 overflow-y-auto"
+              style={{ 
+                height: '450px',
+                maxHeight: '450px'
+              }}
+            >
               {messagesByMilestone[milestoneKey]?.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                   No messages yet
                 </div>
               ) : (
-                messagesByMilestone[milestoneKey]?.map((msg) => (
-                  <ChatMessage
-                    key={msg.id}
-                    id={msg.id}
-                    message={msg.message}
-                    sender={msg.sender}
-                    timestamp={msg.timestamp}
-                    onEdit={handleEditMessage}
-                    onDelete={handleDeleteMessage}
-                  />
-                ))
+                <div className="space-y-4">
+                  {messagesByMilestone[milestoneKey]?.map((msg) => (
+                    <ChatMessage
+                      key={msg.id}
+                      id={msg.id}
+                      message={msg.message}
+                      sender={msg.sender}
+                      timestamp={msg.timestamp}
+                      onEdit={handleEditMessage}
+                      onDelete={handleDeleteMessage}
+                    />
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
               )}
-              <div ref={messagesEndRef} />
-            </div>
-          </TabsContent>
-        );
-      })}
+            </TabsContent>
+          );
+        })}
+      </div>
     </Tabs>
   );
 };
