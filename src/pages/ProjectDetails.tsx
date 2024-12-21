@@ -132,7 +132,6 @@ const ProjectDetails = () => {
       ...data
     });
 
-    // Update localStorage to persist project details
     const savedProjects = localStorage.getItem('projects');
     const allProjects = savedProjects ? JSON.parse(savedProjects) : projects;
     const updatedProjects = allProjects.map((p: Project) =>
@@ -158,14 +157,14 @@ const ProjectDetails = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-6 mt-6">
+        <div>
+          <ChatSection />
+        </div>
         <div className="space-y-6">
           <TaskManagement 
             milestones={milestones}
             setMilestones={setMilestones}
           />
-        </div>
-        <div>
-          <ChatSection />
         </div>
       </div>
     </div>
