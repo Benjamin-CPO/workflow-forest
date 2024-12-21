@@ -1,4 +1,5 @@
 import { ProjectHeader } from "./ProjectHeader";
+import { ProjectProgressBar } from "./ProjectProgressBar";
 
 interface Task {
   id: number;
@@ -17,9 +18,16 @@ interface Project {
   figmaReviewFile?: string;
 }
 
+interface Milestone {
+  id: number;
+  title: string;
+  tasks: Task[];
+}
+
 interface ProjectInfoProps {
   project: Project;
   tasks: Task[];
+  milestones: Milestone[];
   onProjectUpdate: (data: {
     title: string;
     description: string;
@@ -29,7 +37,7 @@ interface ProjectInfoProps {
   }) => void;
 }
 
-export const ProjectInfo = ({ project, tasks, onProjectUpdate }: ProjectInfoProps) => {
+export const ProjectInfo = ({ project, tasks, milestones, onProjectUpdate }: ProjectInfoProps) => {
   return (
     <div className="space-y-6">
       <ProjectHeader
@@ -41,6 +49,9 @@ export const ProjectInfo = ({ project, tasks, onProjectUpdate }: ProjectInfoProp
         progress={tasks.length > 0 ? (tasks.filter(t => t.status === "completed").length / tasks.length) * 100 : 0}
         onUpdate={onProjectUpdate}
       />
+      <div className="bg-accent rounded-lg p-6">
+        <ProjectProgressBar milestones={milestones} />
+      </div>
     </div>
   );
 };
