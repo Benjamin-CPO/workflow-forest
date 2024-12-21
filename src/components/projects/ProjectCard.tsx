@@ -15,7 +15,6 @@ interface ProjectCardProps {
   id: number;
   title: string;
   description: string;
-  progress: number;
   dueDate: string;
   status?: 'priority' | null;
   clientId: number;
