@@ -31,26 +31,34 @@ export const ProjectColumn = ({ client, projects, tasks }: ProjectColumnProps) =
                 .filter((project): project is Project => 
                   project !== undefined && project !== null && typeof project.id === 'number'
                 )
-                .map((project, index) => (
-                  <Draggable
-                    key={project.id}
-                    draggableId={project.id.toString()}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <ProjectCard 
-                          {...project} 
-                          tasks={getProjectTasks(project.id)}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))
+                .map((project, index) => {
+                  const projectTasks = getProjectTasks(project.id);
+                  const progress = projectTasks.length > 0 
+                    ? (projectTasks.filter(t => t.status === "completed").length / projectTasks.length) * 100 
+                    : 0;
+                  
+                  return (
+                    <Draggable
+                      key={project.id}
+                      draggableId={project.id.toString()}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <ProjectCard 
+                            {...project}
+                            progress={progress}
+                            tasks={projectTasks}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })
             )}
             {provided.placeholder}
           </div>

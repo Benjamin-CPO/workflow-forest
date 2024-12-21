@@ -83,6 +83,10 @@ export const ClientProjectsTable = () => {
     }
   };
 
+  const getProjectTasks = (projectId: number) => {
+    return tasks.filter(task => task.projectId === projectId);
+  };
+
   const filteredProjectsByClient = selectedClientIds.includes("all")
     ? [
         {
