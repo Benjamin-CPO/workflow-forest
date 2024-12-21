@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { TaskEditDialog } from "./TaskEditDialog";
 import { MilestoneTasks } from "./MilestoneTasks";
+import { KanbanView } from "./KanbanView";
 import { AddTaskDialog } from "@/components/projects/AddTaskDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { List, Kanban } from "lucide-react";
 
 interface Task {
   id: number;
@@ -31,6 +34,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
+  const [view, setView] = useState<"list" | "kanban">("list");
   const { toast } = useToast();
 
   const handleAddTask = (data: { title: string; dueDate: string; milestoneId: number }) => {
@@ -107,7 +111,17 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     <div className="h-full flex flex-col">
       <div className="sticky top-0 bg-background z-10 p-4 border-b">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Tasks</h2>
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-semibold">Tasks</h2>
+            <ToggleGroup type="single" value={view} onValueChange={(value) => value && setView(value as "list" | "kanban")}>
+              <ToggleGroupItem value="list" aria-label="List view">
+                <List className="h-4 w-4" />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="kanban" aria-label="Kanban view">
+                <Kanban className="h-4 w-4" />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
           <div className="flex gap-2">
             <Button onClick={() => setIsDialogOpen(true)}>Add Task</Button>
             <Button variant="outline" onClick={() => setIsMilestoneDialogOpen(true)}>
@@ -117,15 +131,26 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-4">
-        <MilestoneTasks
-          milestones={milestones}
-          onStatusChange={handleStatusChange}
-          onTaskClick={(task) => {
-            setSelectedTask(task);
-            setIsEditDialogOpen(true);
-          }}
-        />
+      <div className="flex-1 overflow-auto">
+        {view === "list" ? (
+          <MilestoneTasks
+            milestones={milestones}
+            onStatusChange={handleStatusChange}
+            onTaskClick={(task) => {
+              setSelectedTask(task);
+              setIsEditDialogOpen(true);
+            }}
+          />
+        ) : (
+          <KanbanView
+            milestones={milestones}
+            onStatusChange={handleStatusChange}
+            onTaskClick={(task) => {
+              setSelectedTask(task);
+              setIsEditDialogOpen(true);
+            }}
+          />
+        )}
       </div>
 
       <AddTaskDialog

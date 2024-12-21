@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface Milestone {
   id: number;
@@ -17,12 +19,19 @@ interface AddTaskDialogProps {
   milestones: Milestone[];
 }
 
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  dueDate: z.string().min(1, "Due date is required"),
+  milestoneId: z.string().min(1, "Milestone is required"),
+});
+
 export const AddTaskDialog = ({ isOpen, onOpenChange, onSubmit, milestones }: AddTaskDialogProps) => {
   const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       dueDate: "",
-      milestoneId: milestones[0]?.id.toString() || "0",
+      milestoneId: "",
     },
   });
 
