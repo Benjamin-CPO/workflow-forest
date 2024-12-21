@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { toast } from "sonner";
 
 interface Client {
   id: number;
@@ -24,6 +26,7 @@ interface Project {
   dueDate: string;
   clientId: number;
   status?: 'priority' | null;
+  order?: number;
 }
 
 export const ClientProjectsTable = () => {
@@ -34,8 +37,25 @@ export const ClientProjectsTable = () => {
   useEffect(() => {
     const storedClients = JSON.parse(localStorage.getItem('clients') || '[]');
     const storedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+    
+    // Initialize projects with order if not present
+    const projectsWithOrder = storedProjects.map((project: Project, index: number) => ({
+      ...project,
+      order: project.order ?? index,
+    }));
+
+    // Set priority for single projects
+    const updatedProjects = projectsWithOrder.map((project: Project) => {
+      const clientProjects = projectsWithOrder.filter(p => p.clientId === project.clientId);
+      if (clientProjects.length === 1) {
+        return { ...project, status: 'priority' };
+      }
+      return project;
+    });
+
     setClients(storedClients);
-    setProjects(storedProjects);
+    setProjects(updatedProjects);
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
   }, []);
 
   const handleClientToggle = (clientId: string) => {
@@ -52,6 +72,37 @@ export const ClientProjectsTable = () => {
     });
   };
 
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const { source, destination } = result;
+    const clientId = parseInt(source.droppableId);
+    
+    const updatedProjects = [...projects];
+    const clientProjects = updatedProjects.filter(p => p.clientId === clientId);
+    const otherProjects = updatedProjects.filter(p => p.clientId !== clientId);
+
+    // Reorder client projects
+    const [reorderedProject] = clientProjects.splice(source.index, 1);
+    clientProjects.splice(destination.index, 0, reorderedProject);
+
+    // Update priority based on order
+    const updatedClientProjects = clientProjects.map((project, index) => ({
+      ...project,
+      order: index,
+      status: index === 0 ? 'priority' : null
+    }));
+
+    // Combine and save
+    const finalProjects = [...otherProjects, ...updatedClientProjects];
+    setProjects(finalProjects);
+    localStorage.setItem('projects', JSON.stringify(finalProjects));
+    
+    if (source.index !== destination.index) {
+      toast.success("Project priority updated");
+    }
+  };
+
   const filteredProjectsByClient = selectedClientIds.includes("all")
     ? [
         {
@@ -60,7 +111,9 @@ export const ClientProjectsTable = () => {
         },
         ...clients.map(client => ({
           client,
-          projects: projects.filter(project => project.clientId === client.id)
+          projects: projects
+            .filter(project => project.clientId === client.id)
+            .sort((a, b) => (a.order || 0) - (b.order || 0))
         }))
       ]
     : [
@@ -74,7 +127,9 @@ export const ClientProjectsTable = () => {
           .filter(client => selectedClientIds.includes(client.id.toString()))
           .map(client => ({
             client,
-            projects: projects.filter(project => project.clientId === client.id)
+            projects: projects
+              .filter(project => project.clientId === client.id)
+              .sort((a, b) => (a.order || 0) - (b.order || 0))
           }))
       ];
 
@@ -91,8 +146,8 @@ export const ClientProjectsTable = () => {
       <div className="flex flex-col space-y-2">
         <label className="text-sm font-medium">Filter by Client</label>
         <Select
-          onValueChange={(value) => handleClientToggle(value)}
           value={selectedClientIds[0]}
+          onValueChange={handleClientToggle}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Select clients" />
@@ -127,44 +182,66 @@ export const ClientProjectsTable = () => {
           ))}
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {filteredProjectsByClient.map(({ client }) => (
-                <TableHead 
-                  key={client.id} 
-                  className="text-left whitespace-nowrap min-w-[250px] w-[250px]"
-                >
-                  {client.name}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow className="align-top">
-              {filteredProjectsByClient.map(({ client, projects }) => (
-                <td key={client.id} className="p-2 min-w-[250px] w-[250px]">
-                  <div className="space-y-2">
-                    {projects.length === 0 ? (
-                      <div className="text-sm text-muted-foreground">
-                        No projects {client.id === -1 ? 'without client' : 'for this client'}
-                      </div>
-                    ) : (
-                      projects.map((project) => (
-                        <ProjectCard
-                          key={project.id}
-                          {...project}
-                        />
-                      ))
-                    )}
-                  </div>
-                </td>
-              ))}
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {filteredProjectsByClient.map(({ client }) => (
+                  <TableHead 
+                    key={client.id} 
+                    className="text-left whitespace-nowrap min-w-[250px] w-[250px]"
+                  >
+                    {client.name}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow className="align-top">
+                {filteredProjectsByClient.map(({ client, projects }) => (
+                  <td key={client.id} className="p-2 min-w-[250px] w-[250px]">
+                    <Droppable droppableId={client.id.toString()}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="space-y-2"
+                        >
+                          {projects.length === 0 ? (
+                            <div className="text-sm text-muted-foreground">
+                              No projects {client.id === -1 ? 'without client' : 'for this client'}
+                            </div>
+                          ) : (
+                            projects.map((project, index) => (
+                              <Draggable
+                                key={project.id}
+                                draggableId={project.id.toString()}
+                                index={index}
+                              >
+                                {(provided) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                  >
+                                    <ProjectCard {...project} />
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))
+                          )}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </td>
+                ))}
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      </DragDropContext>
     </div>
   );
 };

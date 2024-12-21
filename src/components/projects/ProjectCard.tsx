@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar } from "lucide-react";
+import { Calendar, GripVertical } from "lucide-react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
 import { Progress } from "@/components/ui/progress";
@@ -47,7 +47,10 @@ export const ProjectCard = ({
     >
       <CardHeader className="pb-1.5 px-2.5 pt-2.5 flex flex-row items-start justify-between">
         <div className="space-y-0.5 flex-1">
-          <ProjectStatusBadge status={status} />
+          <div className="flex items-center gap-2">
+            <GripVertical className="h-4 w-4 text-muted-foreground" />
+            <ProjectStatusBadge status={status} />
+          </div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
