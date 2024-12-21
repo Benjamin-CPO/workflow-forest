@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Temporary mock data - in a real app, this would come from an API
 const projects = [
@@ -77,6 +78,12 @@ export const ProjectDetails = () => {
     setTasks([...tasks, newTask]);
     form.reset();
     setIsDialogOpen(false);
+  };
+
+  const handleStatusChange = (taskId: number, newStatus: string) => {
+    setTasks(tasks.map(task => 
+      task.id === taskId ? { ...task, status: newStatus } : task
+    ));
   };
 
   // Calculate progress based on completed tasks
@@ -175,7 +182,19 @@ export const ProjectDetails = () => {
                 <TableRow key={task.id}>
                   <TableCell>{task.title}</TableCell>
                   <TableCell>
-                    <span className="capitalize">{task.status}</span>
+                    <Select
+                      defaultValue={task.status}
+                      onValueChange={(value) => handleStatusChange(task.id, value)}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="in-progress">In Progress</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell>{task.dueDate}</TableCell>
                 </TableRow>
