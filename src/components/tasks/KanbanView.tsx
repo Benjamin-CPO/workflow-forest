@@ -23,21 +23,35 @@ interface KanbanViewProps {
 }
 
 export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanViewProps) => {
-  const [selectedMilestoneId, setSelectedMilestoneId] = useState<number | null>(null);
+  const [selectedMilestoneIds, setSelectedMilestoneIds] = useState<Set<number>>(new Set());
 
-  const filteredTasks = selectedMilestoneId
-    ? milestones
-        .find(m => m.id === selectedMilestoneId)
-        ?.tasks.map(task => ({
-          ...task,
-          milestoneTitle: milestones.find(m => m.id === selectedMilestoneId)?.title
-        })) || []
-    : milestones.flatMap(milestone => 
+  const filteredTasks = selectedMilestoneIds.size === 0
+    ? milestones.flatMap(milestone => 
         milestone.tasks.map(task => ({
           ...task,
           milestoneTitle: milestone.title
         }))
-      );
+      )
+    : milestones
+        .filter(m => selectedMilestoneIds.has(m.id))
+        .flatMap(milestone => 
+          milestone.tasks.map(task => ({
+            ...task,
+            milestoneTitle: milestone.title
+          }))
+        );
+
+  const toggleMilestone = (milestoneId: number) => {
+    setSelectedMilestoneIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(milestoneId)) {
+        newSet.delete(milestoneId);
+      } else {
+        newSet.add(milestoneId);
+      }
+      return newSet;
+    });
+  };
 
   const columns = [
     { status: "pending", label: "Pending", bgColor: "bg-gray-100", textColor: "text-gray-700" },
@@ -61,20 +75,13 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
     <div className="space-y-4">
       <div className="pt-4 px-4 border-t">
         <div className="flex gap-2 overflow-x-auto">
-          <Button
-            variant={selectedMilestoneId === null ? "default" : "outline"}
-            onClick={() => setSelectedMilestoneId(null)}
-            className="whitespace-nowrap bg-muted hover:bg-muted/80"
-          >
-            All Milestones
-          </Button>
           {milestones.map(milestone => (
             <Button
               key={milestone.id}
               variant="outline"
-              onClick={() => setSelectedMilestoneId(milestone.id === selectedMilestoneId ? null : milestone.id)}
+              onClick={() => toggleMilestone(milestone.id)}
               className={`whitespace-nowrap ${
-                milestone.id === selectedMilestoneId ? "bg-muted text-muted-foreground" : ""
+                selectedMilestoneIds.has(milestone.id) ? "bg-muted text-muted-foreground" : ""
               }`}
             >
               {milestone.title}
