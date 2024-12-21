@@ -23,6 +23,13 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const [figmaReviewFile, setFigmaReviewFile] = useState("");
   const navigate = useNavigate();
 
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setFigmaWorkfile("");
+    setFigmaReviewFile("");
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -51,12 +58,21 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
     localStorage.setItem(`project-${newProject.id}-milestones`, JSON.stringify([]));
 
     setOpen(false);
+    resetForm();
     toast.success("Project created successfully");
     navigate(`/projects/${newProject.id}`);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog 
+      open={open} 
+      onOpenChange={(newOpen) => {
+        setOpen(newOpen);
+        if (!newOpen) {
+          resetForm();
+        }
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
