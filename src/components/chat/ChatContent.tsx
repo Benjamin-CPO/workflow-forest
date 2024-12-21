@@ -45,7 +45,7 @@ export const ChatContent = ({
           <TabsContent 
             key={milestone.id} 
             value={milestoneKey} 
-            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 h-[400px]"
+            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 max-h-[400px]"
           >
             {messagesByMilestone[milestoneKey]?.map((msg) => (
               <ChatMessage
