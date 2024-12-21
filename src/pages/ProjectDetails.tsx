@@ -91,6 +91,7 @@ const ProjectDetails = () => {
       <ProjectInfo
         project={project}
         tasks={allTasks}
+        milestones={milestones}
         onProjectUpdate={handleProjectUpdate}
       />
       <div className="flex gap-3 mt-6 h-[600px] relative">
