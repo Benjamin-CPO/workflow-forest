@@ -59,28 +59,28 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 overflow-x-auto pb-4 px-4">
-        <Button
-          variant={selectedMilestoneId === null ? "default" : "outline"}
-          onClick={() => setSelectedMilestoneId(null)}
-          className="whitespace-nowrap bg-muted hover:bg-muted/80"
-        >
-          All Milestones
-        </Button>
-        {milestones.map(milestone => (
+      <div className="pt-4 px-4 border-t">
+        <div className="flex gap-2 overflow-x-auto">
           <Button
-            key={milestone.id}
-            variant={selectedMilestoneId === milestone.id ? "default" : "outline"}
-            onClick={() => setSelectedMilestoneId(milestone.id)}
-            className={`whitespace-nowrap ${
-              selectedMilestoneId === milestone.id
-                ? "bg-muted text-muted-foreground"
-                : "hover:bg-muted/50"
-            }`}
+            variant={selectedMilestoneId === null ? "default" : "outline"}
+            onClick={() => setSelectedMilestoneId(null)}
+            className="whitespace-nowrap bg-muted hover:bg-muted/80"
           >
-            {milestone.title}
+            All Milestones
           </Button>
-        ))}
+          {milestones.map(milestone => (
+            <Button
+              key={milestone.id}
+              variant="outline"
+              onClick={() => setSelectedMilestoneId(milestone.id === selectedMilestoneId ? null : milestone.id)}
+              className={`whitespace-nowrap ${
+                milestone.id === selectedMilestoneId ? "bg-muted text-muted-foreground" : ""
+              }`}
+            >
+              {milestone.title}
+            </Button>
+          ))}
+        </div>
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
