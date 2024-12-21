@@ -90,16 +90,16 @@ export const ProjectEditForm = ({
       <div className="grid gap-2">
         <Label>Client</Label>
         <Select
-          value={clientId?.toString() || ''}
+          value={clientId?.toString() || 'no-client'}
           onValueChange={(value) => 
-            onSave({ ...getFormData(), clientId: value ? Number(value) : undefined })
+            onSave({ ...getFormData(), clientId: value === 'no-client' ? undefined : Number(value) })
           }
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a client" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">No Client</SelectItem>
+            <SelectItem value="no-client">No Client</SelectItem>
             {clients.map((client) => (
               <SelectItem key={client.id} value={client.id.toString()}>
                 {client.name}
