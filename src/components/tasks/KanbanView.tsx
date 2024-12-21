@@ -29,11 +29,11 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
   );
 
   const columns = [
-    { status: "pending", label: "Pending", bgColor: "bg-gray-700 text-white" },
-    { status: "in-progress", label: "In Progress", bgColor: "bg-orange-500 text-white" },
-    { status: "need-review", label: "Need Review", bgColor: "bg-blue-500 text-white" },
-    { status: "need-revision", label: "Need Revision", bgColor: "bg-red-500 text-white" },
-    { status: "completed", label: "Completed", bgColor: "bg-green-500 text-white" }
+    { status: "pending", label: "Pending", bgColor: "bg-gray-100", textColor: "text-gray-700" },
+    { status: "in-progress", label: "In Progress", bgColor: "bg-orange-100", textColor: "text-orange-700" },
+    { status: "need-review", label: "Need Review", bgColor: "bg-blue-100", textColor: "text-blue-700" },
+    { status: "need-revision", label: "Need Revision", bgColor: "bg-red-100", textColor: "text-red-700" },
+    { status: "completed", label: "Completed", bgColor: "bg-green-100", textColor: "text-green-700" }
   ];
 
   const handleDragEnd = (result: any) => {
@@ -50,8 +50,8 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
         {columns.map(column => (
-          <div key={column.status} className="space-y-4">
-            <div className={`font-semibold text-sm p-2 rounded-t-lg ${column.bgColor}`}>
+          <div key={column.status} className={`space-y-4 ${column.bgColor} rounded-lg p-4`}>
+            <div className={`font-semibold text-sm p-2 rounded-lg ${column.textColor}`}>
               {column.label}
             </div>
             <Droppable droppableId={column.status}>
@@ -76,7 +76,7 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
                             {...provided.dragHandleProps}
                           >
                             <Card 
-                              className="cursor-pointer hover:shadow-md transition-shadow"
+                              className="cursor-pointer hover:shadow-md transition-shadow bg-white"
                               onClick={() => onTaskClick(task)}
                             >
                               <CardContent className="p-3 space-y-2">
