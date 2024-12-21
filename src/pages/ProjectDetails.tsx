@@ -158,7 +158,7 @@ const ProjectDetails = () => {
 
       <div className="grid grid-cols-2 gap-6 mt-6">
         <div>
-          <ChatSection />
+          <ChatSection projectMilestones={milestones} />
         </div>
         <div className="space-y-6">
           <TaskManagement 

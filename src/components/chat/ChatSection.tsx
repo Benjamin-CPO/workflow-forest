@@ -3,53 +3,45 @@ import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Temporary mock data with tagged messages for each milestone
-const initialMessagesByMilestone = {
-  "design": [
-    {
-      id: 1,
-      message: "Hey team, how's the progress on @[Task: Design Homepage]?",
-      sender: "John Doe",
-      timestamp: "2:30 PM",
-      milestone: "design"
-    },
-    {
-      id: 2,
-      message: "@[Milestone: Design Phase] is almost complete! I've just pushed the latest changes.",
-      sender: "Jane Smith",
-      timestamp: "2:32 PM",
-      milestone: "design"
-    }
-  ],
-  "development": [
-    {
-      id: 3,
-      message: "Starting work on @[Task: Mobile Layout]",
-      sender: "Alice Johnson",
-      timestamp: "3:15 PM",
-      milestone: "development"
-    }
-  ]
+interface ChatSectionProps {
+  projectMilestones: Array<{
+    id: number;
+    title: string;
+  }>;
+}
+
+// Temporary mock data with tagged messages
+const createInitialMessages = (milestones: Array<{ id: number; title: string }>) => {
+  return milestones.reduce((acc, milestone) => {
+    acc[milestone.title.toLowerCase().replace(/\s+/g, '-')] = [];
+    return acc;
+  }, {} as Record<string, Array<{
+    id: number;
+    message: string;
+    sender: string;
+    timestamp: string;
+    milestone: string;
+  }>>);
 };
 
-export const ChatSection = () => {
-  const [messagesByMilestone, setMessagesByMilestone] = useState(initialMessagesByMilestone);
-  const [currentMilestone, setCurrentMilestone] = useState("design");
+export const ChatSection = ({ projectMilestones }: ChatSectionProps) => {
+  const [messagesByMilestone, setMessagesByMilestone] = useState(() => 
+    createInitialMessages(projectMilestones)
+  );
+  const [currentMilestone, setCurrentMilestone] = useState(() => 
+    projectMilestones[0]?.title.toLowerCase().replace(/\s+/g, '-') || ''
+  );
   const [newMessage, setNewMessage] = useState("");
   const [mentionOpen, setMentionOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
 
-  // Mock data for suggestions
+  // Mock data for suggestions - now using project-specific tasks
   const suggestions = {
     tasks: [
-      { id: 1, title: "Design Homepage" },
-      { id: 2, title: "Mobile Layout" },
-      { id: 3, title: "Contact Form" }
+      { id: 1, title: "UI/UX Design" },
+      { id: 2, title: "Backend Integration" }
     ],
-    milestones: [
-      { id: 1, title: "Design Phase" },
-      { id: 2, title: "Development Phase" }
-    ]
+    milestones: projectMilestones
   };
 
   const handleMentionSelect = (type: 'Task' | 'Milestone', title: string) => {
@@ -102,38 +94,39 @@ export const ChatSection = () => {
       <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col">
         <div className="px-4 border-b">
           <TabsList>
-            <TabsTrigger value="design">Design Phase</TabsTrigger>
-            <TabsTrigger value="development">Development Phase</TabsTrigger>
+            {projectMilestones.map((milestone) => (
+              <TabsTrigger 
+                key={milestone.id} 
+                value={milestone.title.toLowerCase().replace(/\s+/g, '-')}
+              >
+                {milestone.title}
+              </TabsTrigger>
+            ))}
           </TabsList>
         </div>
 
-        <TabsContent value="design" className="flex-1 overflow-y-auto p-4 space-y-4 mt-0">
-          {messagesByMilestone.design?.map((msg) => (
-            <ChatMessage
-              key={msg.id}
-              id={msg.id}
-              message={msg.message}
-              sender={msg.sender}
-              timestamp={msg.timestamp}
-              onEdit={handleEditMessage}
-              onDelete={handleDeleteMessage}
-            />
-          ))}
-        </TabsContent>
-
-        <TabsContent value="development" className="flex-1 overflow-y-auto p-4 space-y-4 mt-0">
-          {messagesByMilestone.development?.map((msg) => (
-            <ChatMessage
-              key={msg.id}
-              id={msg.id}
-              message={msg.message}
-              sender={msg.sender}
-              timestamp={msg.timestamp}
-              onEdit={handleEditMessage}
-              onDelete={handleDeleteMessage}
-            />
-          ))}
-        </TabsContent>
+        {projectMilestones.map((milestone) => {
+          const milestoneKey = milestone.title.toLowerCase().replace(/\s+/g, '-');
+          return (
+            <TabsContent 
+              key={milestone.id} 
+              value={milestoneKey} 
+              className="flex-1 overflow-y-auto p-4 space-y-4 mt-0"
+            >
+              {messagesByMilestone[milestoneKey]?.map((msg) => (
+                <ChatMessage
+                  key={msg.id}
+                  id={msg.id}
+                  message={msg.message}
+                  sender={msg.sender}
+                  timestamp={msg.timestamp}
+                  onEdit={handleEditMessage}
+                  onDelete={handleDeleteMessage}
+                />
+              ))}
+            </TabsContent>
+          );
+        })}
       </Tabs>
 
       <ChatInput
