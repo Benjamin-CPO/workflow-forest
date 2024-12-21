@@ -11,6 +11,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -21,6 +28,7 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const [description, setDescription] = useState("");
   const [figmaWorkfile, setFigmaWorkfile] = useState("");
   const [figmaReviewFile, setFigmaReviewFile] = useState("");
+  const [status, setStatus] = useState<'priority' | 'on-hold' | null>(null);
   const navigate = useNavigate();
 
   const resetForm = () => {
@@ -28,35 +36,32 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
     setDescription("");
     setFigmaWorkfile("");
     setFigmaReviewFile("");
+    setStatus(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // In a real app, this would be an API call
     const newProject = {
-      id: Math.floor(Math.random() * 1000), // Temporary ID generation
+      id: Math.floor(Math.random() * 1000),
       title,
       description,
       progress: 0,
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       figmaWorkfile,
       figmaReviewFile,
-      milestones: [] // Initialize with no milestones
+      status,
+      milestones: []
     };
 
-    // Add the new project to the projects array
     const projects = JSON.parse(localStorage.getItem('projects') || '[]');
     projects.push(newProject);
     localStorage.setItem('projects', JSON.stringify(projects));
 
-    // Initialize empty chat messages for the new project with a general chat
     const initialMessages = {
       'general': []
     };
     localStorage.setItem(`project-${newProject.id}-messages`, JSON.stringify(initialMessages));
-
-    // Initialize empty milestones for the new project
     localStorage.setItem(`project-${newProject.id}-milestones`, JSON.stringify([]));
 
     setOpen(false);
@@ -104,6 +109,22 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
                 placeholder="Enter project description"
                 required
               />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="status">Project Status</Label>
+              <Select
+                value={status || ''}
+                onValueChange={(value: 'priority' | 'on-hold' | '') => setStatus(value || null)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select project status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Regular Project</SelectItem>
+                  <SelectItem value="priority">Priority Project</SelectItem>
+                  <SelectItem value="on-hold">Project on Hold</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="figmaWorkfile">Figma Work File URL</Label>

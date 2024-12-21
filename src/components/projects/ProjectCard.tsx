@@ -1,4 +1,4 @@
-import { Calendar, Trash2 } from "lucide-react";
+import { Calendar, Trash2, Star, Pause } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface ProjectCardProps {
   id: number;
@@ -23,6 +24,7 @@ interface ProjectCardProps {
   description: string;
   progress: number;
   dueDate: string;
+  status?: 'priority' | 'on-hold' | null;
   onDelete?: (id: number) => void;
 }
 
@@ -32,11 +34,11 @@ export const ProjectCard = ({
   description, 
   progress, 
   dueDate,
+  status,
   onDelete 
 }: ProjectCardProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const status = getProjectStatus(progress);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const segments = [
@@ -49,7 +51,7 @@ export const ProjectCard = ({
   ];
 
   const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent navigation when clicking delete
+    e.stopPropagation();
     setShowDeleteDialog(true);
   };
 
@@ -69,14 +71,40 @@ export const ProjectCard = ({
     setShowDeleteDialog(false);
   };
 
+  const getStatusBadge = () => {
+    if (status === 'priority') {
+      return (
+        <Badge className="bg-[#F97316] hover:bg-[#F97316]/80 gap-1">
+          <Star className="h-3 w-3" />
+          Priority Project
+        </Badge>
+      );
+    }
+    if (status === 'on-hold') {
+      return (
+        <Badge variant="secondary" className="bg-[#8E9196] hover:bg-[#8E9196]/80 text-white gap-1">
+          <Pause className="h-3 w-3" />
+          Project on Hold
+        </Badge>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <Card 
-        className="hover:shadow-md transition-shadow cursor-pointer group"
+        className={`hover:shadow-md transition-shadow cursor-pointer group ${
+          status === 'priority' ? 'bg-orange-50' : 
+          status === 'on-hold' ? 'bg-gray-50' : ''
+        }`}
         onClick={() => navigate(`/projects/${id}`)}
       >
         <CardHeader className="pb-2 flex flex-row items-start justify-between">
-          <CardTitle className="text-lg">{title}</CardTitle>
+          <div className="space-y-2">
+            <CardTitle className="text-lg">{title}</CardTitle>
+            {getStatusBadge()}
+          </div>
           <Button
             variant="ghost"
             size="icon"

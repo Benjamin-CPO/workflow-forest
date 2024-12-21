@@ -2,6 +2,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 interface ProjectEditFormProps {
   title: string;
@@ -9,12 +17,14 @@ interface ProjectEditFormProps {
   dueDate: string;
   figmaWorkfile: string;
   figmaReviewFile: string;
+  status?: 'priority' | 'on-hold' | null;
   onSave: (data: {
     title: string;
     description: string;
     dueDate: string;
     figmaWorkfile?: string;
     figmaReviewFile?: string;
+    status?: 'priority' | 'on-hold' | null;
   }) => void;
   onCancel: () => void;
 }
@@ -25,6 +35,7 @@ export const ProjectEditForm = ({
   dueDate,
   figmaWorkfile,
   figmaReviewFile,
+  status,
   onSave,
   onCancel,
 }: ProjectEditFormProps) => {
@@ -42,6 +53,24 @@ export const ProjectEditForm = ({
         placeholder="Project description (You can use [link text](url) for links)"
         className="resize-none"
       />
+      <div className="grid gap-2">
+        <Label>Project Status</Label>
+        <Select
+          value={status || ''}
+          onValueChange={(value: 'priority' | 'on-hold' | '') => 
+            onSave({ ...getFormData(), status: value || null })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select project status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Regular Project</SelectItem>
+            <SelectItem value="priority">Priority Project</SelectItem>
+            <SelectItem value="on-hold">Project on Hold</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <Input
         type="date"
         value={dueDate.split(",")[0]}
@@ -82,6 +111,7 @@ export const ProjectEditForm = ({
       dueDate,
       figmaWorkfile,
       figmaReviewFile,
+      status,
     };
   }
 };
