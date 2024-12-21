@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, GripVertical } from "lucide-react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
-import { MultiColorProgress } from "@/components/ui/multi-color-progress";
-import { calculateProgressColors } from "@/utils/progressUtils";
+import { ProjectProgress } from "./ProjectProgress";
 import {
   Tooltip,
   TooltipContent,
@@ -33,7 +32,6 @@ export const ProjectCard = ({
   id, 
   title, 
   description, 
-  progress, 
   dueDate,
   status,
   clientId,
@@ -45,8 +43,6 @@ export const ProjectCard = ({
   const handleDelete = () => {
     onDelete?.(id);
   };
-
-  const progressSegments = calculateProgressColors(tasks);
 
   return (
     <Card 
@@ -78,13 +74,7 @@ export const ProjectCard = ({
       </CardHeader>
       <CardContent className="px-2.5 pb-2.5">
         <div className="space-y-1.5">
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Progress</span>
-              <span className="text-sm font-medium">{progress}%</span>
-            </div>
-            <MultiColorProgress segments={progressSegments} className="h-2" />
-          </div>
+          <ProjectProgress tasks={tasks} />
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-1" />
             Due {dueDate}

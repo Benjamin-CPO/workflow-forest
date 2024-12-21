@@ -18,10 +18,10 @@ export const ProjectProgress = ({ tasks }: ProjectProgressProps) => {
   const progressSegments = calculateProgressColors(tasks);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <div className="flex justify-between items-center">
         <span className="text-sm text-muted-foreground">
-          Progress ({completedTasks} of {tasks.length} tasks completed)
+          Progress ({completedTasks} of {tasks.length} tasks)
         </span>
         <span className="text-sm font-medium">{Math.round(progress)}%</span>
       </div>

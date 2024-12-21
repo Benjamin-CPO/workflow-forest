@@ -33,10 +33,6 @@ export const ProjectColumn = ({ client, projects, tasks }: ProjectColumnProps) =
                 )
                 .map((project, index) => {
                   const projectTasks = getProjectTasks(project.id);
-                  const completedTasks = projectTasks.filter(t => t.status === "completed").length;
-                  const progress = projectTasks.length > 0 
-                    ? (completedTasks / projectTasks.length) * 100 
-                    : 0;
                   
                   return (
                     <Draggable
@@ -52,7 +48,6 @@ export const ProjectColumn = ({ client, projects, tasks }: ProjectColumnProps) =
                         >
                           <ProjectCard 
                             {...project}
-                            progress={progress}
                             tasks={projectTasks}
                           />
                         </div>
