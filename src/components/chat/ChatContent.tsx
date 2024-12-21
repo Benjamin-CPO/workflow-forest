@@ -56,10 +56,10 @@ export const ChatContent = ({
           <TabsContent 
             key={milestone.id} 
             value={milestoneKey} 
-            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0"
+            className="flex-1 p-4 space-y-4 mt-0 overflow-y-auto"
             style={{ 
-              height: 'calc(100% - 45px)',
-              overflowY: 'auto',
+              height: 'calc(100vh - 300px)',
+              maxHeight: '500px',
               scrollBehavior: 'smooth'
             }}
           >
