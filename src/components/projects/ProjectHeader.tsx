@@ -81,18 +81,21 @@ export const ProjectHeader = ({
   };
 
   return (
-    <div>
-      <Button
-        variant="ghost"
-        className="mb-6"
-        onClick={() => navigate("/")}
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Projects
-      </Button>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between border-b pb-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/")}
+          className="gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Projects
+        </Button>
+      </div>
 
-      <div className="bg-accent p-6 rounded-lg">
-        <div className="flex justify-between items-start mb-4">
+      <div className="bg-background rounded-lg">
+        <div className="flex justify-between items-start">
           {isEditing ? (
             <ProjectEditForm
               title={title}
