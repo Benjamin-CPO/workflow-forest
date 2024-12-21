@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, GripVertical } from "lucide-react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
-import { ProjectProgress } from "./ProjectProgress";
 import {
   Tooltip,
   TooltipContent,
@@ -19,12 +18,6 @@ interface ProjectCardProps {
   status?: 'priority' | null;
   clientId: number;
   onDelete?: (id: number) => void;
-  tasks?: Array<{
-    id: number;
-    title: string;
-    status: string;
-    dueDate: string;
-  }>;
 }
 
 export const ProjectCard = ({ 
@@ -35,7 +28,6 @@ export const ProjectCard = ({
   status,
   clientId,
   onDelete,
-  tasks = []
 }: ProjectCardProps) => {
   const navigate = useNavigate();
 
@@ -73,7 +65,6 @@ export const ProjectCard = ({
       </CardHeader>
       <CardContent className="px-2.5 pb-2.5">
         <div className="space-y-1.5">
-          <ProjectProgress tasks={tasks} />
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-1" />
             Due {dueDate}
