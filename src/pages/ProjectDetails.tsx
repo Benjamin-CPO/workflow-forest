@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -52,8 +52,20 @@ const projects = [
 export const ProjectDetails = () => {
   const { id } = useParams();
   const project = projects.find((p) => p.id === Number(id));
-  const [tasks, setTasks] = useState(project?.tasks || []);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Initialize tasks from localStorage or fall back to project's default tasks
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem(`project-${id}-tasks`);
+    return savedTasks ? JSON.parse(savedTasks) : project?.tasks || [];
+  });
+
+  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    if (id) {
+      localStorage.setItem(`project-${id}-tasks`, JSON.stringify(tasks));
+    }
+  }, [tasks, id]);
 
   const form = useForm({
     defaultValues: {
