@@ -50,8 +50,10 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
     projects.push(newProject);
     localStorage.setItem('projects', JSON.stringify(projects));
 
-    // Initialize empty chat messages for the new project
-    const initialMessages = {};
+    // Initialize empty chat messages for the new project with a general chat
+    const initialMessages = {
+      'general': []
+    };
     localStorage.setItem(`project-${newProject.id}-messages`, JSON.stringify(initialMessages));
 
     // Initialize empty milestones for the new project

@@ -44,12 +44,13 @@ const ProjectDetails = () => {
   const [project, setProject] = useState<Project | undefined>(initialProject);
   const [milestones, setMilestones] = useState(() => {
     const savedMilestones = localStorage.getItem(`project-${id}-milestones`);
-    return savedMilestones ? JSON.parse(savedMilestones) : project?.milestones || [];
+    const projectMilestones = savedMilestones ? JSON.parse(savedMilestones) : project?.milestones || [];
+    return [{ id: 0, title: "General", tasks: [] }, ...projectMilestones];
   });
 
   useEffect(() => {
     if (id) {
-      localStorage.setItem(`project-${id}-milestones`, JSON.stringify(milestones));
+      localStorage.setItem(`project-${id}-milestones`, JSON.stringify(milestones.filter(m => m.id !== 0)));
     }
   }, [milestones, id]);
 
@@ -111,8 +112,8 @@ const ProjectDetails = () => {
           }`}
         >
           <MilestoneManager
-            milestones={milestones}
-            setMilestones={setMilestones}
+            milestones={milestones.filter(m => m.id !== 0)}
+            setMilestones={(newMilestones) => setMilestones([milestones[0], ...newMilestones])}
           />
         </div>
       </div>
