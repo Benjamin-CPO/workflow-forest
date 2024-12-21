@@ -30,78 +30,18 @@ interface Project {
   milestones: Milestone[];
 }
 
-const projects = [
-  {
-    id: 1,
-    title: "Website Redesign",
-    description: "Complete overhaul of the company website with new branding",
-    progress: 75,
-    dueDate: "Mar 15, 2024",
-    figmaWorkfile: "https://figma.com/file/example-workfile",
-    figmaReviewFile: "https://figma.com/file/example-review",
-    milestones: [
-      {
-        id: 1,
-        title: "Design Phase",
-        tasks: [
-          { id: 1, title: "Design Homepage", status: "completed", dueDate: "Mar 10, 2024" },
-          { id: 2, title: "Design Mobile Layout", status: "in-progress", dueDate: "Mar 12, 2024" },
-        ],
-      },
-      {
-        id: 2,
-        title: "Development Phase",
-        tasks: [
-          { id: 3, title: "Implement Contact Form", status: "in-progress", dueDate: "Mar 12, 2024" },
-          { id: 4, title: "Mobile Responsiveness", status: "pending", dueDate: "Mar 14, 2024" },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Mobile App Development",
-    description: "Create a new mobile app for customer engagement",
-    progress: 30,
-    dueDate: "Apr 1, 2024",
-    figmaWorkfile: "https://figma.com/file/example-workfile",
-    figmaReviewFile: "https://figma.com/file/example-review",
-    milestones: [
-      {
-        id: 1,
-        title: "Planning Phase",
-        tasks: [
-          { id: 1, title: "UI/UX Design", status: "completed", dueDate: "Mar 20, 2024" },
-          { id: 2, title: "Backend Integration", status: "pending", dueDate: "Mar 25, 2024" },
-        ],
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "Marketing Campaign",
-    description: "Q2 marketing campaign for product launch",
-    progress: 50,
-    dueDate: "Mar 30, 2024",
-    figmaWorkfile: "https://figma.com/file/example-workfile",
-    figmaReviewFile: "https://figma.com/file/example-review",
-    milestones: [
-      {
-        id: 1,
-        title: "Campaign Planning",
-        tasks: [
-          { id: 1, title: "Content Creation", status: "in-progress", dueDate: "Mar 25, 2024" },
-          { id: 2, title: "Social Media Strategy", status: "pending", dueDate: "Mar 28, 2024" },
-        ],
-      },
-    ],
-  },
-];
-
 const ProjectDetails = () => {
   const { id } = useParams();
   const projectId = Number(id);
-  const initialProject = projects.find((p) => p.id === projectId);
+  
+  // Get project from localStorage instead of hardcoded array
+  const initialProject = (() => {
+    const savedProjects = localStorage.getItem('projects');
+    if (!savedProjects) return undefined;
+    
+    const projects = JSON.parse(savedProjects);
+    return projects.find((p: Project) => p.id === projectId);
+  })();
   
   const [project, setProject] = useState<Project | undefined>(initialProject);
   const [milestones, setMilestones] = useState(() => {
@@ -117,7 +57,7 @@ const ProjectDetails = () => {
   }, [milestones, id]);
 
   if (!project) {
-    return <div>Project not found</div>;
+    return <div className="container py-6">Project not found</div>;
   }
 
   const allTasks = milestones.flatMap(milestone => milestone.tasks);
@@ -135,7 +75,7 @@ const ProjectDetails = () => {
     });
 
     const savedProjects = localStorage.getItem('projects');
-    const allProjects = savedProjects ? JSON.parse(savedProjects) : projects;
+    const allProjects = savedProjects ? JSON.parse(savedProjects) : [];
     const updatedProjects = allProjects.map((p: Project) =>
       p.id === projectId ? { ...p, ...data } : p
     );
