@@ -1,10 +1,11 @@
-import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
+import { Table } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { DragDropContext } from '@hello-pangea/dnd';
 import { toast } from "sonner";
 import { Client, Project, Task } from "@/types/project";
 import { ClientFilter } from "./ClientFilter";
-import { ProjectColumn } from "./ProjectColumn";
+import { ProjectTableHeader } from "./ProjectTableHeader";
+import { ProjectTableBody } from "./ProjectTableBody";
 
 export const ClientProjectsTable = () => {
   const [clients, setClients] = useState<Client[]>([]);
@@ -83,10 +84,6 @@ export const ClientProjectsTable = () => {
     }
   };
 
-  const getProjectTasks = (projectId: number) => {
-    return tasks.filter(task => task.projectId === projectId);
-  };
-
   const filteredProjectsByClient = selectedClientIds.includes("all")
     ? [
         {
@@ -135,29 +132,8 @@ export const ClientProjectsTable = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow>
-                {filteredProjectsByClient.map(({ client }) => (
-                  <TableHead 
-                    key={client.id} 
-                    className="text-left whitespace-nowrap min-w-[250px] w-[250px]"
-                  >
-                    {client.name}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow className="align-top">
-                {filteredProjectsByClient.map(({ client, projects: clientProjects }) => (
-                  <ProjectColumn
-                    key={client.id}
-                    client={client}
-                    projects={clientProjects}
-                  />
-                ))}
-              </TableRow>
-            </TableBody>
+            <ProjectTableHeader clients={filteredProjectsByClient} />
+            <ProjectTableBody clients={filteredProjectsByClient} />
           </Table>
         </div>
       </DragDropContext>
