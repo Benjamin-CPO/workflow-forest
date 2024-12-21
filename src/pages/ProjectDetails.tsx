@@ -53,6 +53,12 @@ const ProjectDetails = () => {
     }
   }, [milestones, id]);
 
+  const [isChatExpanded, setIsChatExpanded] = useState(true);
+
+  const handleChatExpandChange = (expanded: boolean) => {
+    setIsChatExpanded(expanded);
+  };
+
   if (!project) {
     return <div className="container py-6">Project not found</div>;
   }
@@ -87,14 +93,15 @@ const ProjectDetails = () => {
         onProjectUpdate={handleProjectUpdate}
       />
       <div className="flex gap-6 mt-6 h-[600px]">
-        <div className="w-1/3">
+        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[60%]' : 'w-1/3'}`}>
           <ChatSection
             projectMilestones={milestones}
             className="h-full"
             collapsedWidth="50px"
+            onExpandChange={handleChatExpandChange}
           />
         </div>
-        <div className="flex-1">
+        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[40%]' : 'flex-1'}`}>
           <MilestoneManager
             milestones={milestones}
             setMilestones={setMilestones}
