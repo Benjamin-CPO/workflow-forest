@@ -90,15 +90,15 @@ const projects = [
 
 const ProjectDetails = () => {
   const { id } = useParams();
-  const project = projects.find((p) => p.id === Number(id));
+  const projectId = Number(id);
+  const initialProject = projects.find((p) => p.id === projectId);
   
-  // Initialize milestones from localStorage or fall back to project's default milestones
+  const [project, setProject] = useState<Project | undefined>(initialProject);
   const [milestones, setMilestones] = useState(() => {
     const savedMilestones = localStorage.getItem(`project-${id}-milestones`);
     return savedMilestones ? JSON.parse(savedMilestones) : project?.milestones || [];
   });
 
-  // Save milestones to localStorage whenever they change
   useEffect(() => {
     if (id) {
       localStorage.setItem(`project-${id}-milestones`, JSON.stringify(milestones));
@@ -109,6 +109,21 @@ const ProjectDetails = () => {
     return <div>Project not found</div>;
   }
 
+  const handleProjectUpdate = (data: { title: string; description: string; dueDate: string }) => {
+    setProject({
+      ...project,
+      ...data
+    });
+
+    // Update localStorage to persist project details
+    const savedProjects = localStorage.getItem('projects');
+    const allProjects = savedProjects ? JSON.parse(savedProjects) : projects;
+    const updatedProjects = allProjects.map((p: Project) =>
+      p.id === projectId ? { ...p, ...data } : p
+    );
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
+  };
+
   const allTasks = milestones.flatMap(milestone => milestone.tasks);
 
   return (
@@ -118,6 +133,7 @@ const ProjectDetails = () => {
         description={project.description}
         dueDate={project.dueDate}
         progress={allTasks.length > 0 ? (allTasks.filter(t => t.status === "completed").length / allTasks.length) * 100 : 0}
+        onUpdate={handleProjectUpdate}
       />
 
       <div className="space-y-6 mt-6">
