@@ -92,8 +92,12 @@ const ProjectDetails = () => {
         tasks={allTasks}
         onProjectUpdate={handleProjectUpdate}
       />
-      <div className="flex gap-3 mt-6 h-[600px]">
-        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[60%]' : 'w-[50px]'}`}>
+      <div className="flex gap-3 mt-6 h-[600px] relative">
+        <div 
+          className={`absolute left-0 transition-all duration-300 ${
+            isChatExpanded ? 'w-[60%]' : 'w-[50px]'
+          }`}
+        >
           <ChatSection
             projectMilestones={milestones}
             className="h-full"
@@ -101,7 +105,11 @@ const ProjectDetails = () => {
             onExpandChange={handleChatExpandChange}
           />
         </div>
-        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[40%]' : 'flex-1'}`}>
+        <div 
+          className={`transition-all duration-300 ml-auto ${
+            isChatExpanded ? 'w-[38%]' : 'w-[calc(100%-70px)]'
+          }`}
+        >
           <MilestoneManager
             milestones={milestones}
             setMilestones={setMilestones}
