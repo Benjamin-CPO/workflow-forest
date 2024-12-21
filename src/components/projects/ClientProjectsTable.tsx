@@ -1,7 +1,15 @@
 import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
 import { ProjectCard } from "./ProjectCard";
 import { useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 interface Client {
   id: number;
@@ -80,42 +88,42 @@ export const ClientProjectsTable = () => {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-4">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="all"
-            checked={selectedClientIds.includes("all")}
-            onCheckedChange={() => handleClientToggle("all")}
-          />
-          <label htmlFor="all" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            All Clients
-          </label>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="no-client"
-              checked={selectedClientIds.includes("-1")}
-              onCheckedChange={() => handleClientToggle("-1")}
-            />
-            <label htmlFor="no-client" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              No Client
-            </label>
-          </div>
-          {clients.map((client) => (
-            <div key={client.id} className="flex items-center space-x-2">
-              <Checkbox
-                id={`client-${client.id}`}
-                checked={selectedClientIds.includes(client.id.toString())}
-                onCheckedChange={() => handleClientToggle(client.id.toString())}
-              />
-              <label
-                htmlFor={`client-${client.id}`}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {client.name}
-              </label>
-            </div>
+      <div className="flex flex-col space-y-2">
+        <label className="text-sm font-medium">Filter by Client</label>
+        <Select
+          onValueChange={(value) => handleClientToggle(value)}
+          value={selectedClientIds[0]}
+        >
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select clients" />
+          </SelectTrigger>
+          <SelectContent>
+            <ScrollArea className="h-[200px]">
+              <SelectItem value="all">All Clients</SelectItem>
+              <SelectItem value="-1">No Client</SelectItem>
+              {clients.map((client) => (
+                <SelectItem key={client.id} value={client.id.toString()}>
+                  {client.name}
+                </SelectItem>
+              ))}
+            </ScrollArea>
+          </SelectContent>
+        </Select>
+        <div className="flex flex-wrap gap-2">
+          {selectedClientIds.map((id) => (
+            <Badge 
+              key={id} 
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => handleClientToggle(id)}
+            >
+              {id === "all" 
+                ? "All Clients" 
+                : id === "-1" 
+                  ? "No Client" 
+                  : clients.find(c => c.id.toString() === id)?.name}
+              ×
+            </Badge>
           ))}
         </div>
       </div>
@@ -126,7 +134,7 @@ export const ClientProjectsTable = () => {
               {filteredProjectsByClient.map(({ client }) => (
                 <TableHead 
                   key={client.id} 
-                  className="text-left whitespace-nowrap min-w-[350px] w-[350px]"
+                  className="text-left whitespace-nowrap min-w-[250px] w-[250px]"
                 >
                   {client.name}
                 </TableHead>
@@ -136,8 +144,8 @@ export const ClientProjectsTable = () => {
           <TableBody>
             <TableRow className="align-top">
               {filteredProjectsByClient.map(({ client, projects }) => (
-                <td key={client.id} className="p-4 min-w-[350px] w-[350px]">
-                  <div className="space-y-4">
+                <td key={client.id} className="p-2 min-w-[250px] w-[250px]">
+                  <div className="space-y-2">
                     {projects.length === 0 ? (
                       <div className="text-sm text-muted-foreground">
                         No projects {client.id === -1 ? 'without client' : 'for this client'}
