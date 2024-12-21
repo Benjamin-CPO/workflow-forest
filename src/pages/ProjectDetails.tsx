@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TaskStatusSelect } from "@/components/TaskStatusSelect";
 
 // Temporary mock data - in a real app, this would come from an API
 const projects = [
@@ -182,19 +182,10 @@ export const ProjectDetails = () => {
                 <TableRow key={task.id}>
                   <TableCell>{task.title}</TableCell>
                   <TableCell>
-                    <Select
-                      defaultValue={task.status}
-                      onValueChange={(value) => handleStatusChange(task.id, value)}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="in-progress">In Progress</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <TaskStatusSelect 
+                      status={task.status}
+                      onStatusChange={(value) => handleStatusChange(task.id, value)}
+                    />
                   </TableCell>
                   <TableCell>{task.dueDate}</TableCell>
                 </TableRow>
