@@ -92,8 +92,8 @@ const ProjectDetails = () => {
         tasks={allTasks}
         onProjectUpdate={handleProjectUpdate}
       />
-      <div className="flex gap-6 mt-6 h-[600px]">
-        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[60%]' : 'w-1/3'}`}>
+      <div className="flex gap-3 mt-6 h-[600px]">
+        <div className={`transition-all duration-300 ${isChatExpanded ? 'w-[60%]' : 'w-[50px]'}`}>
           <ChatSection
             projectMilestones={milestones}
             className="h-full"
