@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
+import { useEffect } from "react";
 
 interface TaskEditDialogProps {
   task: {
@@ -20,17 +21,27 @@ interface TaskEditDialogProps {
 export const TaskEditDialog = ({ task, isOpen, onClose, onSave }: TaskEditDialogProps) => {
   const form = useForm({
     defaultValues: {
-      title: task?.title || "",
-      status: task?.status || "pending",
-      dueDate: task?.dueDate || "",
+      title: "",
+      status: "pending",
+      dueDate: "",
     },
   });
+
+  // Reset form with task values when task changes
+  useEffect(() => {
+    if (task) {
+      form.reset({
+        title: task.title,
+        status: task.status,
+        dueDate: task.dueDate,
+      });
+    }
+  }, [task, form]);
 
   const handleSubmit = (data: { title: string; status: string; dueDate: string }) => {
     if (task) {
       onSave(task.id, data);
       onClose();
-      form.reset();
     }
   };
 
