@@ -17,12 +17,15 @@ interface ChatSectionProps {
 }
 
 const createInitialMessages = (milestones: Array<{ id: number; title: string }>, projectId: string) => {
-  const savedMessages = localStorage.getItem(`project-${projectId}-messages`);
+  const storageKey = `project-${projectId}-messages`;
+  const savedMessages = localStorage.getItem(storageKey);
+  
   if (savedMessages) {
     return JSON.parse(savedMessages);
   }
 
-  return milestones.reduce((acc, milestone) => {
+  // Initialize storage with empty arrays for each milestone
+  const initialMessages = milestones.reduce((acc, milestone) => {
     acc[milestone.title.toLowerCase().replace(/\s+/g, '-')] = [];
     return acc;
   }, {} as Record<string, Array<{
@@ -32,6 +35,10 @@ const createInitialMessages = (milestones: Array<{ id: number; title: string }>,
     timestamp: string;
     milestone: string;
   }>>);
+
+  // Save initial state to localStorage
+  localStorage.setItem(storageKey, JSON.stringify(initialMessages));
+  return initialMessages;
 };
 
 export const ChatSection = ({ 
@@ -45,6 +52,7 @@ export const ChatSection = ({
   const [messagesByMilestone, setMessagesByMilestone] = useState(() => 
     createInitialMessages(projectMilestones, projectId)
   );
+
   const [currentMilestone, setCurrentMilestone] = useState(() => 
     projectMilestones[0]?.title.toLowerCase().replace(/\s+/g, '-') || ''
   );
@@ -110,8 +118,9 @@ export const ChatSection = ({
   };
 
   useEffect(() => {
-    onExpandChange?.(isExpanded);
-  }, [isExpanded, onExpandChange]);
+    // Ensure storage is initialized when milestones change
+    setMessagesByMilestone(createInitialMessages(projectMilestones, projectId));
+  }, [projectMilestones, projectId]);
 
   return (
     <div 
