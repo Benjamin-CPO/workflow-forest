@@ -14,13 +14,13 @@ export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectPro
             status === "pending" ? "bg-gray-100 text-gray-700" :
             status === "need-revision" ? "bg-red-100 text-red-700" :
             status === "in-progress" ? "bg-orange-100 text-orange-700" :
-            status === "need-review" ? "bg-blue-100 text-blue-700" :
+            status === "need-feedback" ? "bg-blue-100 text-blue-700" :
             status === "completed" ? "bg-green-100 text-green-700" : ""
           }`}>
             {status === "pending" ? "Pending" :
              status === "need-revision" ? "Need Revision" :
              status === "in-progress" ? "In Progress" :
-             status === "need-review" ? "Need Review" :
+             status === "need-feedback" ? "Need Feedback" :
              status === "completed" ? "Completed" : status}
           </span>
         </SelectValue>
@@ -35,8 +35,8 @@ export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectPro
         <SelectItem value="in-progress">
           <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded">In Progress</span>
         </SelectItem>
-        <SelectItem value="need-review">
-          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">Need Review</span>
+        <SelectItem value="need-feedback">
+          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">Need Feedback</span>
         </SelectItem>
         <SelectItem value="completed">
           <span className="bg-green-100 text-green-700 px-2 py-1 rounded">Completed</span>
