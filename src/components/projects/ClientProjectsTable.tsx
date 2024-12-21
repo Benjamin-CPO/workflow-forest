@@ -29,14 +29,24 @@ interface Project {
   order?: number;
 }
 
+interface Task {
+  id: number;
+  title: string;
+  status: string;
+  dueDate: string;
+  projectId: number;
+}
+
 export const ClientProjectsTable = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedClientIds, setSelectedClientIds] = useState<string[]>(["all"]);
 
   useEffect(() => {
     const storedClients = JSON.parse(localStorage.getItem('clients') || '[]');
     const storedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+    const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
     
     // Initialize projects with order if not present and ensure correct status type
     const projectsWithOrder = storedProjects
@@ -60,6 +70,7 @@ export const ClientProjectsTable = () => {
 
     setClients(storedClients);
     setProjects(updatedProjects);
+    setTasks(storedTasks);
     localStorage.setItem('projects', JSON.stringify(updatedProjects));
   }, []);
 
@@ -106,6 +117,10 @@ export const ClientProjectsTable = () => {
     if (source.index !== destination.index) {
       toast.success("Project priority updated");
     }
+  };
+
+  const getProjectTasks = (projectId: number) => {
+    return tasks.filter(task => task.projectId === projectId);
   };
 
   const filteredProjectsByClient = selectedClientIds.includes("all")
@@ -234,7 +249,10 @@ export const ClientProjectsTable = () => {
                                       {...provided.draggableProps}
                                       {...provided.dragHandleProps}
                                     >
-                                      <ProjectCard {...project} />
+                                      <ProjectCard 
+                                        {...project} 
+                                        tasks={getProjectTasks(project.id)}
+                                      />
                                     </div>
                                   )}
                                 </Draggable>
