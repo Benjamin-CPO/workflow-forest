@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { ProjectClientInfo } from "./ProjectClientInfo";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
+import { Progress } from "@/components/ui/progress";
 
 interface ProjectCardProps {
   id: number;
@@ -60,6 +61,13 @@ export const ProjectCard = ({
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">{description}</p>
         <div className="space-y-3">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Progress</span>
+              <span className="text-sm font-medium">{progress}%</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-2" />
             Due {dueDate}
