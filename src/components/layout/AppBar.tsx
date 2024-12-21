@@ -1,4 +1,4 @@
-import { Bell, Calendar, List, Search, User, Users } from "lucide-react";
+import { Bell, Calendar, List, Plus, Search, User, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { AddProjectDialog } from "@/components/projects/AddProjectDialog";
