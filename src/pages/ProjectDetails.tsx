@@ -97,6 +97,16 @@ const ProjectDetails = () => {
   }
 
   const handleAddTask = (data: { title: string; dueDate: string }) => {
+    if (milestones.length === 0) {
+      // If no milestones exist, create a default one
+      const newMilestone = {
+        id: 1,
+        title: "General Tasks",
+        tasks: [],
+      };
+      setMilestones([newMilestone]);
+    }
+
     const newTask = {
       id: Math.max(...milestones.flatMap(m => m.tasks.map(t => t.id)), 0) + 1,
       title: data.title,
@@ -104,7 +114,7 @@ const ProjectDetails = () => {
       dueDate: data.dueDate,
     };
     
-    // Add to the first milestone by default
+    // Add to the first milestone
     const updatedMilestones = milestones.map((milestone, index) => 
       index === 0 
         ? { ...milestone, tasks: [...milestone.tasks, newTask] }
