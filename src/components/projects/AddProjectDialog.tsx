@@ -18,9 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+
+interface Client {
+  id: number;
+  name: string;
+}
 
 export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -29,7 +34,26 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const [figmaWorkfile, setFigmaWorkfile] = useState("");
   const [figmaReviewFile, setFigmaReviewFile] = useState("");
   const [status, setStatus] = useState<'priority' | 'on-hold' | null>(null);
+  const [clientId, setClientId] = useState<string>("");
+  const [clients, setClients] = useState<Client[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Load clients from localStorage
+    const storedClients = localStorage.getItem('clients');
+    if (storedClients) {
+      setClients(JSON.parse(storedClients));
+    } else {
+      // Initialize with some example clients if none exist
+      const initialClients = [
+        { id: 1, name: "Acme Corp" },
+        { id: 2, name: "TechStart Inc" },
+        { id: 3, name: "Global Solutions" }
+      ];
+      localStorage.setItem('clients', JSON.stringify(initialClients));
+      setClients(initialClients);
+    }
+  }, []);
 
   const resetForm = () => {
     setTitle("");
@@ -37,11 +61,17 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
     setFigmaWorkfile("");
     setFigmaReviewFile("");
     setStatus(null);
+    setClientId("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!clientId) {
+      toast.error("Please select a client");
+      return;
+    }
+
     const newProject = {
       id: Math.floor(Math.random() * 1000),
       title,
@@ -51,6 +81,7 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
       figmaWorkfile,
       figmaReviewFile,
       status,
+      clientId: parseInt(clientId),
       milestones: []
     };
 
@@ -90,6 +121,24 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="client">Client</Label>
+              <Select
+                value={clientId}
+                onValueChange={setClientId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a client" />
+                </SelectTrigger>
+                <SelectContent>
+                  {clients.map((client) => (
+                    <SelectItem key={client.id} value={client.id.toString()}>
+                      {client.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="title">Title</Label>
               <Input

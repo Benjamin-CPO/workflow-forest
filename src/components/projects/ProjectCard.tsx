@@ -1,8 +1,7 @@
-import { Calendar, Trash2, Star, Pause } from "lucide-react";
+import { Calendar, Trash2, Star, Pause, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { useNavigate } from "react-router-dom";
-import { statusColors, getProjectStatus } from "@/utils/statusColors";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -15,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 
 interface ProjectCardProps {
@@ -25,6 +24,7 @@ interface ProjectCardProps {
   progress: number;
   dueDate: string;
   status?: 'priority' | 'on-hold' | null;
+  clientId: number;
   onDelete?: (id: number) => void;
 }
 
@@ -35,11 +35,21 @@ export const ProjectCard = ({
   progress, 
   dueDate,
   status,
+  clientId,
   onDelete 
 }: ProjectCardProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [clientName, setClientName] = useState<string>("");
+
+  useEffect(() => {
+    const clients = JSON.parse(localStorage.getItem('clients') || '[]');
+    const client = clients.find((c: { id: number }) => c.id === clientId);
+    if (client) {
+      setClientName(client.name);
+    }
+  }, [clientId]);
 
   const segments = [
     {
@@ -103,7 +113,13 @@ export const ProjectCard = ({
         <CardHeader className="pb-2 flex flex-row items-start justify-between">
           <div className="space-y-2">
             <CardTitle className="text-lg">{title}</CardTitle>
-            {getStatusBadge()}
+            <div className="flex flex-col gap-2">
+              {getStatusBadge()}
+              <div className="flex items-center text-sm text-muted-foreground gap-1">
+                <Building2 className="h-4 w-4" />
+                {clientName}
+              </div>
+            </div>
           </div>
           <Button
             variant="ghost"
