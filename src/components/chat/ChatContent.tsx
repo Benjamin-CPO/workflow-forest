@@ -1,5 +1,6 @@
 import { TabsContent, TabsList, TabsTrigger, Tabs } from "@/components/ui/tabs";
 import { ChatMessage } from "./ChatMessage";
+import { useEffect, useRef } from "react";
 
 interface ChatContentProps {
   projectMilestones: Array<{ id: number; title: string }>;
@@ -24,6 +25,16 @@ export const ChatContent = ({
   handleEditMessage,
   handleDeleteMessage,
 }: ChatContentProps) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messagesByMilestone]);
+
   return (
     <Tabs value={currentMilestone} onValueChange={setCurrentMilestone} className="flex-1 flex flex-col min-h-0">
       <div className="px-4 border-b">
@@ -45,25 +56,28 @@ export const ChatContent = ({
           <TabsContent 
             key={milestone.id} 
             value={milestoneKey} 
-            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 min-h-[450px] max-h-[450px]"
+            className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 min-h-[450px] max-h-[450px] flex flex-col justify-end"
           >
-            {messagesByMilestone[milestoneKey]?.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                No messages yet
-              </div>
-            ) : (
-              messagesByMilestone[milestoneKey]?.map((msg) => (
-                <ChatMessage
-                  key={msg.id}
-                  id={msg.id}
-                  message={msg.message}
-                  sender={msg.sender}
-                  timestamp={msg.timestamp}
-                  onEdit={handleEditMessage}
-                  onDelete={handleDeleteMessage}
-                />
-              ))
-            )}
+            <div className="space-y-4">
+              {messagesByMilestone[milestoneKey]?.length === 0 ? (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  No messages yet
+                </div>
+              ) : (
+                messagesByMilestone[milestoneKey]?.map((msg) => (
+                  <ChatMessage
+                    key={msg.id}
+                    id={msg.id}
+                    message={msg.message}
+                    sender={msg.sender}
+                    timestamp={msg.timestamp}
+                    onEdit={handleEditMessage}
+                    onDelete={handleDeleteMessage}
+                  />
+                ))
+              )}
+              <div ref={messagesEndRef} />
+            </div>
           </TabsContent>
         );
       })}
