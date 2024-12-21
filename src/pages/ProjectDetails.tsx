@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Calendar, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { Progress } from "@/components/ui/progress";
 
 // Temporary mock data - in a real app, this would come from an API
 const projects = [
@@ -48,20 +48,7 @@ const projects = [
   },
 ];
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "completed":
-      return "bg-green-500";
-    case "in-progress":
-      return "bg-blue-500";
-    case "pending":
-      return "bg-yellow-500";
-    default:
-      return "bg-gray-500";
-  }
-};
-
-const ProjectDetails = () => {
+export const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const project = projects.find((p) => p.id === Number(id));
@@ -92,96 +79,110 @@ const ProjectDetails = () => {
     setIsDialogOpen(false);
   };
 
+  // Calculate progress based on completed tasks
+  const completedTasks = tasks.filter(task => task.status === "completed").length;
+  const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
+
   return (
     <div className="container py-6">
-      <Button 
-        variant="ghost" 
-        onClick={() => navigate(-1)}
+      <Button
+        variant="ghost"
         className="mb-6"
+        onClick={() => navigate("/projects")}
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Projects
       </Button>
-      
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{project.title}</h1>
-        <p className="text-muted-foreground">{project.description}</p>
-        <div className="flex items-center mt-2 text-sm text-muted-foreground">
-          <Calendar className="h-4 w-4 mr-2" />
-          Due {project.dueDate}
-        </div>
-      </div>
 
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Tasks</h2>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>Add Task</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Task</DialogTitle>
-              </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Task Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter task title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="dueDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Due Date</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full">
-                    Add Task
-                  </Button>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold mb-2">{project.title}</h1>
+          <p className="text-muted-foreground mb-4">{project.description}</p>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Calendar className="h-4 w-4 mr-2" />
+            Due {project.dueDate}
+          </div>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Task</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Due Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tasks.map((task) => (
-              <TableRow key={task.id}>
-                <TableCell>{task.title}</TableCell>
-                <TableCell>
-                  <Badge className={getStatusColor(task.status)}>
-                    {task.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>{task.dueDate}</TableCell>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">
+              Progress ({completedTasks} of {tasks.length} tasks completed)
+            </span>
+            <span className="text-sm font-medium">{Math.round(progress)}%</span>
+          </div>
+          <Progress value={progress} className="h-2" />
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Tasks</h2>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>Add Task</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Task</DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Task Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter task title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="dueDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Due Date</FormLabel>
+                          <FormControl>
+                            <Input type="date" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full">
+                      Add Task
+                    </Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Due Date</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {tasks.map((task) => (
+                <TableRow key={task.id}>
+                  <TableCell>{task.title}</TableCell>
+                  <TableCell>
+                    <span className="capitalize">{task.status}</span>
+                  </TableCell>
+                  <TableCell>{task.dueDate}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );
