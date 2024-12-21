@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Calendar, ArrowLeft, Edit2, Check, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import ReactMarkdown from 'react-markdown';
+import { ProjectDisplay } from "./ProjectDisplay";
+import { ProjectEditForm } from "./ProjectEditForm";
 
 interface ProjectHeaderProps {
   title: string;
@@ -14,23 +13,23 @@ interface ProjectHeaderProps {
   progress: number;
   figmaWorkfile?: string;
   figmaReviewFile?: string;
-  onUpdate?: (data: { 
-    title: string; 
-    description: string; 
+  onUpdate?: (data: {
+    title: string;
+    description: string;
     dueDate: string;
     figmaWorkfile?: string;
     figmaReviewFile?: string;
   }) => void;
 }
 
-export const ProjectHeader = ({ 
-  title: initialTitle, 
-  description: initialDescription, 
+export const ProjectHeader = ({
+  title: initialTitle,
+  description: initialDescription,
   dueDate: initialDueDate,
   figmaWorkfile: initialFigmaWorkfile = '',
   figmaReviewFile: initialFigmaReviewFile = '',
   progress,
-  onUpdate 
+  onUpdate
 }: ProjectHeaderProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -41,8 +40,14 @@ export const ProjectHeader = ({
   const [figmaWorkfile, setFigmaWorkfile] = useState(initialFigmaWorkfile);
   const [figmaReviewFile, setFigmaReviewFile] = useState(initialFigmaReviewFile);
 
-  const handleSave = () => {
-    if (!title.trim()) {
+  const handleSave = (data: {
+    title: string;
+    description: string;
+    dueDate: string;
+    figmaWorkfile?: string;
+    figmaReviewFile?: string;
+  }) => {
+    if (!data.title.trim()) {
       toast({
         title: "Error",
         description: "Project title cannot be empty",
@@ -51,15 +56,15 @@ export const ProjectHeader = ({
       return;
     }
 
-    onUpdate?.({
-      title,
-      description,
-      dueDate,
-      figmaWorkfile,
-      figmaReviewFile,
-    });
-
+    setTitle(data.title);
+    setDescription(data.description);
+    setDueDate(data.dueDate);
+    setFigmaWorkfile(data.figmaWorkfile || '');
+    setFigmaReviewFile(data.figmaReviewFile || '');
+    
+    onUpdate?.(data);
     setIsEditing(false);
+    
     toast({
       title: "Success",
       description: "Project details updated successfully",
@@ -89,103 +94,24 @@ export const ProjectHeader = ({
       <div className="bg-accent p-6 rounded-lg">
         <div className="flex justify-between items-start mb-4">
           {isEditing ? (
-            <div className="flex-1 space-y-4">
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Project title"
-                className="text-2xl font-bold"
-              />
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Project description (You can use [link text](url) for links)"
-                className="resize-none"
-              />
-              <Input
-                type="date"
-                value={dueDate.split(",")[0]}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full"
-              />
-              <Input
-                type="url"
-                value={figmaWorkfile}
-                onChange={(e) => setFigmaWorkfile(e.target.value)}
-                placeholder="Figma Workfile URL"
-                className="w-full"
-              />
-              <Input
-                type="url"
-                value={figmaReviewFile}
-                onChange={(e) => setFigmaReviewFile(e.target.value)}
-                placeholder="Figma Review File URL"
-                className="w-full"
-              />
-              <div className="flex gap-2">
-                <Button onClick={handleSave}>
-                  <Check className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
-                <Button variant="outline" onClick={handleCancel}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-              </div>
-            </div>
+            <ProjectEditForm
+              title={title}
+              description={description}
+              dueDate={dueDate}
+              figmaWorkfile={figmaWorkfile}
+              figmaReviewFile={figmaReviewFile}
+              onSave={handleSave}
+              onCancel={handleCancel}
+            />
           ) : (
-            <>
-              <div className="space-y-4 w-full">
-                <h1 className="text-2xl font-bold">{title}</h1>
-                <div className="text-muted-foreground">
-                  <ReactMarkdown
-                    components={{
-                      a: ({ node, ...props }) => (
-                        <a
-                          {...props}
-                          className="text-blue-500 hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        />
-                      ),
-                    }}
-                  >
-                    {description}
-                  </ReactMarkdown>
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Due {dueDate}
-                </div>
-                {(figmaWorkfile || figmaReviewFile) && (
-                  <div className="space-y-2">
-                    {figmaWorkfile && (
-                      <a
-                        href={figmaWorkfile}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-sm text-blue-500 hover:underline"
-                      >
-                        📝 Figma Workfile
-                      </a>
-                    )}
-                    {figmaReviewFile && (
-                      <a
-                        href={figmaReviewFile}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-sm text-blue-500 hover:underline"
-                      >
-                        👀 Figma Review File
-                      </a>
-                    )}
-                  </div>
-                )}
-              </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
-                <Edit2 className="h-4 w-4" />
-              </Button>
-            </>
+            <ProjectDisplay
+              title={title}
+              description={description}
+              dueDate={dueDate}
+              figmaWorkfile={figmaWorkfile}
+              figmaReviewFile={figmaReviewFile}
+              onEdit={() => setIsEditing(true)}
+            />
           )}
         </div>
       </div>
