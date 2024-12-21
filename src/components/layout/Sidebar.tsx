@@ -11,6 +11,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { AddProjectDialog } from "@/components/projects/AddProjectDialog";
+import { AddClientDialog } from "@/components/clients/AddClientDialog";
+import { useLocation } from "react-router-dom";
 
 const items = [
   {
@@ -26,16 +28,28 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const location = useLocation();
+
   return (
     <Sidebar>
       <SidebarContent>
         <div className="px-4 py-2">
-          <AddProjectDialog>
-            <Button className="w-full justify-start" size="sm">
-              <Plus className="mr-2 h-4 w-4" />
-              New Project
-            </Button>
-          </AddProjectDialog>
+          {location.pathname === "/" && (
+            <AddProjectDialog>
+              <Button className="w-full justify-start" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                New Project
+              </Button>
+            </AddProjectDialog>
+          )}
+          {location.pathname === "/clients" && (
+            <AddClientDialog>
+              <Button className="w-full justify-start" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                New Client
+              </Button>
+            </AddClientDialog>
+          )}
         </div>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>

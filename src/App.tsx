@@ -9,12 +9,28 @@ import ProjectDetails from "./pages/ProjectDetails";
 
 const queryClient = new QueryClient();
 
-const Clients = () => (
-  <div className="container py-6">
-    <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
-    <p className="text-muted-foreground">Manage your client relationships</p>
-  </div>
-);
+const Clients = () => {
+  const clients = JSON.parse(localStorage.getItem('clients') || '[]');
+
+  return (
+    <div className="container py-6">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
+        <p className="text-muted-foreground">Manage your client relationships</p>
+      </div>
+      <div className="grid gap-4">
+        {clients.map((client: { id: number; name: string }) => (
+          <div
+            key={client.id}
+            className="flex items-center justify-between p-4 border rounded-lg"
+          >
+            <span className="font-medium">{client.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
