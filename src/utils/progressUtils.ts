@@ -10,7 +10,9 @@ export const calculateProgressColors = (tasks: Task[]) => {
 
   const statusCounts = {
     pending: tasks.filter(task => task.status === 'pending').length,
+    'need-revision': tasks.filter(task => task.status === 'need-revision').length,
     'in-progress': tasks.filter(task => task.status === 'in-progress').length,
+    'need-review': tasks.filter(task => task.status === 'need-review').length,
     completed: tasks.filter(task => task.status === 'completed').length,
   };
 
@@ -24,10 +26,24 @@ export const calculateProgressColors = (tasks: Task[]) => {
     });
   }
 
+  if (statusCounts['need-review'] > 0) {
+    segments.push({
+      color: 'bg-blue-500',
+      percentage: (statusCounts['need-review'] / total) * 100
+    });
+  }
+
   if (statusCounts['in-progress'] > 0) {
     segments.push({
       color: 'bg-orange-500',
       percentage: (statusCounts['in-progress'] / total) * 100
+    });
+  }
+
+  if (statusCounts['need-revision'] > 0) {
+    segments.push({
+      color: 'bg-red-500',
+      percentage: (statusCounts['need-revision'] / total) * 100
     });
   }
 

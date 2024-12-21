@@ -3,9 +3,17 @@ export const statusColors = {
     bg: 'bg-gray-300',
     text: 'text-gray-700'
   },
+  'need-revision': {
+    bg: 'bg-red-500',
+    text: 'text-red-700'
+  },
   'in-progress': {
     bg: 'bg-orange-500',
     text: 'text-orange-700'
+  },
+  'need-review': {
+    bg: 'bg-blue-500',
+    text: 'text-blue-700'
   },
   completed: {
     bg: 'bg-green-500',
