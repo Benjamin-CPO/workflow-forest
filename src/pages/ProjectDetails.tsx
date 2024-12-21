@@ -86,7 +86,6 @@ export const ProjectDetails = () => {
     ));
   };
 
-  // Calculate progress based on completed tasks
   const completedTasks = tasks.filter(task => task.status === "completed").length;
   const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
   const progressSegments = calculateProgressColors(tasks);
@@ -96,7 +95,7 @@ export const ProjectDetails = () => {
       <Button
         variant="ghost"
         className="mb-6"
-        onClick={() => navigate("/projects")}
+        onClick={() => navigate("/")}
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Projects
