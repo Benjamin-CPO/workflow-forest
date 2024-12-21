@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { TaskStatusSelect } from "@/components/TaskStatusSelect";
 import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { calculateProgressColors } from "@/utils/progressUtils";
 import { ProjectHeader } from "@/components/projects/ProjectHeader";
-import { statusColors, getProjectStatus } from "@/utils/statusColors";
+import { TasksTable } from "@/components/tasks/TasksTable";
+import { TaskEditDialog } from "@/components/tasks/TaskEditDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 const projects = [
   {
@@ -53,6 +53,11 @@ export const ProjectDetails = () => {
   const { id } = useParams();
   const project = projects.find((p) => p.id === Number(id));
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
+  
+  // Task editing state
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Initialize tasks from localStorage or fall back to project's default tasks
   const [tasks, setTasks] = useState(() => {
@@ -89,6 +94,10 @@ export const ProjectDetails = () => {
     setTasks([...tasks, newTask]);
     form.reset();
     setIsDialogOpen(false);
+    toast({
+      title: "Task added",
+      description: "New task has been added successfully.",
+    });
   };
 
   const handleStatusChange = (taskId: number, newStatus: string) => {
@@ -97,10 +106,19 @@ export const ProjectDetails = () => {
     ));
   };
 
+  const handleTaskEdit = (taskId: number, data: { title: string; status: string; dueDate: string }) => {
+    setTasks(tasks.map(task =>
+      task.id === taskId ? { ...task, ...data } : task
+    ));
+    toast({
+      title: "Task updated",
+      description: "Task has been updated successfully.",
+    });
+  };
+
   const completedTasks = tasks.filter(task => task.status === "completed").length;
   const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
   const progressSegments = calculateProgressColors(tasks);
-  const status = getProjectStatus(progress);
 
   return (
     <div className="container py-6">
@@ -170,29 +188,24 @@ export const ProjectDetails = () => {
             </Dialog>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Due Date</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tasks.map((task) => (
-                <TableRow key={task.id}>
-                  <TableCell>{task.title}</TableCell>
-                  <TableCell>
-                    <TaskStatusSelect 
-                      status={task.status}
-                      onStatusChange={(value) => handleStatusChange(task.id, value)}
-                    />
-                  </TableCell>
-                  <TableCell>{task.dueDate}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <TasksTable
+            tasks={tasks}
+            onStatusChange={handleStatusChange}
+            onTaskClick={(task) => {
+              setSelectedTask(task);
+              setIsEditDialogOpen(true);
+            }}
+          />
+
+          <TaskEditDialog
+            task={selectedTask}
+            isOpen={isEditDialogOpen}
+            onClose={() => {
+              setIsEditDialogOpen(false);
+              setSelectedTask(null);
+            }}
+            onSave={handleTaskEdit}
+          />
         </div>
       </div>
     </div>
