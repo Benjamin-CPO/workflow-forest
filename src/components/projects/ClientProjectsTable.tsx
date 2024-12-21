@@ -28,12 +28,18 @@ export const ClientProjectsTable = () => {
     setProjects(storedProjects);
   }, []);
 
-  const projectsByClient = clients.map(client => ({
-    client,
-    projects: projects.filter(project => project.clientId === client.id)
-  }));
+  const projectsByClient = [
+    {
+      client: { id: -1, name: "No Client" },
+      projects: projects.filter(project => !project.clientId)
+    },
+    ...clients.map(client => ({
+      client,
+      projects: projects.filter(project => project.clientId === client.id)
+    }))
+  ];
 
-  if (clients.length === 0) {
+  if (clients.length === 0 && projects.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-8">
         No clients yet. Add a client to start creating projects!
@@ -46,6 +52,7 @@ export const ClientProjectsTable = () => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="text-left">No Client</TableHead>
             {clients.map((client) => (
               <TableHead key={client.id} className="text-left">
                 {client.name}
@@ -60,7 +67,7 @@ export const ClientProjectsTable = () => {
                 <div className="space-y-4">
                   {projects.length === 0 ? (
                     <div className="text-sm text-muted-foreground">
-                      No projects for this client
+                      No projects {client.id === -1 ? 'without client' : 'for this client'}
                     </div>
                   ) : (
                     projects.map((project) => (
