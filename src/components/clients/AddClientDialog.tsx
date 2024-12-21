@@ -29,6 +29,9 @@ export function AddClientDialog({ children }: { children: React.ReactNode }) {
     clients.push(newClient);
     localStorage.setItem('clients', JSON.stringify(clients));
     
+    // Force a page reload to refresh the clients list
+    window.location.reload();
+    
     setOpen(false);
     setName("");
     toast.success("Client created successfully");
