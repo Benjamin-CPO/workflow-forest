@@ -35,7 +35,6 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
   const [view, setView] = useState<"list" | "kanban">("list");
-  const [selectedMilestones, setSelectedMilestones] = useState<number[]>([]);
   const { toast } = useToast();
 
   const handleAddTask = (data: { title: string; dueDate: string; milestoneId: number }) => {
@@ -108,22 +107,9 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     });
   };
 
-  const toggleMilestone = (milestoneId: number) => {
-    setSelectedMilestones(prev => {
-      if (prev.includes(milestoneId)) {
-        return prev.filter(id => id !== milestoneId);
-      }
-      return [...prev, milestoneId];
-    });
-  };
-
-  const filteredMilestones = selectedMilestones.length > 0
-    ? milestones.filter(m => selectedMilestones.includes(m.id))
-    : milestones;
-
   return (
     <div className="h-full flex flex-col">
-      <div className="sticky top-0 bg-background z-10 p-4 border-b space-y-4">
+      <div className="sticky top-0 bg-background z-10 p-4 border-b">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-semibold">Tasks</h2>
@@ -143,29 +129,12 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
             </Button>
           </div>
         </div>
-
-        <div className="flex gap-2 overflow-x-auto py-2">
-          {milestones.map((milestone) => (
-            <Button
-              key={milestone.id}
-              variant="outline"
-              className={`px-4 py-2 whitespace-nowrap ${
-                selectedMilestones.includes(milestone.id)
-                  ? "bg-muted text-muted-foreground"
-                  : "hover:bg-muted/50"
-              }`}
-              onClick={() => toggleMilestone(milestone.id)}
-            >
-              {milestone.title}
-            </Button>
-          ))}
-        </div>
       </div>
 
       <div className="flex-1 overflow-auto">
         {view === "list" ? (
           <MilestoneTasks
-            milestones={filteredMilestones}
+            milestones={milestones}
             onStatusChange={handleStatusChange}
             onTaskClick={(task) => {
               setSelectedTask(task);
@@ -174,7 +143,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
           />
         ) : (
           <KanbanView
-            milestones={filteredMilestones}
+            milestones={milestones}
             onStatusChange={handleStatusChange}
             onTaskClick={(task) => {
               setSelectedTask(task);
