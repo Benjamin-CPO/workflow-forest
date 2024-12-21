@@ -113,14 +113,15 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
             <div className="grid gap-2">
               <Label htmlFor="status">Project Status</Label>
               <Select
-                value={status || ''}
-                onValueChange={(value: 'priority' | 'on-hold' | '') => setStatus(value || null)}
+                value={status || 'regular'}
+                onValueChange={(value: 'regular' | 'priority' | 'on-hold') => 
+                  setStatus(value === 'regular' ? null : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select project status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Regular Project</SelectItem>
+                  <SelectItem value="regular">Regular Project</SelectItem>
                   <SelectItem value="priority">Priority Project</SelectItem>
                   <SelectItem value="on-hold">Project on Hold</SelectItem>
                 </SelectContent>
