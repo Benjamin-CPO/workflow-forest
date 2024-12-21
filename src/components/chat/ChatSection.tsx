@@ -116,7 +116,7 @@ export const ChatSection = ({
   return (
     <div 
       className={cn(
-        "flex flex-col bg-background border rounded-lg transition-all duration-300 h-full",
+        "flex flex-col bg-background border rounded-lg transition-all duration-300 h-[600px]",
         isExpanded ? className : "w-[50px]"
       )}
     >
@@ -167,7 +167,7 @@ export const ChatSection = ({
                 <TabsContent 
                   key={milestone.id} 
                   value={milestoneKey} 
-                  className="flex-1 overflow-y-auto p-4 space-y-4 mt-0"
+                  className="flex-1 overflow-y-auto p-4 space-y-4 mt-0 h-[400px]"
                 >
                   {messagesByMilestone[milestoneKey]?.map((msg) => (
                     <ChatMessage
