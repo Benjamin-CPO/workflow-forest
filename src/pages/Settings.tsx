@@ -10,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
 } from "@/components/ui/sidebar";
 import Permissions from "./settings/Permissions";
 
@@ -32,48 +31,46 @@ const Settings = () => {
         <p className="text-muted-foreground">Manage your application settings</p>
       </div>
       
-      <SidebarProvider>
-        <div className="flex w-full">
-          <Sidebar className="w-64 border-r">
-            <SidebarContent>
-              <SidebarGroup>
-                <SidebarGroupLabel>Settings</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {settingsNavItems.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={location.pathname === item.path}
-                        >
-                          <Link to={item.path}>
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            </SidebarContent>
-          </Sidebar>
+      <div className="flex">
+        <Sidebar className="w-64 border-r">
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Settings</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {settingsNavItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === item.path}
+                      >
+                        <Link to={item.path}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
 
-          <div className="flex-1">
-            <Routes>
-              <Route path="/permissions" element={<Permissions />} />
-              <Route
-                path="/"
-                element={
-                  <div className="p-6 text-muted-foreground">
-                    Select a settings category from the sidebar
-                  </div>
-                }
-              />
-            </Routes>
-          </div>
+        <div className="flex-1">
+          <Routes>
+            <Route path="/permissions" element={<Permissions />} />
+            <Route
+              path="/"
+              element={
+                <div className="p-6 text-muted-foreground">
+                  Select a settings category from the sidebar
+                </div>
+              }
+            />
+          </Routes>
         </div>
-      </SidebarProvider>
+      </div>
     </div>
   );
 };
