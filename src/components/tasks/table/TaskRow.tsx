@@ -29,7 +29,7 @@ export const TaskRow = ({
         </Button>
         <span onClick={() => onTaskClick(task)}>{task.title}</span>
       </TableCell>
-      <TableCell onClick={(e) => e.stopPropagation()}>
+      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
         <TaskStatusSelect
           status={task.status}
           onStatusChange={(value) => onStatusChange(task.id, value)}
