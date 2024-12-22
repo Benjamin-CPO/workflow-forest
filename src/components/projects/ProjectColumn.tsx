@@ -5,9 +5,10 @@ import { Droppable, Draggable } from '@hello-pangea/dnd';
 interface ProjectColumnProps {
   client: Client;
   projects: Project[];
+  onDeleteProject: (projectId: number) => void;
 }
 
-export const ProjectColumn = ({ client, projects }: ProjectColumnProps) => {
+export const ProjectColumn = ({ client, projects, onDeleteProject }: ProjectColumnProps) => {
   return (
     <td className="p-2 min-w-[250px] w-[250px]">
       <Droppable droppableId={client.id.toString()}>
@@ -40,6 +41,7 @@ export const ProjectColumn = ({ client, projects }: ProjectColumnProps) => {
                       >
                         <ProjectCard 
                           {...project}
+                          onDelete={() => onDeleteProject(project.id)}
                         />
                       </div>
                     )}
