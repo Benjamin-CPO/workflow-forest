@@ -22,7 +22,7 @@ export const KanbanColumn = ({
   return (
     <div className={`${bgColor} rounded-lg p-4`}>
       <div className={`font-semibold text-sm p-2 rounded-lg ${textColor}`}>
-        {label}
+        {label} ({items.length})
       </div>
       <Droppable droppableId={status}>
         {(provided) => (
@@ -35,7 +35,7 @@ export const KanbanColumn = ({
               const draggableId = isSubtaskWithParent(item) 
                 ? `subtask-${item.id}-${item.parentTaskId}`
                 : `task-${item.id}`;
-                
+              
               return (
                 <Draggable 
                   key={draggableId}
@@ -47,6 +47,7 @@ export const KanbanColumn = ({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
+                      className="transition-transform"
                     >
                       <KanbanCard 
                         item={item}

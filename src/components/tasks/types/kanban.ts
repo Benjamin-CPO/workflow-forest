@@ -12,13 +12,6 @@ export interface SubTaskWithParent extends SubTask {
 
 export type KanbanItem = TaskWithMilestone | SubTaskWithParent;
 
-export interface Column {
-  status: string;
-  label: string;
-  bgColor: string;
-  textColor: string;
-}
-
 export const isSubtaskWithParent = (item: KanbanItem): item is SubTaskWithParent => {
   return 'parentTaskTitle' in item;
 };

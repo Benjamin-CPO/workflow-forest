@@ -3,7 +3,6 @@ import { useState } from "react";
 import { KanbanColumn } from "./kanban/KanbanColumn";
 import { MilestoneFilter } from "./kanban/MilestoneFilter";
 import { KanbanProvider } from "./kanban/KanbanContext";
-import { useDragAndDrop } from "./kanban/useDragAndDrop";
 import { columns } from "./kanban/config";
 import { KanbanViewProps } from "./kanban/types";
 import { KanbanItem } from "./types/kanban";
@@ -17,7 +16,20 @@ export const KanbanView = ({
   const [selectedMilestoneIds, setSelectedMilestoneIds] = useState<Set<number>>(new Set());
   const [viewMode, setViewMode] = useState<'tasks' | 'subtasks'>('tasks');
   
-  const { handleDragEnd } = useDragAndDrop(onStatusChange, onSubtaskStatusChange, viewMode);
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const { draggableId, destination } = result;
+    const newStatus = destination.droppableId;
+
+    if (draggableId.startsWith('subtask-')) {
+      const [_, subtaskId, parentTaskId] = draggableId.split('-');
+      onSubtaskStatusChange(Number(parentTaskId), Number(subtaskId), newStatus);
+    } else if (draggableId.startsWith('task-')) {
+      const taskId = Number(draggableId.split('-')[1]);
+      onStatusChange(taskId, newStatus);
+    }
+  };
 
   const filteredTasks = selectedMilestoneIds.size === 0
     ? milestones.flatMap(milestone => 
