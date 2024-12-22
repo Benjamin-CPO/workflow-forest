@@ -56,6 +56,23 @@ export const KanbanView = ({
     }))
   );
 
+  const handleDragEnd = (result: any) => {
+    if (!result.destination || viewMode === 'subtasks') return;
+
+    const { draggableId, destination } = result;
+    const [type, idStr] = draggableId.split('-');
+    const newStatus = destination.droppableId;
+    const numericId = parseInt(idStr, 10);
+
+    if (type === 'task') {
+      onStatusChange(numericId, newStatus);
+      toast({
+        title: "Task Updated",
+        description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
+      });
+    }
+  };
+
   const toggleMilestone = (milestoneId: number) => {
     setSelectedMilestoneIds(prev => {
       const newSet = new Set(prev);
@@ -66,26 +83,6 @@ export const KanbanView = ({
       }
       return newSet;
     });
-  };
-
-  const handleDragEnd = (result: any) => {
-    if (!result.destination || viewMode === 'subtasks') return;
-
-    const { draggableId, destination } = result;
-    const [type, idStr] = draggableId.split('-');
-    const newStatus = destination.droppableId;
-    const numericId = parseInt(idStr, 10);
-
-    if (type === 'task') {
-      const task = filteredTasks.find(t => t.id === numericId);
-      if (task) {
-        onStatusChange(numericId, newStatus);
-        toast({
-          title: "Task Updated",
-          description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
-        });
-      }
-    }
   };
 
   const currentItems = viewMode === 'tasks' ? filteredTasks : flattenedSubtasks;
