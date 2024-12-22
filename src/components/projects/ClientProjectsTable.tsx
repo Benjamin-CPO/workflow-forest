@@ -7,7 +7,7 @@ import { ProjectTableHeader } from "./ProjectTableHeader";
 import { ProjectTableBody } from "./ProjectTableBody";
 
 export const ClientProjectsTable = () => {
-  const { projects, clients, updateProjectPriority } = useProjectOperations();
+  const { projects, clients, updateProjectPriority, deleteProject } = useProjectOperations();
   const [selectedClientIds, setSelectedClientIds] = useState<string[]>(["all"]);
 
   const handleClientToggle = (clientId: string) => {
@@ -73,7 +73,10 @@ export const ClientProjectsTable = () => {
         <div className="overflow-x-auto">
           <Table className="border-collapse">
             <ProjectTableHeader clients={filteredProjectsByClient} />
-            <ProjectTableBody clients={filteredProjectsByClient} />
+            <ProjectTableBody 
+              clients={filteredProjectsByClient} 
+              onDeleteProject={deleteProject}
+            />
           </Table>
         </div>
       </DragDropContext>

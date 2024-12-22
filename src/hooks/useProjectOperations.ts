@@ -61,9 +61,21 @@ export const useProjectOperations = () => {
     }
   };
 
+  const deleteProject = (projectId: number) => {
+    const updatedProjects = projects.filter(project => project.id !== projectId);
+    setProjects(updatedProjects);
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
+    
+    // Clean up related data
+    localStorage.removeItem(`project-${projectId}-milestones`);
+    
+    toast.success("Project deleted successfully");
+  };
+
   return {
     projects,
     clients,
-    updateProjectPriority
+    updateProjectPriority,
+    deleteProject
   };
 };
