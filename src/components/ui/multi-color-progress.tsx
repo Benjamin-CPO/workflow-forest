@@ -47,9 +47,9 @@ const MultiColorProgress = React.forwardRef<
         ))}
       </div>
     </ProgressPrimitive.Root>
-  )
-}))
+  );
+});
 
-MultiColorProgress.displayName = "MultiColorProgress"
+MultiColorProgress.displayName = "MultiColorProgress";
 
-export { MultiColorProgress }
+export { MultiColorProgress };
