@@ -2,12 +2,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface Task {
   id: number;
   title: string;
   status: string;
   dueDate: string;
+  subtasks?: SubTask[];
+}
+
+interface SubTask {
+  id: number;
+  title: string;
+  status: string;
 }
 
 interface Milestone {
@@ -24,6 +32,7 @@ interface KanbanViewProps {
 
 export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanViewProps) => {
   const [selectedMilestoneIds, setSelectedMilestoneIds] = useState<Set<number>>(new Set());
+  const [viewMode, setViewMode] = useState<'tasks' | 'subtasks'>('tasks');
 
   const filteredTasks = selectedMilestoneIds.size === 0
     ? milestones.flatMap(milestone => 
@@ -40,6 +49,14 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
             milestoneTitle: milestone.title
           }))
         );
+
+  const flattenedSubtasks = filteredTasks.flatMap(task => 
+    (task.subtasks || []).map(subtask => ({
+      ...subtask,
+      parentTaskTitle: task.title,
+      milestoneTitle: task.milestoneTitle
+    }))
+  );
 
   const toggleMilestone = (milestoneId: number) => {
     setSelectedMilestoneIds(prev => {
@@ -65,26 +82,40 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
     if (!result.destination) return;
 
     const { draggableId, destination } = result;
-    const newStatus = destination.droppableId;
     const taskId = parseInt(draggableId);
 
-    onStatusChange(taskId, newStatus);
+    onStatusChange(taskId, destination.droppableId);
   };
 
   return (
     <div className="space-y-4">
-      <div className="pt-8 px-4 border-t">
-        <div className="flex gap-2 overflow-x-auto">
-          {milestones.map(milestone => (
-            <Button
-              key={milestone.id}
-              variant={selectedMilestoneIds.has(milestone.id) ? "default" : "outline"}
-              onClick={() => toggleMilestone(milestone.id)}
-              className="whitespace-nowrap"
-            >
-              {milestone.title}
-            </Button>
-          ))}
+      <div className="pt-8 px-4 border-t space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 overflow-x-auto">
+            {milestones.map(milestone => (
+              <Button
+                key={milestone.id}
+                variant={selectedMilestoneIds.has(milestone.id) ? "default" : "outline"}
+                onClick={() => toggleMilestone(milestone.id)}
+                className="whitespace-nowrap"
+              >
+                {milestone.title}
+              </Button>
+            ))}
+          </div>
+          <ToggleGroup 
+            type="single" 
+            value={viewMode}
+            onValueChange={(value) => value && setViewMode(value as 'tasks' | 'subtasks')}
+            className="border rounded-lg"
+          >
+            <ToggleGroupItem value="tasks" aria-label="View tasks">
+              Tasks
+            </ToggleGroupItem>
+            <ToggleGroupItem value="subtasks" aria-label="View subtasks">
+              Subtasks
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
 
@@ -102,12 +133,12 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
                     {...provided.droppableProps}
                     className="space-y-2 min-h-[100px]"
                   >
-                    {filteredTasks
-                      .filter(task => task.status === column.status)
-                      .map((task, index) => (
+                    {(viewMode === 'tasks' ? filteredTasks : flattenedSubtasks)
+                      .filter(item => item.status === column.status)
+                      .map((item, index) => (
                         <Draggable 
-                          key={task.id} 
-                          draggableId={task.id.toString()} 
+                          key={item.id} 
+                          draggableId={item.id.toString()} 
                           index={index}
                         >
                           {(provided) => (
@@ -118,11 +149,24 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
                             >
                               <Card 
                                 className="cursor-pointer hover:shadow-md transition-shadow bg-white"
-                                onClick={() => onTaskClick(task)}
+                                onClick={() => viewMode === 'tasks' && onTaskClick(item as Task)}
                               >
                                 <CardContent className="p-3 space-y-2">
-                                  <div className="font-medium text-sm">{task.title}</div>
-                                  <div className="text-xs text-muted-foreground">{task.milestoneTitle}</div>
+                                  <div className="font-medium text-sm">{item.title}</div>
+                                  {viewMode === 'tasks' ? (
+                                    <div className="text-xs text-muted-foreground">
+                                      {item.milestoneTitle}
+                                    </div>
+                                  ) : (
+                                    <div className="space-y-1">
+                                      <div className="text-xs text-muted-foreground">
+                                        {item.milestoneTitle}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        Task: {item.parentTaskTitle}
+                                      </div>
+                                    </div>
+                                  )}
                                 </CardContent>
                               </Card>
                             </div>
