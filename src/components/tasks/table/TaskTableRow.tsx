@@ -6,6 +6,7 @@ import { TaskStatusSelect } from "@/components/TaskStatusSelect";
 import { Task, SubTask } from "@/types/project";
 import { SubtaskRow } from "./SubtaskRow";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 interface TaskTableRowProps {
   task: Task;
@@ -28,9 +29,26 @@ export const TaskTableRow = ({
 }: TaskTableRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
+  const { toast } = useToast();
 
   const handleAddSubtask = () => {
-    if (!onAddSubtask || !newSubtaskTitle.trim()) return;
+    if (!onAddSubtask) {
+      toast({
+        title: "Error",
+        description: "Add subtask functionality is not available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newSubtaskTitle.trim()) {
+      toast({
+        title: "Error",
+        description: "Subtask title cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const newSubtask: SubTask = {
       id: Math.random(),
@@ -40,6 +58,11 @@ export const TaskTableRow = ({
 
     onAddSubtask(task.id, newSubtask);
     setNewSubtaskTitle("");
+    
+    toast({
+      title: "Success",
+      description: "Subtask added successfully",
+    });
   };
 
   const handleToggleExpand = (e: React.MouseEvent) => {
