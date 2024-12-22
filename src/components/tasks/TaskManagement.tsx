@@ -148,7 +148,11 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
       tasks: milestone.tasks.map(task =>
-        task.id === taskId ? { ...task, ...data } : task
+        task.id === taskId ? { 
+          ...task, 
+          ...data,
+          subtasks: task.subtasks || [] // Ensure subtasks is always present
+        } : task
       ),
     }));
     setMilestones(updatedMilestones);
