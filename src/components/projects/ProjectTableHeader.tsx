@@ -12,7 +12,7 @@ export const ProjectTableHeader = ({ clients }: ProjectTableHeaderProps) => {
         {clients.map(({ client }) => (
           <TableHead 
             key={client.id} 
-            className="text-left whitespace-nowrap min-w-[250px] w-[250px]"
+            className="h-14 min-w-[250px] w-[250px] align-top"
           >
             {client.name}
           </TableHead>

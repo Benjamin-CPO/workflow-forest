@@ -131,7 +131,7 @@ export const ClientProjectsTable = () => {
       />
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="overflow-x-auto">
-          <Table>
+          <Table className="border-collapse">
             <ProjectTableHeader clients={filteredProjectsByClient} />
             <ProjectTableBody clients={filteredProjectsByClient} />
           </Table>

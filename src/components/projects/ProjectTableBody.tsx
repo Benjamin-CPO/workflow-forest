@@ -1,4 +1,4 @@
-import { TableBody, TableRow } from "@/components/ui/table";
+import { TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { Client, Project } from "@/types/project";
 import { ProjectColumn } from "./ProjectColumn";
 
@@ -12,13 +12,17 @@ interface ProjectTableBodyProps {
 export const ProjectTableBody = ({ clients }: ProjectTableBodyProps) => {
   return (
     <TableBody>
-      <TableRow className="align-top">
+      <TableRow>
         {clients.map(({ client, projects: clientProjects }) => (
-          <ProjectColumn
-            key={client.id}
-            client={client}
-            projects={clientProjects}
-          />
+          <TableCell 
+            key={client.id} 
+            className="align-top min-w-[250px] w-[250px] p-0"
+          >
+            <ProjectColumn
+              client={client}
+              projects={clientProjects}
+            />
+          </TableCell>
         ))}
       </TableRow>
     </TableBody>
