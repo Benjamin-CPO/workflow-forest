@@ -65,11 +65,14 @@ export const KanbanView = ({
     const numericId = parseInt(idStr, 10);
 
     if (type === 'task' && viewMode === 'tasks') {
-      onStatusChange(numericId, newStatus);
-      toast({
-        title: "Task Updated",
-        description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
-      });
+      const task = filteredTasks.find(t => t.id === numericId);
+      if (task) {
+        onStatusChange(numericId, newStatus);
+        toast({
+          title: "Task Updated",
+          description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
+        });
+      }
     } else if (type === 'subtask' && viewMode === 'subtasks') {
       const subtask = flattenedSubtasks.find(st => st.id === numericId);
       if (subtask) {
