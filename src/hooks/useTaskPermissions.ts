@@ -14,8 +14,22 @@ export const useTaskPermissions = () => {
   const { impersonatedUser } = useImpersonation();
 
   const getStoredPermissions = () => {
-    const storedPermissions = localStorage.getItem('taskPermissions');
-    return storedPermissions ? JSON.parse(storedPermissions) : defaultPermissions;
+    try {
+      const storedPermissions = localStorage.getItem('taskPermissions');
+      if (!storedPermissions) {
+        localStorage.setItem('taskPermissions', JSON.stringify(defaultPermissions));
+        return defaultPermissions;
+      }
+      const parsedPermissions = JSON.parse(storedPermissions);
+      // Validate the structure
+      if (typeof parsedPermissions === 'object' && Object.keys(parsedPermissions).length > 0) {
+        return parsedPermissions;
+      }
+      return defaultPermissions;
+    } catch (error) {
+      console.error('Error reading permissions:', error);
+      return defaultPermissions;
+    }
   };
 
   const hasPermission = (permission: Permission): boolean => {
