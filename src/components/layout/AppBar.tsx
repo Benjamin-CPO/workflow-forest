@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
 
-const AppBar = () => {
+export const AppBar = () => {
   const [impersonatedUser, setImpersonatedUser] = React.useState<{ name: string; role: string } | null>(null);
 
   React.useEffect(() => {
@@ -45,5 +45,3 @@ const AppBar = () => {
     </header>
   );
 };
-
-export default AppBar;
