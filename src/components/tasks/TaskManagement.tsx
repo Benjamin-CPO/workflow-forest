@@ -16,6 +16,10 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const [view, setView] = useState<"list" | "kanban">("list");
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handleAddMilestone = () => {
@@ -153,6 +157,14 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       <TaskDialogsContainer
         milestones={milestones}
         setMilestones={setMilestones}
+        isAddDialogOpen={isAddDialogOpen}
+        setIsAddDialogOpen={setIsAddDialogOpen}
+        isEditDialogOpen={isEditDialogOpen}
+        setIsEditDialogOpen={setIsEditDialogOpen}
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+        selectedTask={selectedTask}
+        setSelectedTask={setSelectedTask}
       />
 
       <AddMilestoneDialog

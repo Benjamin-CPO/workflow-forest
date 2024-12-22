@@ -1,21 +1,32 @@
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { Task, Milestone } from "@/types/project";
 import { TaskDialogs } from "../TaskDialogs";
+import { useToast } from "@/hooks/use-toast";
 
 interface TaskDialogsContainerProps {
   milestones: Milestone[];
   setMilestones: (milestones: Milestone[]) => void;
+  isAddDialogOpen: boolean;
+  setIsAddDialogOpen: (open: boolean) => void;
+  isEditDialogOpen: boolean;
+  setIsEditDialogOpen: (open: boolean) => void;
+  isDeleteDialogOpen: boolean;
+  setIsDeleteDialogOpen: (open: boolean) => void;
+  selectedTask: Task | null;
+  setSelectedTask: (task: Task | null) => void;
 }
 
 export const TaskDialogsContainer = ({
   milestones,
   setMilestones,
+  isAddDialogOpen,
+  setIsAddDialogOpen,
+  isEditDialogOpen,
+  setIsEditDialogOpen,
+  isDeleteDialogOpen,
+  setIsDeleteDialogOpen,
+  selectedTask,
+  setSelectedTask,
 }: TaskDialogsContainerProps) => {
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handleAddTask = (data: { title: string; dueDate: string; milestoneId: number }) => {
@@ -40,6 +51,20 @@ export const TaskDialogsContainer = ({
     });
   };
 
+  const handleEditTask = (taskId: number, data: { title: string; status: string; dueDate: string }) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task =>
+        task.id === taskId ? { ...task, ...data } : task
+      ),
+    }));
+    setMilestones(updatedMilestones);
+    toast({
+      title: "Task updated",
+      description: "Task has been updated successfully.",
+    });
+  };
+
   const handleDeleteTask = () => {
     if (!selectedTask) return;
     
@@ -58,24 +83,6 @@ export const TaskDialogsContainer = ({
     });
   };
 
-  const handleTaskEdit = (taskId: number, data: { title: string; status: string; dueDate: string }) => {
-    const updatedMilestones = milestones.map(milestone => ({
-      ...milestone,
-      tasks: milestone.tasks.map(task =>
-        task.id === taskId ? { 
-          ...task, 
-          ...data,
-          subtasks: task.subtasks || [] 
-        } : task
-      ),
-    }));
-    setMilestones(updatedMilestones);
-    toast({
-      title: "Task updated",
-      description: "Task has been updated successfully.",
-    });
-  };
-
   return (
     <TaskDialogs
       isAddDialogOpen={isAddDialogOpen}
@@ -88,7 +95,7 @@ export const TaskDialogsContainer = ({
       setSelectedTask={setSelectedTask}
       milestones={milestones}
       onAddTask={handleAddTask}
-      onEditTask={handleTaskEdit}
+      onEditTask={handleEditTask}
       onDeleteTask={handleDeleteTask}
     />
   );
