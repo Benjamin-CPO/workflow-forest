@@ -11,7 +11,7 @@ export const ChatHeader = ({ isExpanded, onExpandChange }: ChatHeaderProps) => {
     <div className="p-4 border-b flex justify-between items-center">
       {isExpanded ? (
         <>
-          <h2 className="font-semibold">Project Chat</h2>
+          <h2 className="text-xl font-semibold">Project Chat</h2>
           <Button
             variant="ghost"
             size="icon"
