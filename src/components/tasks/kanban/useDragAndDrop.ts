@@ -23,8 +23,13 @@ export const useDragAndDrop = (
         description: `Task status changed to ${newStatus}`,
       });
     } else if (type === 'subtask' && viewMode === 'subtasks') {
-      const parentTaskId = parseInt(draggableId.split('-')[2], 10);
-      onSubtaskStatusChange(parentTaskId, numericId, newStatus);
+      // Extract parentTaskId from the draggableId
+      // Format is 'subtask-subtaskId-parentTaskId'
+      const parts = draggableId.split('-');
+      const parentTaskId = parseInt(parts[2], 10);
+      const subtaskId = parseInt(parts[1], 10);
+      
+      onSubtaskStatusChange(parentTaskId, subtaskId, newStatus);
       toast({
         title: "Subtask Updated",
         description: `Subtask status changed to ${newStatus}`,

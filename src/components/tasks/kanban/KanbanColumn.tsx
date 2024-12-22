@@ -1,6 +1,6 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { KanbanCard } from "./KanbanCard";
-import { KanbanItem } from "../types/kanban";
+import { KanbanItem, isSubtaskWithParent } from "../types/kanban";
 
 interface KanbanColumnProps {
   status: string;
@@ -31,26 +31,33 @@ export const KanbanColumn = ({
             {...provided.droppableProps}
             className="space-y-2 min-h-[100px]"
           >
-            {items.map((item, index) => (
-              <Draggable 
-                key={`${viewMode === 'subtasks' ? 'subtask' : 'task'}-${item.id}`}
-                draggableId={`${viewMode === 'subtasks' ? 'subtask' : 'task'}-${item.id}`}
-                index={index}
-              >
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <KanbanCard 
-                      item={item}
-                      isDragging={snapshot.isDragging}
-                    />
-                  </div>
-                )}
-              </Draggable>
-            ))}
+            {items.map((item, index) => {
+              // Create a draggableId that includes both subtask and parent task IDs for subtasks
+              const draggableId = isSubtaskWithParent(item) 
+                ? `subtask-${item.id}-${item.parentTaskId}`
+                : `task-${item.id}`;
+                
+              return (
+                <Draggable 
+                  key={draggableId}
+                  draggableId={draggableId}
+                  index={index}
+                >
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <KanbanCard 
+                        item={item}
+                        isDragging={snapshot.isDragging}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              );
+            })}
             {provided.placeholder}
           </div>
         )}
