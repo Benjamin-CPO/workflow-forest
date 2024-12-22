@@ -27,15 +27,10 @@ export const ProjectCard = ({
   description, 
   dueDate,
   status,
-  clientId,
   onDelete,
 }: ProjectCardProps) => {
   const navigate = useNavigate();
   const storedMilestones = JSON.parse(localStorage.getItem(`project-${id}-milestones`) || '[]');
-
-  const handleDelete = () => {
-    onDelete?.(id);
-  };
 
   return (
     <Card 
@@ -63,7 +58,7 @@ export const ProjectCard = ({
             </Tooltip>
           </TooltipProvider>
         </div>
-        <ProjectDeleteButton projectTitle={title} onDelete={handleDelete} />
+        <ProjectDeleteButton projectTitle={title} onDelete={() => onDelete?.(id)} />
       </CardHeader>
       <CardContent className="px-2.5 pb-2.5 space-y-3">
         <div className="space-y-1.5">
