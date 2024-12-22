@@ -2,16 +2,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
-import { Task } from "@/types/project";
-
-interface TaskRowProps {
-  task: Task;
-  isExpanded: boolean;
-  onToggleExpand: (taskId: number) => void;
-  onStatusChange: (taskId: number, newStatus: string) => void;
-  onTaskClick: (task: Task) => void;
-  onDeleteTask?: (taskId: number) => void;
-}
+import { TaskRowProps } from "../types/table";
 
 export const TaskRow = ({
   task,
