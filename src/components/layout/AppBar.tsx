@@ -1,4 +1,4 @@
-import { Bell, List, Search, User, Users } from "lucide-react";
+import { Bell, List, Search, User, Users, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 
@@ -12,6 +12,11 @@ const navigationItems = [
     title: "Clients",
     url: "/clients",
     icon: Users,
+  },
+  {
+    title: "Team",
+    url: "/team",
+    icon: UserPlus,
   },
 ];
 
