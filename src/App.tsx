@@ -13,27 +13,29 @@ import { Clients } from "./pages/Clients";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen flex flex-col w-full">
-          <AppBar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/projects/:id" element={<ProjectDetails />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/team" element={<Team />} />
-              <Route path="/settings/*" element={<Settings />} />
-            </Routes>
-          </main>
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="min-h-screen flex flex-col w-full">
+            <AppBar />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/projects/:id" element={<ProjectDetails />} />
+                <Route path="/clients" element={<Clients />} />
+                <Route path="/team" element={<Team />} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </main>
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
