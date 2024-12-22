@@ -27,6 +27,10 @@ const Settings = () => {
       actions: ["View", "Create", "Edit", "Delete", "Change Status"],
     },
     {
+      category: "Chat",
+      actions: ["View", "Send Messages", "Edit Messages", "Delete Messages"],
+    },
+    {
       category: "Team Members",
       actions: ["View", "Add", "Edit", "Remove"],
     },
@@ -91,7 +95,7 @@ const Settings = () => {
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-secondary">
               <TableHead className="w-[200px]">Feature / Action</TableHead>
               {roles.map((role) => (
                 <TableHead key={role} className="text-center">{role}</TableHead>
@@ -99,13 +103,19 @@ const Settings = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {permissions.map(({ category, actions }) => (
+            {permissions.map(({ category, actions }, categoryIndex) => (
               <React.Fragment key={category}>
                 {actions.map((action, actionIndex) => (
-                  <TableRow key={`${category}-${action}`}>
+                  <TableRow 
+                    key={`${category}-${action}`}
+                    className={`
+                      ${actionIndex === 0 ? 'border-t-4 border-secondary' : ''}
+                      ${categoryIndex % 2 === 0 ? 'bg-muted/50' : ''}
+                    `}
+                  >
                     <TableCell className="font-medium">
                       {actionIndex === 0 ? (
-                        <div className="font-bold text-muted-foreground mb-2">{category}</div>
+                        <div className="font-bold text-primary mb-2">{category}</div>
                       ) : null}
                       {action}
                     </TableCell>
