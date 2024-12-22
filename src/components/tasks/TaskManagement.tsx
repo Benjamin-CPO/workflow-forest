@@ -10,11 +10,18 @@ import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { List, Kanban } from "lucide-react";
 
+interface SubTask {
+  id: number;
+  title: string;
+  status: string;
+}
+
 interface Task {
   id: number;
   title: string;
   status: string;
   dueDate: string;
+  subtasks: SubTask[];
 }
 
 interface Milestone {
@@ -43,6 +50,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       title: data.title,
       status: "pending",
       dueDate: data.dueDate,
+      subtasks: [],
     };
 
     const updatedMilestones = milestones.map(milestone =>
@@ -56,6 +64,68 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       title: "Task added",
       description: "New task has been added successfully.",
     });
+  };
+
+  const handleDeleteTask = (taskId: number) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.filter(task => task.id !== taskId)
+    }));
+    setMilestones(updatedMilestones);
+  };
+
+  const handleAddSubtask = (taskId: number, subtask: { title: string; status: string }) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task => {
+        if (task.id === taskId) {
+          const newSubtask = {
+            id: Math.max(0, ...(task.subtasks?.map(st => st.id) || []), 0) + 1,
+            ...subtask
+          };
+          return {
+            ...task,
+            subtasks: [...(task.subtasks || []), newSubtask]
+          };
+        }
+        return task;
+      })
+    }));
+    setMilestones(updatedMilestones);
+  };
+
+  const handleDeleteSubtask = (taskId: number, subtaskId: number) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            subtasks: task.subtasks.filter(st => st.id !== subtaskId)
+          };
+        }
+        return task;
+      })
+    }));
+    setMilestones(updatedMilestones);
+  };
+
+  const handleSubtaskStatusChange = (taskId: number, subtaskId: number, newStatus: string) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            subtasks: task.subtasks.map(st =>
+              st.id === subtaskId ? { ...st, status: newStatus } : st
+            )
+          };
+        }
+        return task;
+      })
+    }));
+    setMilestones(updatedMilestones);
   };
 
   const handleAddMilestone = () => {
@@ -140,6 +210,10 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
               setSelectedTask(task);
               setIsEditDialogOpen(true);
             }}
+            onDeleteTask={handleDeleteTask}
+            onAddSubtask={handleAddSubtask}
+            onDeleteSubtask={handleDeleteSubtask}
+            onSubtaskStatusChange={handleSubtaskStatusChange}
           />
         ) : (
           <KanbanView

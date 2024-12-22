@@ -14,10 +14,17 @@ export interface Project {
   order?: number;
 }
 
+export interface SubTask {
+  id: number;
+  title: string;
+  status: string;
+}
+
 export interface Task {
   id: number;
   title: string;
   status: string;
   dueDate: string;
   projectId: number;
+  subtasks: SubTask[];
 }
