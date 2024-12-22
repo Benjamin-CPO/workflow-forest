@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { MilestoneTasks } from "./MilestoneTasks";
-import { KanbanView } from "./KanbanView";
+import { Task, Milestone } from "@/types/project";
 import { ViewControlsContainer } from "./containers/ViewControlsContainer";
 import { TaskDialogsContainer } from "./containers/TaskDialogsContainer";
 import { AddMilestoneDialog } from "./AddMilestoneDialog";
-import { Task, Milestone, SubTask } from "@/types/project";
+import { MilestoneTasks } from "./MilestoneTasks";
+import { KanbanView } from "./KanbanView";
+import { useMilestoneManagement } from "@/hooks/useMilestoneManagement";
 
 interface TaskManagementProps {
   milestones: Milestone[];
@@ -14,44 +14,24 @@ interface TaskManagementProps {
 
 export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProps) => {
   const [view, setView] = useState<"list" | "kanban">("list");
-  const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
-  const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { toast } = useToast();
 
-  const handleAddMilestone = () => {
-    if (!newMilestoneTitle.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a milestone title.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const newMilestone: Milestone = {
-      id: Math.max(0, ...milestones.map(m => m.id)) + 1,
-      title: newMilestoneTitle,
-      tasks: [],
-    };
-
-    setMilestones([...milestones, newMilestone]);
-    setNewMilestoneTitle("");
-    setIsMilestoneDialogOpen(false);
-    toast({
-      title: "Milestone added",
-      description: "New milestone has been added successfully.",
-    });
-  };
+  const {
+    isMilestoneDialogOpen,
+    setIsMilestoneDialogOpen,
+    newMilestoneTitle,
+    setNewMilestoneTitle,
+    handleAddMilestone,
+  } = useMilestoneManagement(milestones, setMilestones);
 
   const handleStatusChange = (taskId: number, newStatus: string) => {
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
       tasks: milestone.tasks.map(task =>
-        task.id === taskId ? { ...task, status: newStatus, subtasks: task.subtasks || [] } : task
+        task.id === taskId ? { ...task, status: newStatus } : task
       ),
     }));
     setMilestones(updatedMilestones);
@@ -73,42 +53,6 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       }),
     }));
     setMilestones(updatedMilestones);
-    toast({
-      title: "Status Updated",
-      description: "Subtask status has been updated successfully.",
-    });
-  };
-
-  const handleAddSubtask = (taskId: number, subtask: SubTask) => {
-    const updatedMilestones = milestones.map(milestone => ({
-      ...milestone,
-      tasks: milestone.tasks.map(task => {
-        if (task.id === taskId) {
-          return {
-            ...task,
-            subtasks: [...(task.subtasks || []), subtask],
-          };
-        }
-        return task;
-      }),
-    }));
-    setMilestones(updatedMilestones);
-  };
-
-  const handleDeleteSubtask = (taskId: number, subtaskId: number) => {
-    const updatedMilestones = milestones.map(milestone => ({
-      ...milestone,
-      tasks: milestone.tasks.map(task => {
-        if (task.id === taskId && task.subtasks) {
-          return {
-            ...task,
-            subtasks: task.subtasks.filter(subtask => subtask.id !== subtaskId),
-          };
-        }
-        return task;
-      }),
-    }));
-    setMilestones(updatedMilestones);
   };
 
   return (
@@ -124,29 +68,27 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
             milestones={milestones}
             onStatusChange={handleStatusChange}
             onTaskClick={(task: Task) => {
-              setSelectedTask({ ...task, subtasks: task.subtasks || [] });
+              setSelectedTask(task);
               setIsEditDialogOpen(true);
             }}
-            onDeleteTask={(taskId) => {
+            onDeleteTask={(taskId: number) => {
               const taskToDelete = milestones
                 .flatMap(m => m.tasks)
                 .find(t => t.id === taskId);
               if (taskToDelete) {
-                setSelectedTask({ ...taskToDelete, subtasks: taskToDelete.subtasks || [] });
+                setSelectedTask(taskToDelete);
                 setIsDeleteDialogOpen(true);
               }
             }}
             onSubtaskStatusChange={handleSubtaskStatusChange}
             onAddTask={() => setIsAddDialogOpen(true)}
-            onAddSubtask={handleAddSubtask}
-            onDeleteSubtask={handleDeleteSubtask}
           />
         ) : (
           <KanbanView
             milestones={milestones}
             onStatusChange={handleStatusChange}
             onTaskClick={(task: Task) => {
-              setSelectedTask({ ...task, subtasks: task.subtasks || [] });
+              setSelectedTask(task);
               setIsEditDialogOpen(true);
             }}
             onSubtaskStatusChange={handleSubtaskStatusChange}
