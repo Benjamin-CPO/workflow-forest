@@ -7,6 +7,7 @@ import { NewSubtaskRow } from "./table/NewSubtaskRow";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { TaskTableProps } from "./types/table";
+import { SubTask } from "@/types/project";
 
 export const TasksTable = ({ 
   tasks, 
@@ -51,11 +52,13 @@ export const TasksTable = ({
       return;
     }
 
-    onAddSubtask(taskId, {
-      id: Math.random(), // This will be replaced by the backend
+    const newSubtask: SubTask = {
+      id: Math.random(),
       title: newSubtaskTitles[taskId],
       status: "pending"
-    });
+    };
+
+    onAddSubtask(taskId, newSubtask);
 
     setNewSubtaskTitles(prev => ({
       ...prev,

@@ -5,7 +5,7 @@ export interface TaskTableProps {
   onStatusChange: (taskId: number, newStatus: string) => void;
   onTaskClick: (task: Task) => void;
   onDeleteTask?: (taskId: number) => void;
-  onAddSubtask?: (taskId: number, subtask: { title: string; status: string }) => void;
+  onAddSubtask?: (taskId: number, subtask: SubTask) => void;
   onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
   onSubtaskStatusChange?: (taskId: number, subtaskId: number, newStatus: string) => void;
   onAddTask?: () => void;
