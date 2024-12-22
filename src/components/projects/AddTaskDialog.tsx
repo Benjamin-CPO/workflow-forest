@@ -25,7 +25,7 @@ const formSchema = z.object({
 
 export const AddTaskDialog = ({ isOpen, onOpenChange, onSubmit, milestones }: AddTaskDialogProps) => {
   const { impersonatedUser } = useImpersonation();
-  const canCreateTask = !impersonatedUser || ["Admin", "Manager", "Designer"].includes(impersonatedUser.role);
+  const canCreateTask = !impersonatedUser || ["Admin", "Manager"].includes(impersonatedUser.role);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
