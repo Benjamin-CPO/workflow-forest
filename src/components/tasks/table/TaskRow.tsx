@@ -47,14 +47,14 @@ export const TaskRow = ({
           {task.title}
         </span>
       </TableCell>
-      <TableCell className="w-[200px]">
+      <TableCell className="text-left w-[200px]">
         <TaskStatusSelect
           status={task.status}
           onStatusChange={(newStatus) => onStatusChange(task.id, newStatus)}
         />
       </TableCell>
-      <TableCell className="w-[150px]">{task.dueDate}</TableCell>
-      <TableCell className="w-[100px]">
+      <TableCell className="text-left w-[150px]">{task.dueDate}</TableCell>
+      <TableCell className="text-right w-[100px]">
         <div className="flex justify-end">
           {onDeleteTask && (
             <Button
