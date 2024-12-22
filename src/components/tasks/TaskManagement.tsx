@@ -2,10 +2,9 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { MilestoneTasks } from "./MilestoneTasks";
 import { KanbanView } from "./KanbanView";
-import { TaskDialogs } from "./TaskDialogs";
-import { ViewControls } from "./ViewControls";
+import { ViewControlsContainer } from "./containers/ViewControlsContainer";
+import { TaskDialogsContainer } from "./containers/TaskDialogsContainer";
 import { AddMilestoneDialog } from "./AddMilestoneDialog";
-import { useTaskState } from "@/hooks/useTaskState";
 import { Task, Milestone, SubTask } from "@/types/project";
 
 interface TaskManagementProps {
@@ -18,20 +17,6 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
   const { toast } = useToast();
-
-  const {
-    isAddDialogOpen,
-    setIsAddDialogOpen,
-    selectedTask,
-    setSelectedTask,
-    isEditDialogOpen,
-    setIsEditDialogOpen,
-    isDeleteDialogOpen,
-    setIsDeleteDialogOpen,
-    handleAddTask,
-    handleDeleteTask,
-    handleTaskEdit,
-  } = useTaskState(milestones, setMilestones);
 
   const handleAddMilestone = () => {
     if (!newMilestoneTitle.trim()) {
@@ -124,9 +109,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
 
   return (
     <div className="h-full flex flex-col">
-      <ViewControls
-        view={view}
-        setView={setView}
+      <ViewControlsContainer
         onAddTask={() => setIsAddDialogOpen(true)}
         onAddMilestone={() => setIsMilestoneDialogOpen(true)}
       />
@@ -167,19 +150,9 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
         )}
       </div>
 
-      <TaskDialogs
-        isAddDialogOpen={isAddDialogOpen}
-        setIsAddDialogOpen={setIsAddDialogOpen}
-        isEditDialogOpen={isEditDialogOpen}
-        setIsEditDialogOpen={setIsEditDialogOpen}
-        isDeleteDialogOpen={isDeleteDialogOpen}
-        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
-        selectedTask={selectedTask}
-        setSelectedTask={setSelectedTask}
+      <TaskDialogsContainer
         milestones={milestones}
-        onAddTask={handleAddTask}
-        onEditTask={handleTaskEdit}
-        onDeleteTask={handleDeleteTask}
+        setMilestones={setMilestones}
       />
 
       <AddMilestoneDialog
