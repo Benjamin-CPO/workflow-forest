@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, GripVertical } from "lucide-react";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { ProjectDeleteButton } from "./ProjectDeleteButton";
+import { ProjectProgressBar } from "./ProjectProgressBar";
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +31,7 @@ export const ProjectCard = ({
   onDelete,
 }: ProjectCardProps) => {
   const navigate = useNavigate();
+  const storedMilestones = JSON.parse(localStorage.getItem(`project-${id}-milestones`) || '[]');
 
   const handleDelete = () => {
     onDelete?.(id);
@@ -37,7 +39,7 @@ export const ProjectCard = ({
 
   return (
     <Card 
-      className={`hover:shadow-md transition-shadow cursor-pointer group h-[150px] ${
+      className={`hover:shadow-md transition-shadow cursor-pointer group h-[200px] ${
         status === 'priority' ? 'bg-orange-50' : ''
       }`}
       onClick={() => navigate(`/projects/${id}`)}
@@ -63,13 +65,14 @@ export const ProjectCard = ({
         </div>
         <ProjectDeleteButton projectTitle={title} onDelete={handleDelete} />
       </CardHeader>
-      <CardContent className="px-2.5 pb-2.5">
+      <CardContent className="px-2.5 pb-2.5 space-y-3">
         <div className="space-y-1.5">
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-1" />
             Due {dueDate}
           </div>
         </div>
+        <ProjectProgressBar milestones={storedMilestones} />
       </CardContent>
     </Card>
   );
