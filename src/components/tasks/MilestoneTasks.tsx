@@ -1,57 +1,38 @@
-import { TasksTable } from "./TasksTable";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Task, Milestone } from "@/types/project";
+import { TasksTable } from "./TasksTable";
 
 interface MilestoneTasksProps {
   milestones: Milestone[];
   onStatusChange: (taskId: number, newStatus: string) => void;
   onTaskClick: (task: Task) => void;
   onDeleteTask?: (taskId: number) => void;
-  onAddSubtask?: (taskId: number, subtask: { title: string; status: string }) => void;
-  onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
   onSubtaskStatusChange?: (taskId: number, subtaskId: number, newStatus: string) => void;
+  onAddTask?: () => void;
 }
 
-export const MilestoneTasks = ({ 
-  milestones, 
-  onStatusChange, 
+export const MilestoneTasks = ({
+  milestones,
+  onStatusChange,
   onTaskClick,
   onDeleteTask,
-  onAddSubtask,
-  onDeleteSubtask,
-  onSubtaskStatusChange
+  onSubtaskStatusChange,
+  onAddTask,
 }: MilestoneTasksProps) => {
-  const getMilestoneProgress = (tasks: Task[]) => {
-    const completedTasks = tasks.filter(task => task.status === "completed").length;
-    return tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
-  };
-
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <div className="space-y-6">
       {milestones.map((milestone) => (
-        <AccordionItem key={milestone.id} value={milestone.id.toString()}>
-          <AccordionTrigger className="hover:no-underline">
-            <div className="flex items-center gap-4">
-              <span>{milestone.title}</span>
-              <Badge variant="secondary">
-                {getMilestoneProgress(milestone.tasks)}% Complete
-              </Badge>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <TasksTable
-              tasks={milestone.tasks}
-              onStatusChange={onStatusChange}
-              onTaskClick={onTaskClick}
-              onDeleteTask={onDeleteTask}
-              onAddSubtask={onAddSubtask}
-              onDeleteSubtask={onDeleteSubtask}
-              onSubtaskStatusChange={onSubtaskStatusChange}
-            />
-          </AccordionContent>
-        </AccordionItem>
+        <div key={milestone.id} className="bg-white rounded-lg shadow p-4">
+          <h3 className="text-lg font-semibold mb-4">{milestone.title}</h3>
+          <TasksTable
+            tasks={milestone.tasks}
+            onStatusChange={onStatusChange}
+            onTaskClick={onTaskClick}
+            onDeleteTask={onDeleteTask}
+            onSubtaskStatusChange={onSubtaskStatusChange}
+            onAddTask={onAddTask}
+          />
+        </div>
       ))}
-    </Accordion>
+    </div>
   );
 };

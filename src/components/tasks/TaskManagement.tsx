@@ -118,6 +118,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
               }
             }}
             onSubtaskStatusChange={handleSubtaskStatusChange}
+            onAddTask={() => setIsAddDialogOpen(true)}
           />
         ) : (
           <KanbanView
