@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus, Trash2, UserCog } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AddTeamMemberDialog } from "@/components/team/AddTeamMemberDialog";
 import { EditTeamMemberDialog } from "@/components/team/EditTeamMemberDialog";
@@ -15,16 +15,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const Team = () => {
   const [members, setMembers] = React.useState<Array<{ id: number; name: string; role: string }>>([]);
-  const [impersonatedUser, setImpersonatedUser] = React.useState<{ id: number; name: string; role: string } | null>(null);
 
   const loadMembers = () => {
     const storedMembers = JSON.parse(localStorage.getItem('teamMembers') || '[]');
@@ -42,18 +35,6 @@ const Team = () => {
     toast.success("Team member deleted successfully");
   };
 
-  const handleImpersonateUser = (member: { id: number; name: string; role: string }) => {
-    setImpersonatedUser(member);
-    localStorage.setItem('impersonatedUser', JSON.stringify(member));
-    toast.success(`Now viewing as ${member.name} (${member.role})`);
-  };
-
-  const stopImpersonation = () => {
-    setImpersonatedUser(null);
-    localStorage.removeItem('impersonatedUser');
-    toast.success("Stopped impersonation");
-  };
-
   return (
     <div className="container py-6">
       <div className="mb-6">
@@ -62,19 +43,12 @@ const Team = () => {
             <h1 className="text-3xl font-bold tracking-tight">Team</h1>
             <p className="text-muted-foreground">Manage your team members</p>
           </div>
-          <div className="flex gap-2">
-            {impersonatedUser && (
-              <Button variant="outline" onClick={stopImpersonation}>
-                Stop viewing as {impersonatedUser.name}
-              </Button>
-            )}
-            <AddTeamMemberDialog>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                New Team Member
-              </Button>
-            </AddTeamMemberDialog>
-          </div>
+          <AddTeamMemberDialog>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              New Team Member
+            </Button>
+          </AddTeamMemberDialog>
         </div>
       </div>
       <div className="grid gap-4">
@@ -88,18 +62,6 @@ const Team = () => {
               <p className="text-sm text-muted-foreground">{member.role}</p>
             </div>
             <div className="flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <UserCog className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => handleImpersonateUser(member)}>
-                    View as {member.name}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
               <EditTeamMemberDialog member={member} onMemberUpdated={loadMembers} />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
