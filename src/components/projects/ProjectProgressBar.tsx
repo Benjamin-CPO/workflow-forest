@@ -31,6 +31,7 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
     );
   }
 
+  // Calculate exact counts for each status
   const statusCounts = {
     pending: allTasks.filter(task => task.status === 'pending').length,
     'in-progress': allTasks.filter(task => task.status === 'in-progress').length,
@@ -39,30 +40,35 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
     completed: allTasks.filter(task => task.status === 'completed').length,
   };
 
+  // Calculate exact percentages with one decimal place
+  const calculatePercentage = (count: number) => {
+    return Number(((count / totalTasks) * 100).toFixed(1));
+  };
+
   const segments = [
     {
       color: 'bg-gray-300',
-      percentage: (statusCounts.pending / totalTasks) * 100
+      percentage: calculatePercentage(statusCounts.pending)
     },
     {
       color: 'bg-blue-500',
-      percentage: (statusCounts['in-progress'] / totalTasks) * 100
+      percentage: calculatePercentage(statusCounts['in-progress'])
     },
     {
       color: 'bg-red-500',
-      percentage: (statusCounts['need-revision'] / totalTasks) * 100
+      percentage: calculatePercentage(statusCounts['need-revision'])
     },
     {
       color: 'bg-yellow-500',
-      percentage: (statusCounts['pending-feedback'] / totalTasks) * 100
+      percentage: calculatePercentage(statusCounts['pending-feedback'])
     },
     {
       color: 'bg-green-500',
-      percentage: (statusCounts.completed / totalTasks) * 100
+      percentage: calculatePercentage(statusCounts.completed)
     }
   ].filter(segment => segment.percentage > 0);
 
-  const completionPercentage = Math.round((statusCounts.completed / totalTasks) * 100);
+  const completionPercentage = calculatePercentage(statusCounts.completed);
 
   const statusLabels = {
     pending: 'Pending',
@@ -109,7 +115,7 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
                 {statusLabels[status as keyof typeof statusLabels]}
               </span>
               <span className="text-sm text-muted-foreground">
-                ({Math.round((count / totalTasks) * 100)}%)
+                ({calculatePercentage(count)}%)
               </span>
             </div>
           )
