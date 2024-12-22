@@ -13,6 +13,7 @@ import { AddClientDialog } from "@/components/clients/AddClientDialog";
 import { EditClientDialog } from "@/components/clients/EditClientDialog";
 import { AddTeamMemberDialog } from "@/components/team/AddTeamMemberDialog";
 import { EditTeamMemberDialog } from "@/components/team/EditTeamMemberDialog";
+import Settings from "./pages/Settings";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -191,6 +192,7 @@ const App = () => (
               <Route path="/projects/:id" element={<ProjectDetails />} />
               <Route path="/clients" element={<Clients />} />
               <Route path="/team" element={<Team />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </main>
         </div>
