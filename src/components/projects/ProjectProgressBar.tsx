@@ -1,5 +1,8 @@
-import { MultiColorProgress } from "@/components/ui/multi-color-progress";
 import { cn } from "@/lib/utils";
+import { MultiColorProgress } from "@/components/ui/multi-color-progress";
+import { ProgressSegment } from "./progress/ProgressSegment";
+import { StatusLabel } from "./progress/StatusLabel";
+import { useProgressCalculation } from "./progress/useProgressCalculation";
 
 interface Task {
   id: number;
@@ -21,9 +24,8 @@ interface ProjectProgressBarProps {
 
 export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBarProps) => {
   const allTasks = milestones.flatMap(milestone => milestone.tasks);
-  const totalTasks = allTasks.length;
-
-  if (totalTasks === 0) {
+  
+  if (allTasks.length === 0) {
     return (
       <div className={cn("text-sm text-muted-foreground", className)}>
         No tasks available to show progress
@@ -31,44 +33,7 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
     );
   }
 
-  // Calculate exact counts for each status
-  const statusCounts = {
-    pending: allTasks.filter(task => task.status === 'pending').length,
-    'in-progress': allTasks.filter(task => task.status === 'in-progress').length,
-    'need-revision': allTasks.filter(task => task.status === 'need-revision').length,
-    'pending-feedback': allTasks.filter(task => task.status === 'pending-feedback').length,
-    completed: allTasks.filter(task => task.status === 'completed').length,
-  };
-
-  // Calculate exact percentages with one decimal place
-  const calculatePercentage = (count: number) => {
-    return Number(((count / totalTasks) * 100).toFixed(1));
-  };
-
-  const segments = [
-    {
-      color: 'bg-gray-300',
-      percentage: calculatePercentage(statusCounts.pending)
-    },
-    {
-      color: 'bg-blue-500',
-      percentage: calculatePercentage(statusCounts['in-progress'])
-    },
-    {
-      color: 'bg-red-500',
-      percentage: calculatePercentage(statusCounts['need-revision'])
-    },
-    {
-      color: 'bg-yellow-500',
-      percentage: calculatePercentage(statusCounts['pending-feedback'])
-    },
-    {
-      color: 'bg-green-500',
-      percentage: calculatePercentage(statusCounts.completed)
-    }
-  ].filter(segment => segment.percentage > 0);
-
-  const completionPercentage = calculatePercentage(statusCounts.completed);
+  const { statusCounts, segments, completionPercentage } = useProgressCalculation(allTasks);
 
   const statusLabels = {
     pending: 'Pending',
@@ -104,20 +69,12 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
       <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap gap-3 text-sm">
         {Object.entries(statusCounts).map(([status, count]) => (
           count > 0 && (
-            <div key={status} className="flex items-center gap-2">
-              <div 
-                className={cn(
-                  "w-3 h-3 rounded-full",
-                  statusColors[status as keyof typeof statusColors]
-                )} 
-              />
-              <span className="text-sm font-medium">
-                {statusLabels[status as keyof typeof statusLabels]}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                ({calculatePercentage(count)}%)
-              </span>
-            </div>
+            <StatusLabel
+              key={status}
+              color={statusColors[status as keyof typeof statusColors]}
+              label={statusLabels[status as keyof typeof statusLabels]}
+              percentage={Number(((count / allTasks.length) * 100).toFixed(1))}
+            />
           )
         ))}
       </div>
