@@ -3,12 +3,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface TaskStatusSelectProps {
   status: string;
   onStatusChange: (value: string) => void;
+  className?: string;  // Added className as an optional prop
 }
 
-export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectProps) => {
+export const TaskStatusSelect = ({ status, onStatusChange, className }: TaskStatusSelectProps) => {
   return (
     <Select defaultValue={status} onValueChange={onStatusChange}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className={`w-[180px] ${className || ''}`}>
         <SelectValue>
           <div className="flex items-center">
             <span className={`inline-flex items-center px-2 py-1 rounded ${
