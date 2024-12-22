@@ -9,20 +9,22 @@ export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectPro
   return (
     <Select defaultValue={status} onValueChange={onStatusChange}>
       <SelectTrigger className="w-[180px] justify-end">
-        <SelectValue className="text-right">
-          <span className={`inline-flex items-center px-2 py-1 rounded ${
-            status === "pending" ? "bg-gray-100 text-gray-700" :
-            status === "need-revision" ? "bg-red-100 text-red-700" :
-            status === "in-progress" ? "bg-orange-100 text-orange-700" :
-            status === "need-feedback" ? "bg-blue-100 text-blue-700" :
-            status === "completed" ? "bg-green-100 text-green-700" : ""
-          }`}>
-            {status === "pending" ? "Pending" :
-             status === "need-revision" ? "Need Revision" :
-             status === "in-progress" ? "In Progress" :
-             status === "need-feedback" ? "Need Feedback" :
-             status === "completed" ? "Completed" : status}
-          </span>
+        <SelectValue>
+          <div className="flex justify-end w-full">
+            <span className={`inline-flex items-center px-2 py-1 rounded ${
+              status === "pending" ? "bg-gray-100 text-gray-700" :
+              status === "need-revision" ? "bg-red-100 text-red-700" :
+              status === "in-progress" ? "bg-orange-100 text-orange-700" :
+              status === "need-feedback" ? "bg-blue-100 text-blue-700" :
+              status === "completed" ? "bg-green-100 text-green-700" : ""
+            }`}>
+              {status === "pending" ? "Pending" :
+               status === "need-revision" ? "Need Revision" :
+               status === "in-progress" ? "In Progress" :
+               status === "need-feedback" ? "Need Feedback" :
+               status === "completed" ? "Completed" : status}
+            </span>
+          </div>
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
