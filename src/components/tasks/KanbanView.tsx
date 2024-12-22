@@ -24,11 +24,26 @@ interface Milestone {
   tasks: Task[];
 }
 
+interface TaskWithMilestone extends Task {
+  milestoneTitle: string;
+}
+
+interface SubTaskWithParent extends SubTask {
+  parentTaskTitle: string;
+  milestoneTitle: string;
+}
+
+type KanbanItem = TaskWithMilestone | SubTaskWithParent;
+
 interface KanbanViewProps {
   milestones: Milestone[];
   onStatusChange: (taskId: number, newStatus: string) => void;
   onTaskClick: (task: Task) => void;
 }
+
+const isSubtaskWithParent = (item: KanbanItem): item is SubTaskWithParent => {
+  return 'parentTaskTitle' in item;
+};
 
 export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanViewProps) => {
   const [selectedMilestoneIds, setSelectedMilestoneIds] = useState<Set<number>>(new Set());
@@ -153,11 +168,7 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
                               >
                                 <CardContent className="p-3 space-y-2">
                                   <div className="font-medium text-sm">{item.title}</div>
-                                  {viewMode === 'tasks' ? (
-                                    <div className="text-xs text-muted-foreground">
-                                      {item.milestoneTitle}
-                                    </div>
-                                  ) : (
+                                  {isSubtaskWithParent(item) ? (
                                     <div className="space-y-1">
                                       <div className="text-xs text-muted-foreground">
                                         {item.milestoneTitle}
@@ -165,6 +176,10 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
                                       <div className="text-xs text-muted-foreground">
                                         Task: {item.parentTaskTitle}
                                       </div>
+                                    </div>
+                                  ) : (
+                                    <div className="text-xs text-muted-foreground">
+                                      {item.milestoneTitle}
                                     </div>
                                   )}
                                 </CardContent>
