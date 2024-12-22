@@ -9,7 +9,7 @@ export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectPro
   return (
     <Select defaultValue={status} onValueChange={onStatusChange}>
       <SelectTrigger className="w-[180px] justify-end">
-        <SelectValue>
+        <SelectValue className="text-right">
           <span className={`inline-flex items-center px-2 py-1 rounded ${
             status === "pending" ? "bg-gray-100 text-gray-700" :
             status === "need-revision" ? "bg-red-100 text-red-700" :
