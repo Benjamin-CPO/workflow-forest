@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
 import { Task, SubTask } from "@/types/project";
 import { SubtaskRow } from "./SubtaskRow";
-import { NewSubtaskRow } from "./NewSubtaskRow";
+import { Input } from "@/components/ui/input";
 
 interface TaskTableRowProps {
   task: Task;
@@ -45,6 +45,12 @@ export const TaskTableRow = ({
   const handleToggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleAddSubtask();
+    }
   };
 
   return (
@@ -92,22 +98,43 @@ export const TaskTableRow = ({
           )}
         </TableCell>
       </TableRow>
-      {isExpanded && task.subtasks?.map((subtask) => (
-        <SubtaskRow
-          key={subtask.id}
-          subtask={subtask}
-          taskId={task.id}
-          onStatusChange={onSubtaskStatusChange!}
-          onDelete={onDeleteSubtask!}
-        />
-      ))}
-      {isExpanded && onAddSubtask && (
-        <NewSubtaskRow
-          taskId={task.id}
-          newSubtaskTitle={newSubtaskTitle}
-          onNewSubtaskTitleChange={(_, title) => setNewSubtaskTitle(title)}
-          onAddSubtask={handleAddSubtask}
-        />
+      {isExpanded && (
+        <>
+          {task.subtasks?.map((subtask) => (
+            <SubtaskRow
+              key={subtask.id}
+              subtask={subtask}
+              taskId={task.id}
+              onStatusChange={onSubtaskStatusChange!}
+              onDelete={onDeleteSubtask!}
+            />
+          ))}
+          <TableRow className="bg-muted/30">
+            <TableCell className="w-[300px]">
+              <div className="flex items-center gap-2 pl-8">
+                <Input
+                  placeholder="Add a new subtask"
+                  value={newSubtaskTitle}
+                  onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="h-8"
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleAddSubtask}
+                  type="button"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add
+                </Button>
+              </div>
+            </TableCell>
+            <TableCell className="w-[200px]" />
+            <TableCell className="w-[150px]" />
+            <TableCell className="w-[100px]" />
+          </TableRow>
+        </>
       )}
     </>
   );
