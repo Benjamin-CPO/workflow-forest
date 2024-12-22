@@ -1,13 +1,13 @@
-import { TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const TaskTableHeader = () => {
   return (
     <TableHeader>
       <TableRow>
-        <TableCell className="w-[300px] font-medium">Title</TableCell>
-        <TableCell className="w-[200px] font-medium">Status</TableCell>
-        <TableCell className="w-[150px] font-medium">Due Date</TableCell>
-        <TableCell className="w-[100px] text-right font-medium">Actions</TableCell>
+        <TableHead className="w-[300px]">Title</TableHead>
+        <TableHead className="w-[200px]">Status</TableHead>
+        <TableHead className="w-[150px]">Due Date</TableHead>
+        <TableHead className="w-[100px] text-right">Actions</TableHead>
       </TableRow>
     </TableHeader>
   );

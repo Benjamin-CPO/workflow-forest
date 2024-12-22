@@ -2,7 +2,13 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { NewSubtaskRowProps } from "../types/table";
+
+interface NewSubtaskRowProps {
+  taskId: number;
+  newSubtaskTitle: string;
+  onNewSubtaskTitleChange: (taskId: number, title: string) => void;
+  onAddSubtask: (taskId: number) => void;
+}
 
 export const NewSubtaskRow = ({
   taskId,
@@ -19,8 +25,8 @@ export const NewSubtaskRow = ({
 
   return (
     <TableRow className="bg-muted/30">
-      <TableCell className="pl-10">
-        <div className="flex items-center gap-2">
+      <TableCell className="w-[300px]">
+        <div className="flex items-center gap-2 pl-8">
           <Input
             placeholder="New subtask title"
             value={newSubtaskTitle}
@@ -39,9 +45,9 @@ export const NewSubtaskRow = ({
           </Button>
         </div>
       </TableCell>
-      <TableCell></TableCell>
-      <TableCell></TableCell>
-      <TableCell></TableCell>
+      <TableCell className="w-[200px]" />
+      <TableCell className="w-[150px]" />
+      <TableCell className="w-[100px]" />
     </TableRow>
   );
 };

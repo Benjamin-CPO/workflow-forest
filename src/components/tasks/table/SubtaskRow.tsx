@@ -18,9 +18,11 @@ export const SubtaskRow = ({
   onDelete,
 }: SubtaskRowProps) => {
   return (
-    <TableRow className="group">
-      <TableCell className="w-[300px] pl-10">
-        <span className="truncate">{subtask.title}</span>
+    <TableRow className="group bg-muted/30">
+      <TableCell className="w-[300px]">
+        <div className="flex items-center gap-2 pl-8">
+          <span className="truncate">{subtask.title}</span>
+        </div>
       </TableCell>
       <TableCell className="w-[200px]">
         <TaskStatusSelect
@@ -30,18 +32,16 @@ export const SubtaskRow = ({
           }
         />
       </TableCell>
-      <TableCell className="w-[150px]"></TableCell>
+      <TableCell className="w-[150px]" />
       <TableCell className="w-[100px] text-right">
-        <div className="flex justify-end">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(taskId, subtask.id)}
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onDelete(taskId, subtask.id)}
+          className="opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </Button>
       </TableCell>
     </TableRow>
   );
