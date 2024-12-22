@@ -10,13 +10,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
+
+const ROLES = ["Admin", "Manager", "Designer"] as const;
+type Role = typeof ROLES[number];
 
 export function AddTeamMemberDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState<Role>("Designer");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +45,7 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
     
     setOpen(false);
     setName("");
-    setRole("");
+    setRole("Designer");
     toast.success("Team member added successfully");
   };
 
@@ -46,7 +56,7 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
         setOpen(newOpen);
         if (!newOpen) {
           setName("");
-          setRole("");
+          setRole("Designer");
         }
       }}
     >
@@ -72,13 +82,21 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
             </div>
             <div className="grid gap-2">
               <Label htmlFor="role">Role</Label>
-              <Input
-                id="role"
+              <Select
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
-                placeholder="Enter team member role"
-                required
-              />
+                onValueChange={(value: Role) => setRole(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROLES.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>

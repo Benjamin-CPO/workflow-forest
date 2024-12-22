@@ -10,9 +10,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
+
+const ROLES = ["Admin", "Manager", "Designer"] as const;
+type Role = typeof ROLES[number];
 
 interface EditTeamMemberDialogProps {
   member: {
@@ -26,7 +36,7 @@ interface EditTeamMemberDialogProps {
 export function EditTeamMemberDialog({ member, onMemberUpdated }: EditTeamMemberDialogProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(member.name);
-  const [role, setRole] = useState(member.role);
+  const [role, setRole] = useState<Role>(member.role as Role);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +60,7 @@ export function EditTeamMemberDialog({ member, onMemberUpdated }: EditTeamMember
         setOpen(newOpen);
         if (!newOpen) {
           setName(member.name);
-          setRole(member.role);
+          setRole(member.role as Role);
         }
       }}
     >
@@ -80,13 +90,21 @@ export function EditTeamMemberDialog({ member, onMemberUpdated }: EditTeamMember
             </div>
             <div className="grid gap-2">
               <Label htmlFor="role">Role</Label>
-              <Input
-                id="role"
+              <Select
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
-                placeholder="Enter team member role"
-                required
-              />
+                onValueChange={(value: Role) => setRole(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROLES.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
