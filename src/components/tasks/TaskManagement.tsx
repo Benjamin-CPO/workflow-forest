@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { TaskEditDialog } from "./TaskEditDialog";
+import { useToast } from "@/hooks/use-toast";
 import { MilestoneTasks } from "./MilestoneTasks";
 import { KanbanView } from "./KanbanView";
-import { AddTaskDialog } from "@/components/projects/AddTaskDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { List, Kanban } from "lucide-react";
 import { Task, Milestone } from "@/types/project";
+import { TaskDialogs } from "./TaskDialogs";
 
 interface TaskManagementProps {
   milestones: Milestone[];
@@ -17,9 +16,10 @@ interface TaskManagementProps {
 }
 
 export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
   const [view, setView] = useState<"list" | "kanban">("list");
@@ -31,7 +31,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       title: data.title,
       status: "pending",
       dueDate: data.dueDate,
-      subtasks: [], // Initialize empty subtasks array
+      subtasks: [],
     };
 
     const updatedMilestones = milestones.map(milestone =>
@@ -47,12 +47,22 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     });
   };
 
-  const handleDeleteTask = (taskId: number) => {
+  const handleDeleteTask = () => {
+    if (!selectedTask) return;
+    
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
-      tasks: milestone.tasks.filter(task => task.id !== taskId)
+      tasks: milestone.tasks.filter(task => task.id !== selectedTask.id)
     }));
+    
     setMilestones(updatedMilestones);
+    setIsDeleteDialogOpen(false);
+    setSelectedTask(null);
+    
+    toast({
+      title: "Task deleted",
+      description: "Task has been deleted successfully.",
+    });
   };
 
   const handleAddSubtask = (taskId: number, subtask: { title: string; status: string }) => {
@@ -151,7 +161,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
         task.id === taskId ? { 
           ...task, 
           ...data,
-          subtasks: task.subtasks || [] // Ensure subtasks is always present
+          subtasks: task.subtasks || [] 
         } : task
       ),
     }));
@@ -178,7 +188,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
             </ToggleGroup>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setIsDialogOpen(true)}>Add Task</Button>
+            <Button onClick={() => setIsAddDialogOpen(true)}>Add Task</Button>
             <Button variant="outline" onClick={() => setIsMilestoneDialogOpen(true)}>
               Add Milestone
             </Button>
@@ -195,7 +205,15 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
               setSelectedTask(task);
               setIsEditDialogOpen(true);
             }}
-            onDeleteTask={handleDeleteTask}
+            onDeleteTask={(taskId) => {
+              const taskToDelete = milestones
+                .flatMap(m => m.tasks)
+                .find(t => t.id === taskId);
+              if (taskToDelete) {
+                setSelectedTask(taskToDelete);
+                setIsDeleteDialogOpen(true);
+              }
+            }}
             onAddSubtask={handleAddSubtask}
             onDeleteSubtask={handleDeleteSubtask}
             onSubtaskStatusChange={handleSubtaskStatusChange}
@@ -212,21 +230,19 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
         )}
       </div>
 
-      <AddTaskDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onSubmit={handleAddTask}
+      <TaskDialogs
+        isAddDialogOpen={isAddDialogOpen}
+        setIsAddDialogOpen={setIsAddDialogOpen}
+        isEditDialogOpen={isEditDialogOpen}
+        setIsEditDialogOpen={setIsEditDialogOpen}
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+        selectedTask={selectedTask}
+        setSelectedTask={setSelectedTask}
         milestones={milestones}
-      />
-
-      <TaskEditDialog
-        task={selectedTask}
-        isOpen={isEditDialogOpen}
-        onClose={() => {
-          setIsEditDialogOpen(false);
-          setSelectedTask(null);
-        }}
-        onSave={handleTaskEdit}
+        onAddTask={handleAddTask}
+        onEditTask={handleTaskEdit}
+        onDeleteTask={handleDeleteTask}
       />
 
       <Dialog open={isMilestoneDialogOpen} onOpenChange={setIsMilestoneDialogOpen}>
