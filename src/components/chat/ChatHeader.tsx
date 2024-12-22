@@ -8,7 +8,7 @@ interface ChatHeaderProps {
 
 export const ChatHeader = ({ isExpanded, onExpandChange }: ChatHeaderProps) => {
   return (
-    <div className="p-4 border-b flex justify-between items-center">
+    <div className="p-4 border-b flex justify-between items-center h-[72px]">
       {isExpanded ? (
         <>
           <h2 className="text-xl font-semibold">Project Chat</h2>

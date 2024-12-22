@@ -11,8 +11,8 @@ interface ViewControlsProps {
 
 export const ViewControls = ({ view, setView, onAddTask, onAddMilestone }: ViewControlsProps) => {
   return (
-    <div className="sticky top-0 bg-background z-10 p-4 border-b">
-      <div className="flex justify-between items-center">
+    <div className="sticky top-0 bg-background z-10 border-b">
+      <div className="flex justify-between items-center p-4 h-[72px]">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-semibold">Tasks</h2>
           <ToggleGroup 
