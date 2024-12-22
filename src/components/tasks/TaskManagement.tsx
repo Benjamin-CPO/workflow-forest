@@ -9,26 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { List, Kanban } from "lucide-react";
-
-interface SubTask {
-  id: number;
-  title: string;
-  status: string;
-}
-
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  dueDate: string;
-  subtasks: SubTask[];
-}
-
-interface Milestone {
-  id: number;
-  title: string;
-  tasks: Task[];
-}
+import { Task, Milestone } from "@/types/project";
 
 interface TaskManagementProps {
   milestones: Milestone[];
@@ -45,7 +26,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   const { toast } = useToast();
 
   const handleAddTask = (data: { title: string; dueDate: string; milestoneId: number }) => {
-    const newTask = {
+    const newTask: Task = {
       id: Math.max(0, ...milestones.flatMap(m => m.tasks.map(t => t.id))) + 1,
       title: data.title,
       status: "pending",

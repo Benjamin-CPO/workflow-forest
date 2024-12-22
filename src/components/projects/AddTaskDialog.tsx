@@ -6,11 +6,7 @@ import { useForm } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-interface Milestone {
-  id: number;
-  title: string;
-}
+import { Milestone } from "@/types/project";
 
 interface AddTaskDialogProps {
   isOpen: boolean;

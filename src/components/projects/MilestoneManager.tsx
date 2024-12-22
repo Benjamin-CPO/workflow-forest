@@ -1,17 +1,5 @@
 import { TaskManagement } from "../tasks/TaskManagement";
-
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  dueDate: string;
-}
-
-interface Milestone {
-  id: number;
-  title: string;
-  tasks: Task[];
-}
+import { Task, Milestone } from "@/types/project";
 
 interface MilestoneManagerProps {
   milestones: Milestone[];

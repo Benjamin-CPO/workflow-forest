@@ -1,26 +1,7 @@
 import { TasksTable } from "./TasksTable";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-
-interface SubTask {
-  id: number;
-  title: string;
-  status: string;
-}
-
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  dueDate: string;
-  subtasks?: SubTask[];
-}
-
-interface Milestone {
-  id: number;
-  title: string;
-  tasks: Task[];
-}
+import { Task, Milestone } from "@/types/project";
 
 interface MilestoneTasksProps {
   milestones: Milestone[];
