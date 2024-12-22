@@ -31,6 +31,7 @@ interface TaskWithMilestone extends Task {
 interface SubTaskWithParent extends SubTask {
   parentTaskTitle: string;
   milestoneTitle: string;
+  parentTaskId: number;
 }
 
 type KanbanItem = TaskWithMilestone | SubTaskWithParent;
@@ -69,7 +70,8 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
     (task.subtasks || []).map(subtask => ({
       ...subtask,
       parentTaskTitle: task.title,
-      milestoneTitle: task.milestoneTitle
+      milestoneTitle: task.milestoneTitle,
+      parentTaskId: task.id
     }))
   );
 
@@ -98,8 +100,23 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
 
     const { draggableId, destination } = result;
     const taskId = parseInt(draggableId);
+    const newStatus = destination.droppableId;
 
-    onStatusChange(taskId, destination.droppableId);
+    if (viewMode === 'subtasks') {
+      // Find the parent task and update its subtask
+      const subtask = flattenedSubtasks.find(st => st.id === taskId);
+      if (subtask) {
+        const parentTask = filteredTasks.find(t => t.id === subtask.parentTaskId);
+        if (parentTask && parentTask.subtasks) {
+          const updatedSubtasks = parentTask.subtasks.map(st =>
+            st.id === taskId ? { ...st, status: newStatus } : st
+          );
+          onStatusChange(parentTask.id, parentTask.status); // Trigger update with unchanged status to update subtasks
+        }
+      }
+    } else {
+      onStatusChange(taskId, newStatus);
+    }
   };
 
   return (
