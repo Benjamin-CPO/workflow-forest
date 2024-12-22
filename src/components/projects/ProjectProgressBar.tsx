@@ -33,9 +33,9 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
 
   const statusCounts = {
     pending: allTasks.filter(task => task.status === 'pending').length,
-    'need-revision': allTasks.filter(task => task.status === 'need-revision').length,
     'in-progress': allTasks.filter(task => task.status === 'in-progress').length,
-    'need-feedback': allTasks.filter(task => task.status === 'need-feedback').length,
+    'need-revision': allTasks.filter(task => task.status === 'need-revision').length,
+    'pending-feedback': allTasks.filter(task => task.status === 'pending-feedback').length,
     completed: allTasks.filter(task => task.status === 'completed').length,
   };
 
@@ -45,16 +45,16 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
       percentage: (statusCounts.pending / totalTasks) * 100
     },
     {
+      color: 'bg-blue-500',
+      percentage: (statusCounts['in-progress'] / totalTasks) * 100
+    },
+    {
       color: 'bg-red-500',
       percentage: (statusCounts['need-revision'] / totalTasks) * 100
     },
     {
-      color: 'bg-orange-500',
-      percentage: (statusCounts['in-progress'] / totalTasks) * 100
-    },
-    {
-      color: 'bg-blue-500',
-      percentage: (statusCounts['need-feedback'] / totalTasks) * 100
+      color: 'bg-yellow-500',
+      percentage: (statusCounts['pending-feedback'] / totalTasks) * 100
     },
     {
       color: 'bg-green-500',
@@ -66,17 +66,17 @@ export const ProjectProgressBar = ({ milestones, className }: ProjectProgressBar
 
   const statusLabels = {
     pending: 'Pending',
-    'need-revision': 'Needs Revision',
     'in-progress': 'In Progress',
-    'need-feedback': 'Needs Feedback',
+    'need-revision': 'Need Revision',
+    'pending-feedback': 'Pending Feedback',
     completed: 'Completed'
   };
 
   const statusColors = {
     pending: 'bg-gray-300',
+    'in-progress': 'bg-blue-500',
     'need-revision': 'bg-red-500',
-    'in-progress': 'bg-orange-500',
-    'need-feedback': 'bg-blue-500',
+    'pending-feedback': 'bg-yellow-500',
     completed: 'bg-green-500'
   };
 

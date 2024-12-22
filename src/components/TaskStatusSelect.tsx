@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface TaskStatusSelectProps {
   status: string;
   onStatusChange: (value: string) => void;
-  className?: string;  // Added className as an optional prop
+  className?: string;
 }
 
 export const TaskStatusSelect = ({ status, onStatusChange, className }: TaskStatusSelectProps) => {
@@ -11,11 +11,11 @@ export const TaskStatusSelect = ({ status, onStatusChange, className }: TaskStat
     switch(currentStatus) {
       case "pending":
         return "bg-gray-100 text-gray-700";
-      case "need-revision":
-        return "bg-red-100 text-red-700";
       case "in-progress":
         return "bg-blue-100 text-blue-700";
-      case "in-review":
+      case "need-revision":
+        return "bg-red-100 text-red-700";
+      case "pending-feedback":
         return "bg-yellow-100 text-yellow-700";
       case "completed":
         return "bg-green-100 text-green-700";
@@ -46,14 +46,14 @@ export const TaskStatusSelect = ({ status, onStatusChange, className }: TaskStat
             In Progress
           </span>
         </SelectItem>
-        <SelectItem value="in-review">
-          <span className={`inline-flex items-center px-2 py-1 rounded ${getStatusStyles("in-review")}`}>
-            In Review
-          </span>
-        </SelectItem>
         <SelectItem value="need-revision">
           <span className={`inline-flex items-center px-2 py-1 rounded ${getStatusStyles("need-revision")}`}>
             Need Revision
+          </span>
+        </SelectItem>
+        <SelectItem value="pending-feedback">
+          <span className={`inline-flex items-center px-2 py-1 rounded ${getStatusStyles("pending-feedback")}`}>
+            Pending Feedback
           </span>
         </SelectItem>
         <SelectItem value="completed">
