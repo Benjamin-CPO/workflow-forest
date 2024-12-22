@@ -13,10 +13,18 @@ type Permission = "create_task" | "edit_task" | "delete_task" | "view_task" | "a
 export const useTaskPermissions = () => {
   const { impersonatedUser } = useImpersonation();
 
+  const getStoredPermissions = () => {
+    const storedPermissions = localStorage.getItem('taskPermissions');
+    return storedPermissions ? JSON.parse(storedPermissions) : defaultPermissions;
+  };
+
   const hasPermission = (permission: Permission): boolean => {
     if (!impersonatedUser) return true; // If not impersonating, allow all actions
+    
     const role = impersonatedUser.role.toLowerCase() as keyof typeof defaultPermissions;
-    return defaultPermissions[role]?.includes(permission) ?? false;
+    const currentPermissions = getStoredPermissions();
+    
+    return currentPermissions[role]?.includes(permission) ?? false;
   };
 
   return { hasPermission };
