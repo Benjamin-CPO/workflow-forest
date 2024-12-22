@@ -8,7 +8,6 @@ interface KanbanColumnProps {
   bgColor: string;
   textColor: string;
   items: KanbanItem[];
-  onTaskClick: (task: any) => void;
   viewMode: 'tasks' | 'subtasks';
 }
 
@@ -17,8 +16,7 @@ export const KanbanColumn = ({
   label, 
   bgColor, 
   textColor, 
-  items, 
-  onTaskClick,
+  items,
   viewMode
 }: KanbanColumnProps) => {
   return (
@@ -47,7 +45,6 @@ export const KanbanColumn = ({
                   >
                     <KanbanCard 
                       item={item}
-                      onTaskClick={onTaskClick}
                       isDragging={snapshot.isDragging}
                     />
                   </div>

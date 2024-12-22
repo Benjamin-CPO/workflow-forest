@@ -74,6 +74,7 @@ export const KanbanView = ({
                 key={column.status}
                 {...column}
                 items={currentItems.filter(item => item.status === column.status)}
+                viewMode={viewMode}
               />
             ))}
           </div>
