@@ -7,9 +7,10 @@ interface ProjectTableBodyProps {
     client: Client;
     projects: Project[];
   }[];
+  onDeleteProject: (projectId: number) => void;
 }
 
-export const ProjectTableBody = ({ clients }: ProjectTableBodyProps) => {
+export const ProjectTableBody = ({ clients, onDeleteProject }: ProjectTableBodyProps) => {
   return (
     <TableBody>
       <TableRow>
@@ -21,6 +22,7 @@ export const ProjectTableBody = ({ clients }: ProjectTableBodyProps) => {
             <ProjectColumn
               client={client}
               projects={clientProjects}
+              onDeleteProject={onDeleteProject}
             />
           </TableCell>
         ))}
