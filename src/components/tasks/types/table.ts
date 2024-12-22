@@ -8,6 +8,7 @@ export interface TaskTableProps {
   onAddSubtask?: (taskId: number, subtask: { title: string; status: string }) => void;
   onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
   onSubtaskStatusChange?: (taskId: number, subtaskId: number, newStatus: string) => void;
+  onAddTask?: () => void;
 }
 
 export interface SubtaskRowProps {

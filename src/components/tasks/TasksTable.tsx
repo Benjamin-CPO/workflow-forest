@@ -4,6 +4,8 @@ import { useToast } from "@/hooks/use-toast";
 import { TaskRow } from "./table/TaskRow";
 import { SubtaskRow } from "./table/SubtaskRow";
 import { NewSubtaskRow } from "./table/NewSubtaskRow";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { TaskTableProps } from "./types/table";
 
 export const TasksTable = ({ 
@@ -13,7 +15,8 @@ export const TasksTable = ({
   onDeleteTask,
   onAddSubtask,
   onDeleteSubtask,
-  onSubtaskStatusChange
+  onSubtaskStatusChange,
+  onAddTask
 }: TaskTableProps) => {
   const [expandedTasks, setExpandedTasks] = useState<Set<number>>(new Set());
   const [newSubtaskTitles, setNewSubtaskTitles] = useState<{ [key: number]: string }>({});
@@ -74,14 +77,29 @@ export const TasksTable = ({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableCell>Title</TableCell>
-          <TableCell className="text-right">Status</TableCell>
-          <TableCell>Due Date</TableCell>
-          <TableCell>Actions</TableCell>
+          <TableCell className="text-left w-[300px]">Title</TableCell>
+          <TableCell className="text-left w-[200px]">Status</TableCell>
+          <TableCell className="text-left w-[150px]">Due Date</TableCell>
+          <TableCell className="text-right w-[100px]">Actions</TableCell>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {tasks.map((task) => (
+        {tasks.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={4}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full flex items-center justify-center gap-2"
+                onClick={() => onAddTask?.()}
+              >
+                <Plus className="h-4 w-4" />
+                Add Task
+              </Button>
+            </TableCell>
+          </TableRow>
+        )}
+        {tasks.map((task, index) => (
           <>
             <TaskRow
               key={task.id}
@@ -92,25 +110,36 @@ export const TasksTable = ({
               onTaskClick={onTaskClick}
               onDeleteTask={onDeleteTask}
             />
+            {expandedTasks.has(task.id) && task.subtasks?.map((subtask) => (
+              <SubtaskRow
+                key={subtask.id}
+                subtask={subtask}
+                taskId={task.id}
+                onStatusChange={onSubtaskStatusChange!}
+                onDelete={handleDeleteSubtask}
+              />
+            ))}
             {expandedTasks.has(task.id) && (
-              <>
-                {task.subtasks?.map((subtask) => (
-                  <SubtaskRow
-                    key={subtask.id}
-                    subtask={subtask}
-                    taskId={task.id}
-                    onStatusChange={onSubtaskStatusChange!}
-                    onDelete={handleDeleteSubtask}
-                  />
-                ))}
-                <NewSubtaskRow
-                  taskId={task.id}
-                  newSubtaskTitle={newSubtaskTitles[task.id] || ""}
-                  onNewSubtaskTitleChange={handleNewSubtaskTitleChange}
-                  onAddSubtask={handleAddSubtask}
-                />
-              </>
+              <NewSubtaskRow
+                taskId={task.id}
+                newSubtaskTitle={newSubtaskTitles[task.id] || ""}
+                onNewSubtaskTitleChange={handleNewSubtaskTitleChange}
+                onAddSubtask={handleAddSubtask}
+              />
             )}
+            <TableRow>
+              <TableCell colSpan={4}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={() => onAddTask?.()}
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Task
+                </Button>
+              </TableCell>
+            </TableRow>
           </>
         ))}
       </TableBody>
