@@ -9,6 +9,7 @@ interface KanbanColumnProps {
   textColor: string;
   items: KanbanItem[];
   onTaskClick: (task: any) => void;
+  viewMode: 'tasks' | 'subtasks';
 }
 
 export const KanbanColumn = ({ 
@@ -17,7 +18,8 @@ export const KanbanColumn = ({
   bgColor, 
   textColor, 
   items, 
-  onTaskClick 
+  onTaskClick,
+  viewMode
 }: KanbanColumnProps) => {
   return (
     <div className={`space-y-4 ${bgColor} rounded-lg p-4`}>
@@ -33,8 +35,8 @@ export const KanbanColumn = ({
           >
             {items.map((item, index) => (
               <Draggable 
-                key={item.id} 
-                draggableId={item.id.toString()} 
+                key={`${viewMode === 'subtasks' ? 'subtask' : 'task'}-${item.id}`}
+                draggableId={`${viewMode === 'subtasks' ? 'subtask' : 'task'}-${item.id}`}
                 index={index}
               >
                 {(provided, snapshot) => (

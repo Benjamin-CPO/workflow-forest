@@ -17,7 +17,7 @@ const columns = [
   { status: "pending", label: "Pending", bgColor: "bg-gray-100", textColor: "text-gray-700" },
   { status: "need-revision", label: "Need Revision", bgColor: "bg-red-100", textColor: "text-red-700" },
   { status: "in-progress", label: "In Progress", bgColor: "bg-orange-100", textColor: "text-orange-700" },
-  { status: "need-feedback", label: "Need Feedback", bgColor: "bg-blue-100", textColor: "text-blue-700" },
+  { status: "in-review", label: "In Review", bgColor: "bg-blue-100", textColor: "text-blue-700" },
   { status: "completed", label: "Completed", bgColor: "bg-green-100", textColor: "text-green-700" }
 ];
 
@@ -72,18 +72,23 @@ export const KanbanView = ({
     if (!result.destination) return;
 
     const { draggableId, destination } = result;
-    const taskId = parseInt(draggableId);
+    const [type, id] = draggableId.split('-');
     const newStatus = destination.droppableId;
+    const numericId = parseInt(id);
 
-    if (viewMode === 'subtasks') {
-      const subtask = flattenedSubtasks.find(st => st.id === taskId);
+    if (type === 'subtask') {
+      const subtask = flattenedSubtasks.find(st => st.id === numericId);
       if (subtask) {
         onSubtaskStatusChange(subtask.parentTaskId, subtask.id, newStatus);
+        toast({
+          title: "Subtask Updated",
+          description: `Subtask status changed to ${columns.find(c => c.status === newStatus)?.label}`,
+        });
       }
     } else {
-      onStatusChange(taskId, newStatus);
+      onStatusChange(numericId, newStatus);
       toast({
-        title: "Status Updated",
+        title: "Task Updated",
         description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
       });
     }
@@ -109,6 +114,7 @@ export const KanbanView = ({
               {...column}
               items={items.filter(item => item.status === column.status)}
               onTaskClick={onTaskClick}
+              viewMode={viewMode}
             />
           ))}
         </div>
