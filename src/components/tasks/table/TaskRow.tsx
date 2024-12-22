@@ -28,6 +28,11 @@ export const TaskRow = ({
     onTaskClick(task);
   };
 
+  const handleToggleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleExpand(task.id);
+  };
+
   return (
     <TableRow className="group">
       <TableCell className="w-[300px]">
@@ -36,10 +41,7 @@ export const TaskRow = ({
             variant="ghost"
             size="icon"
             className="h-4 w-4"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleExpand(task.id);
-            }}
+            onClick={handleToggleExpand}
           >
             {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
