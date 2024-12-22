@@ -1,8 +1,17 @@
 import { TableCell, TableRow } from "@/components/ui/table";
+import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
-import { TaskRowProps } from "../types/table";
+import { Task } from "@/types/project";
+
+interface TaskRowProps {
+  task: Task;
+  isExpanded: boolean;
+  onToggleExpand: (taskId: number) => void;
+  onStatusChange: (taskId: number, newStatus: string) => void;
+  onTaskClick: (task: Task) => void;
+  onDeleteTask?: (taskId: number) => void;
+}
 
 export const TaskRow = ({
   task,
@@ -13,43 +22,51 @@ export const TaskRow = ({
   onDeleteTask,
 }: TaskRowProps) => {
   return (
-    <TableRow className="cursor-pointer hover:bg-muted/50">
+    <TableRow className="group">
       <TableCell className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
-          className="h-4 w-4 p-0"
+          className="h-4 w-4"
           onClick={() => onToggleExpand(task.id)}
         >
-          {isExpanded ? (
-            <ChevronDown className="h-4 w-4" />
+          {task.subtasks && task.subtasks.length > 0 ? (
+            isExpanded ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )
           ) : (
-            <ChevronRight className="h-4 w-4" />
+            <div className="w-4" /> // Placeholder to maintain alignment
           )}
         </Button>
-        <span onClick={() => onTaskClick(task)}>{task.title}</span>
+        <span
+          className="cursor-pointer hover:underline"
+          onClick={() => onTaskClick(task)}
+        >
+          {task.title}
+        </span>
       </TableCell>
-      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+      <TableCell className="text-right min-w-[200px]">
         <TaskStatusSelect
           status={task.status}
-          onStatusChange={(value) => onStatusChange(task.id, value)}
+          onStatusChange={(newStatus) => onStatusChange(task.id, newStatus)}
         />
       </TableCell>
       <TableCell>{task.dueDate}</TableCell>
       <TableCell>
-        {onDeleteTask && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDeleteTask(task.id);
-            }}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        )}
+        <div className="flex justify-end">
+          {onDeleteTask && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onDeleteTask(task.id)}
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          )}
+        </div>
       </TableCell>
     </TableRow>
   );
