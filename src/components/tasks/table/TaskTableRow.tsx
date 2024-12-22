@@ -42,6 +42,11 @@ export const TaskTableRow = ({
     setNewSubtaskTitle("");
   };
 
+  const handleToggleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <>
       <TableRow className="group">
@@ -51,16 +56,12 @@ export const TaskTableRow = ({
               variant="ghost"
               size="icon"
               className="h-4 w-4"
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={handleToggleExpand}
             >
-              {task.subtasks && task.subtasks.length > 0 ? (
-                isExpanded ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )
+              {isExpanded ? (
+                <ChevronDown className="h-4 w-4" />
               ) : (
-                <div className="w-4" />
+                <ChevronRight className="h-4 w-4" />
               )}
             </Button>
             <span
