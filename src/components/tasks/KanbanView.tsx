@@ -82,7 +82,7 @@ export const KanbanView = ({
       const subtask = flattenedSubtasks.find(st => st.id === numericId);
       console.log('Found subtask:', subtask);
       
-      if (subtask) {
+      if (subtask && subtask.parentTaskId) {
         console.log('Updating subtask status:', {
           parentTaskId: subtask.parentTaskId,
           subtaskId: numericId,
@@ -95,7 +95,7 @@ export const KanbanView = ({
           description: `Subtask status changed to ${columns.find(c => c.status === newStatus)?.label}`,
         });
       }
-    } else {
+    } else if (type === 'task') {
       const task = filteredTasks.find(t => t.id === numericId);
       console.log('Found task:', task);
       
@@ -108,8 +108,6 @@ export const KanbanView = ({
       }
     }
   };
-
-  const items = viewMode === 'tasks' ? filteredTasks : flattenedSubtasks;
 
   return (
     <div className="space-y-4">
