@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 const Settings = () => {
   // Define roles and permissions
-  const roles = ["Admin", "Manager", "Team Member", "Client"];
+  const roles = ["Admin", "Manager", "Designer", "Client"];
   const permissions = [
     {
       category: "Projects",
@@ -60,7 +60,7 @@ const Settings = () => {
           initialMatrix[key] = {
             Admin: true,
             Manager: action !== "Delete" && action !== "Remove",
-            "Team Member": action === "View" || action === "Create",
+            Designer: action === "View" || action === "Create",
             Client: action === "View",
           };
         });
