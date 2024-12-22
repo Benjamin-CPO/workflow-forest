@@ -14,38 +14,40 @@ export const TaskRow = ({
 }: TaskRowProps) => {
   return (
     <TableRow className="group">
-      <TableCell className="flex items-center gap-2 w-[300px]">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-4 w-4"
-          onClick={() => onToggleExpand(task.id)}
-        >
-          {task.subtasks && task.subtasks.length > 0 ? (
-            isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
+      <TableCell className="w-[300px]">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-4 w-4"
+            onClick={() => onToggleExpand(task.id)}
+          >
+            {task.subtasks && task.subtasks.length > 0 ? (
+              isExpanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )
             ) : (
-              <ChevronRight className="h-4 w-4" />
-            )
-          ) : (
-            <div className="w-4" />
-          )}
-        </Button>
-        <span
-          className="cursor-pointer hover:underline truncate"
-          onClick={() => onTaskClick(task)}
-        >
-          {task.title}
-        </span>
+              <div className="w-4" />
+            )}
+          </Button>
+          <span
+            className="cursor-pointer hover:underline truncate"
+            onClick={() => onTaskClick(task)}
+          >
+            {task.title}
+          </span>
+        </div>
       </TableCell>
-      <TableCell className="text-left w-[200px]">
+      <TableCell className="w-[200px]">
         <TaskStatusSelect
           status={task.status}
           onStatusChange={(newStatus) => onStatusChange(task.id, newStatus)}
         />
       </TableCell>
-      <TableCell className="text-left w-[150px]">{task.dueDate}</TableCell>
-      <TableCell className="text-right w-[100px]">
+      <TableCell className="w-[150px]">{task.dueDate}</TableCell>
+      <TableCell className="w-[100px] text-right">
         <div className="flex justify-end">
           {onDeleteTask && (
             <Button

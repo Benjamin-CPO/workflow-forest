@@ -4,10 +4,10 @@ export const TaskTableHeader = () => {
   return (
     <TableHeader>
       <TableRow>
-        <TableCell className="text-left w-[300px]">Title</TableCell>
-        <TableCell className="text-left w-[200px]">Status</TableCell>
-        <TableCell className="text-left w-[150px]">Due Date</TableCell>
-        <TableCell className="text-right w-[100px]">Actions</TableCell>
+        <TableCell className="w-[300px] font-medium">Title</TableCell>
+        <TableCell className="w-[200px] font-medium">Status</TableCell>
+        <TableCell className="w-[150px] font-medium">Due Date</TableCell>
+        <TableCell className="w-[100px] text-right font-medium">Actions</TableCell>
       </TableRow>
     </TableHeader>
   );
