@@ -74,9 +74,20 @@ export const TasksTable = ({
   };
 
   const handleAddTask = () => {
-    if (onAddTask) {
-      onAddTask();
+    if (!onAddTask) {
+      toast({
+        title: "Error",
+        description: "Add task functionality is not available",
+        variant: "destructive",
+      });
+      return;
     }
+    
+    onAddTask();
+    toast({
+      title: "Success",
+      description: "New task dialog opened",
+    });
   };
 
   return (
@@ -90,66 +101,48 @@ export const TasksTable = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {tasks.length === 0 ? (
-          <TableRow>
-            <TableCell colSpan={4}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full flex items-center justify-center gap-2"
-                onClick={handleAddTask}
-              >
-                <Plus className="h-4 w-4" />
-                Add Task
-              </Button>
-            </TableCell>
-          </TableRow>
-        ) : (
-          <>
-            {tasks.map((task) => (
-              <React.Fragment key={task.id}>
-                <TaskRow
-                  task={task}
-                  isExpanded={expandedTasks.has(task.id)}
-                  onToggleExpand={toggleTaskExpansion}
-                  onStatusChange={onStatusChange}
-                  onTaskClick={onTaskClick}
-                  onDeleteTask={onDeleteTask}
-                />
-                {expandedTasks.has(task.id) && task.subtasks?.map((subtask) => (
-                  <SubtaskRow
-                    key={subtask.id}
-                    subtask={subtask}
-                    taskId={task.id}
-                    onStatusChange={onSubtaskStatusChange!}
-                    onDelete={handleDeleteSubtask}
-                  />
-                ))}
-                {expandedTasks.has(task.id) && (
-                  <NewSubtaskRow
-                    taskId={task.id}
-                    newSubtaskTitle={newSubtaskTitles[task.id] || ""}
-                    onNewSubtaskTitleChange={handleNewSubtaskTitleChange}
-                    onAddSubtask={handleAddSubtask}
-                  />
-                )}
-              </React.Fragment>
+        {tasks.map((task) => (
+          <React.Fragment key={task.id}>
+            <TaskRow
+              task={task}
+              isExpanded={expandedTasks.has(task.id)}
+              onToggleExpand={toggleTaskExpansion}
+              onStatusChange={onStatusChange}
+              onTaskClick={onTaskClick}
+              onDeleteTask={onDeleteTask}
+            />
+            {expandedTasks.has(task.id) && task.subtasks?.map((subtask) => (
+              <SubtaskRow
+                key={subtask.id}
+                subtask={subtask}
+                taskId={task.id}
+                onStatusChange={onSubtaskStatusChange!}
+                onDelete={handleDeleteSubtask}
+              />
             ))}
-            <TableRow>
-              <TableCell colSpan={4}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full flex items-center justify-center gap-2"
-                  onClick={handleAddTask}
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Task
-                </Button>
-              </TableCell>
-            </TableRow>
-          </>
-        )}
+            {expandedTasks.has(task.id) && (
+              <NewSubtaskRow
+                taskId={task.id}
+                newSubtaskTitle={newSubtaskTitles[task.id] || ""}
+                onNewSubtaskTitleChange={handleNewSubtaskTitleChange}
+                onAddSubtask={handleAddSubtask}
+              />
+            )}
+          </React.Fragment>
+        ))}
+        <TableRow>
+          <TableCell colSpan={4}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full flex items-center justify-center gap-2"
+              onClick={handleAddTask}
+            >
+              <Plus className="h-4 w-4" />
+              Add Task
+            </Button>
+          </TableCell>
+        </TableRow>
       </TableBody>
     </Table>
   );
