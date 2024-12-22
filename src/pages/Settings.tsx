@@ -9,8 +9,11 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { useImpersonation } from "@/contexts/ImpersonationContext";
 
 const Settings = () => {
+  const { impersonatedUser } = useImpersonation();
+  
   const roles = ["Admin", "Manager", "Designer", "Client"];
   const permissions = [
     {
@@ -57,10 +60,10 @@ const Settings = () => {
         actions.forEach(action => {
           const key = `${category}-${action}`;
           initialMatrix[key] = {
-            Admin: true, // Admin always has all permissions
+            Admin: true,
             Manager: action !== "Delete" && action !== "Remove",
-            Designer: action === "View" || action === "Create",
-            Client: action === "View",
+            Designer: ["View", "Create", "Edit", "Change Status"].includes(action),
+            Client: ["View", "Change Status"].includes(action),
           };
         });
       });
@@ -70,6 +73,12 @@ const Settings = () => {
   }, []);
 
   const handlePermissionChange = (category: string, action: string, role: string) => {
+    // If user is impersonating someone, prevent any changes
+    if (impersonatedUser) {
+      toast.error("Cannot modify permissions while viewing as another user");
+      return;
+    }
+
     // Skip if trying to modify Admin permissions
     if (role === "Admin") {
       toast.error("Admin permissions cannot be modified");
@@ -91,6 +100,16 @@ const Settings = () => {
     });
     toast.success(`Permission updated for ${role}`);
   };
+
+  // Check if the current impersonated user has permission to view settings
+  if (impersonatedUser && !permissionMatrix["Settings-View"]?.[impersonatedUser.role]) {
+    return (
+      <div className="container py-6">
+        <h1 className="text-3xl font-bold tracking-tight text-destructive">Access Denied</h1>
+        <p className="text-muted-foreground">You don't have permission to view this page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-6">
@@ -129,9 +148,9 @@ const Settings = () => {
                       <TableCell key={role} className="text-center">
                         <div className="flex items-center justify-center">
                           <Checkbox
-                            checked={role === "Admin" ? true : permissionMatrix[`${category}-${action}`]?.[role] ?? false}
+                            checked={permissionMatrix[`${category}-${action}`]?.[role] ?? false}
                             onCheckedChange={() => handlePermissionChange(category, action, role)}
-                            disabled={role === "Admin"} // Admin checkboxes are always disabled
+                            disabled={role === "Admin" || impersonatedUser !== null}
                           />
                         </div>
                       </TableCell>
