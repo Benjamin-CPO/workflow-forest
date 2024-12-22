@@ -86,6 +86,8 @@ export const TaskDialogsContainer = ({
   };
 
   const handleDeleteTask = () => {
+    if (!selectedTask) return;
+
     if (!hasPermission('delete_task')) {
       toast({
         title: "Permission denied",
@@ -94,8 +96,6 @@ export const TaskDialogsContainer = ({
       });
       return;
     }
-
-    if (!selectedTask) return;
     
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
