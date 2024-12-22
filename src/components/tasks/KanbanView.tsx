@@ -82,13 +82,7 @@ export const KanbanView = ({
       const subtask = flattenedSubtasks.find(st => st.id === numericId);
       console.log('Found subtask:', subtask);
       
-      if (subtask && subtask.parentTaskId) {
-        console.log('Updating subtask status:', {
-          parentTaskId: subtask.parentTaskId,
-          subtaskId: numericId,
-          newStatus
-        });
-        
+      if (subtask?.parentTaskId) {
         onSubtaskStatusChange(subtask.parentTaskId, numericId, newStatus);
         toast({
           title: "Subtask Updated",
