@@ -21,7 +21,6 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useImpersonation } from "@/contexts/ImpersonationContext";
 
 interface Client {
   id: number;
@@ -29,7 +28,6 @@ interface Client {
 }
 
 export function AddProjectDialog({ children }: { children: React.ReactNode }) {
-  const { impersonatedUser } = useImpersonation();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -39,9 +37,6 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const [clientId, setClientId] = useState<string>("");
   const [clients, setClients] = useState<Client[]>([]);
   const navigate = useNavigate();
-
-  // Check if user has permission to create projects
-  const canCreateProject = !impersonatedUser || ["Admin", "Manager"].includes(impersonatedUser.role);
 
   useEffect(() => {
     const storedClients = localStorage.getItem('clients');
@@ -70,11 +65,6 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!canCreateProject) {
-      toast.error("You don't have permission to create projects");
-      return;
-    }
-
     if (!clientId) {
       toast.error("Please select a client");
       return;
@@ -108,10 +98,6 @@ export function AddProjectDialog({ children }: { children: React.ReactNode }) {
     toast.success("Project created successfully");
     navigate(`/projects/${newProject.id}`);
   };
-
-  if (!canCreateProject) {
-    return null;
-  }
 
   return (
     <Dialog 

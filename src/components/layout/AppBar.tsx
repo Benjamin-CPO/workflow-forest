@@ -1,7 +1,6 @@
-import { Bell, List, Search, Settings, User, Users, UserPlus, UserX } from "lucide-react";
+import { Bell, List, Search, User, Users, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-import { useImpersonation } from "@/contexts/ImpersonationContext";
 
 const navigationItems = [
   {
@@ -19,16 +18,10 @@ const navigationItems = [
     url: "/team",
     icon: UserPlus,
   },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
 ];
 
 export const AppBar = () => {
   const location = useLocation();
-  const { impersonatedUser, stopImpersonation } = useImpersonation();
 
   return (
     <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -68,18 +61,6 @@ export const AppBar = () => {
                 />
               </div>
             </div>
-            {impersonatedUser && (
-              <Button 
-                variant="destructive" 
-                size="sm" 
-                onClick={stopImpersonation}
-                className="gap-2"
-              >
-                <UserX className="h-4 w-4" />
-                <span className="hidden md:inline">Stop Viewing as {impersonatedUser.name}</span>
-                <span className="md:hidden">Stop Viewing</span>
-              </Button>
-            )}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />
               <span className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">

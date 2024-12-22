@@ -5,11 +5,11 @@ import { List, Kanban } from "lucide-react";
 interface ViewControlsProps {
   view: "list" | "kanban";
   setView: (view: "list" | "kanban") => void;
-  onAddTask?: () => void;
-  onAddMilestone?: () => void;
+  onAddTask: () => void;
+  onAddMilestone: () => void;
 }
 
-export const ViewControls = ({ view, setView }: ViewControlsProps) => {
+export const ViewControls = ({ view, setView, onAddTask, onAddMilestone }: ViewControlsProps) => {
   return (
     <div className="sticky top-0 bg-background z-10 border-b">
       <div className="flex justify-between items-center p-4 h-[72px]">
@@ -27,6 +27,12 @@ export const ViewControls = ({ view, setView }: ViewControlsProps) => {
               <Kanban className="h-4 w-4" />
             </ToggleGroupItem>
           </ToggleGroup>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={onAddTask}>Add Task</Button>
+          <Button variant="outline" onClick={onAddMilestone}>
+            Add Milestone
+          </Button>
         </div>
       </div>
     </div>
