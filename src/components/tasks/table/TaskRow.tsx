@@ -23,7 +23,7 @@ export const TaskRow = ({
 }: TaskRowProps) => {
   return (
     <TableRow className="group">
-      <TableCell className="flex items-center gap-2">
+      <TableCell className="flex items-center gap-2 w-[300px]">
         <Button
           variant="ghost"
           size="icon"
@@ -37,24 +37,24 @@ export const TaskRow = ({
               <ChevronRight className="h-4 w-4" />
             )
           ) : (
-            <div className="w-4" /> // Placeholder to maintain alignment
+            <div className="w-4" />
           )}
         </Button>
         <span
-          className="cursor-pointer hover:underline"
+          className="cursor-pointer hover:underline truncate"
           onClick={() => onTaskClick(task)}
         >
           {task.title}
         </span>
       </TableCell>
-      <TableCell className="text-right min-w-[200px]">
+      <TableCell className="w-[200px]">
         <TaskStatusSelect
           status={task.status}
           onStatusChange={(newStatus) => onStatusChange(task.id, newStatus)}
         />
       </TableCell>
-      <TableCell>{task.dueDate}</TableCell>
-      <TableCell>
+      <TableCell className="w-[150px]">{task.dueDate}</TableCell>
+      <TableCell className="w-[100px]">
         <div className="flex justify-end">
           {onDeleteTask && (
             <Button
