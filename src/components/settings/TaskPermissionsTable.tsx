@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +33,32 @@ const initialPermissions = {
 export const TaskPermissionsTable = () => {
   const [permissions, setPermissions] = useState<Record<Role, string[]>>(initialPermissions);
   const { toast } = useToast();
+
+  // Load permissions from localStorage when component mounts
+  useEffect(() => {
+    const savedPermissions = localStorage.getItem('taskPermissions');
+    if (savedPermissions) {
+      try {
+        const parsedPermissions = JSON.parse(savedPermissions);
+        // Validate that the parsed permissions have the correct structure
+        if (
+          typeof parsedPermissions === 'object' &&
+          roles.every(role => Array.isArray(parsedPermissions[role]))
+        ) {
+          setPermissions(parsedPermissions);
+        } else {
+          console.error('Invalid permissions structure in localStorage');
+          localStorage.setItem('taskPermissions', JSON.stringify(initialPermissions));
+        }
+      } catch (error) {
+        console.error('Error parsing permissions from localStorage:', error);
+        localStorage.setItem('taskPermissions', JSON.stringify(initialPermissions));
+      }
+    } else {
+      // If no permissions are saved, set the initial permissions in localStorage
+      localStorage.setItem('taskPermissions', JSON.stringify(initialPermissions));
+    }
+  }, []);
 
   const togglePermission = (role: Role, permissionId: string) => {
     if (role === "admin") {
