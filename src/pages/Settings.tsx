@@ -58,7 +58,7 @@ const Settings = () => {
         actions.forEach(action => {
           const key = `${category}-${action}`;
           initialMatrix[key] = {
-            Admin: true,
+            Admin: true, // Admin always has all permissions
             Manager: action !== "Delete" && action !== "Remove",
             Designer: action === "View" || action === "Create",
             Client: action === "View",
@@ -71,13 +71,23 @@ const Settings = () => {
   }, []);
 
   const handlePermissionChange = (category: string, action: string, role: string) => {
+    // Skip if trying to modify Admin permissions
+    if (role === "Admin") {
+      toast({
+        title: "Permission Change Denied",
+        description: "Admin permissions cannot be modified",
+      });
+      return;
+    }
+
     const key = `${category}-${action}`;
     setPermissionMatrix(prev => {
       const updated = {
         ...prev,
         [key]: {
           ...prev[key],
-          [role]: !prev[key]?.[role]
+          [role]: !prev[key]?.[role],
+          Admin: true, // Ensure Admin permissions stay true
         }
       };
       localStorage.setItem('permissionMatrix', JSON.stringify(updated));
@@ -123,9 +133,9 @@ const Settings = () => {
                       <TableCell key={role} className="text-center">
                         <div className="flex items-center justify-center">
                           <Checkbox
-                            checked={permissionMatrix[`${category}-${action}`]?.[role] ?? false}
+                            checked={role === "Admin" ? true : permissionMatrix[`${category}-${action}`]?.[role] ?? false}
                             onCheckedChange={() => handlePermissionChange(category, action, role)}
-                            disabled={role === "Admin"} // Admin always has all permissions
+                            disabled={role === "Admin"} // Admin checkboxes are always disabled
                           />
                         </div>
                       </TableCell>
