@@ -4,6 +4,7 @@ import { Milestone } from "@/types/project";
 import { KanbanColumn } from "./kanban/KanbanColumn";
 import { MilestoneFilter } from "./kanban/MilestoneFilter";
 import { KanbanItem, TaskWithMilestone, SubTaskWithParent } from "./types/kanban";
+import { useToast } from "@/hooks/use-toast";
 
 interface KanbanViewProps {
   milestones: Milestone[];
@@ -22,6 +23,7 @@ const columns = [
 export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanViewProps) => {
   const [selectedMilestoneIds, setSelectedMilestoneIds] = useState<Set<number>>(new Set());
   const [viewMode, setViewMode] = useState<'tasks' | 'subtasks'>('tasks');
+  const { toast } = useToast();
 
   const filteredTasks = selectedMilestoneIds.size === 0
     ? milestones.flatMap(milestone => 
@@ -72,14 +74,32 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
       if (subtask) {
         const parentTask = filteredTasks.find(t => t.id === subtask.parentTaskId);
         if (parentTask && parentTask.subtasks) {
+          // Update the subtask status
           const updatedSubtasks = parentTask.subtasks.map(st =>
             st.id === taskId ? { ...st, status: newStatus } : st
           );
-          onStatusChange(parentTask.id, parentTask.status);
+          
+          // Update the parent task with the modified subtasks
+          const updatedParentTask = {
+            ...parentTask,
+            subtasks: updatedSubtasks
+          };
+
+          // Call onStatusChange with the updated parent task
+          onStatusChange(parentTask.id, updatedParentTask.status);
+          
+          toast({
+            title: "Status Updated",
+            description: `Subtask status changed to ${columns.find(c => c.status === newStatus)?.label}`,
+          });
         }
       }
     } else {
       onStatusChange(taskId, newStatus);
+      toast({
+        title: "Status Updated",
+        description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
+      });
     }
   };
 
