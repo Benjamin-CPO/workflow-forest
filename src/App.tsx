@@ -14,6 +14,7 @@ import { EditClientDialog } from "@/components/clients/EditClientDialog";
 import { AddTeamMemberDialog } from "@/components/team/AddTeamMemberDialog";
 import { EditTeamMemberDialog } from "@/components/team/EditTeamMemberDialog";
 import { toast } from "sonner";
+import Settings from "./pages/Settings";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -191,6 +192,7 @@ const App = () => (
               <Route path="/projects/:id" element={<ProjectDetails />} />
               <Route path="/clients" element={<Clients />} />
               <Route path="/team" element={<Team />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </main>
         </div>
