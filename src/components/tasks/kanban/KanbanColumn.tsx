@@ -20,7 +20,7 @@ export const KanbanColumn = ({
   viewMode
 }: KanbanColumnProps) => {
   return (
-    <div className={`space-y-4 ${bgColor} rounded-lg p-4`}>
+    <div className={`${bgColor} rounded-lg p-4`}>
       <div className={`font-semibold text-sm p-2 rounded-lg ${textColor}`}>
         {label}
       </div>
@@ -32,7 +32,6 @@ export const KanbanColumn = ({
             className="space-y-2 min-h-[100px]"
           >
             {items.map((item, index) => {
-              // Create a draggableId that includes both subtask and parent task IDs for subtasks
               const draggableId = isSubtaskWithParent(item) 
                 ? `subtask-${item.id}-${item.parentTaskId}`
                 : `task-${item.id}`;

@@ -12,22 +12,19 @@ export const useDragAndDrop = (
     if (!result.destination) return;
 
     const { draggableId, destination } = result;
-    const [type, idStr] = draggableId.split('-');
+    const [type, idStr, parentIdStr] = draggableId.split('-');
     const newStatus = destination.droppableId;
-    const numericId = parseInt(idStr, 10);
 
     if (type === 'task' && viewMode === 'tasks') {
-      onStatusChange(numericId, newStatus);
+      const taskId = parseInt(idStr, 10);
+      onStatusChange(taskId, newStatus);
       toast({
         title: "Task Updated",
         description: `Task status changed to ${newStatus}`,
       });
-    } else if (type === 'subtask' && viewMode === 'subtasks') {
-      // Extract parentTaskId from the draggableId
-      // Format is 'subtask-subtaskId-parentTaskId'
-      const parts = draggableId.split('-');
-      const parentTaskId = parseInt(parts[2], 10);
-      const subtaskId = parseInt(parts[1], 10);
+    } else if (type === 'subtask' && viewMode === 'subtasks' && parentIdStr) {
+      const subtaskId = parseInt(idStr, 10);
+      const parentTaskId = parseInt(parentIdStr, 10);
       
       onSubtaskStatusChange(parentTaskId, subtaskId, newStatus);
       toast({

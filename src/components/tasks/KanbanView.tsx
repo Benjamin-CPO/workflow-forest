@@ -68,7 +68,7 @@ export const KanbanView = ({
 
       <KanbanProvider value={{ viewMode, onTaskClick }}>
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {columns.map(column => (
               <KanbanColumn
                 key={column.status}
