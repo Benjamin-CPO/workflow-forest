@@ -155,7 +155,7 @@ export const TaskList = ({
           {expandedTasks.has(task.id) && hasPermission('add_subtask') && (
             <NewSubtaskRow
               taskId={task.id}
-              newSubtaskTitle={newSubtaskTitles[taskId] || ""}
+              newSubtaskTitle={newSubtaskTitles[task.id] || ""}
               onNewSubtaskTitleChange={handleNewSubtaskTitleChange}
               onAddSubtask={handleAddSubtask}
             />
