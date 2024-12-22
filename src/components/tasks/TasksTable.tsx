@@ -42,7 +42,17 @@ export const TasksTable = ({
       return;
     }
 
-    onAddSubtask?.(taskId, {
+    if (!onAddSubtask) {
+      toast({
+        title: "Error",
+        description: "Add subtask functionality is not available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onAddSubtask(taskId, {
+      id: Math.random(), // This will be replaced by the backend
       title: newSubtaskTitles[taskId],
       status: "pending"
     });
@@ -66,7 +76,16 @@ export const TasksTable = ({
   };
 
   const handleDeleteSubtask = (taskId: number, subtaskId: number) => {
-    onDeleteSubtask?.(taskId, subtaskId);
+    if (!onDeleteSubtask) {
+      toast({
+        title: "Error",
+        description: "Delete subtask functionality is not available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onDeleteSubtask(taskId, subtaskId);
     toast({
       title: "Success",
       description: "Subtask deleted successfully",
