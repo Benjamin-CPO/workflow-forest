@@ -6,6 +6,7 @@ import { AddMilestoneDialog } from "./AddMilestoneDialog";
 import { MilestoneTasks } from "./MilestoneTasks";
 import { KanbanView } from "./KanbanView";
 import { useMilestoneManagement } from "@/hooks/useMilestoneManagement";
+import { useTaskState } from "@/hooks/useTaskState";
 
 interface TaskManagementProps {
   milestones: Milestone[];
@@ -14,10 +15,20 @@ interface TaskManagementProps {
 
 export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProps) => {
   const [view, setView] = useState<"list" | "kanban">("list");
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  
+  const {
+    isAddDialogOpen,
+    setIsAddDialogOpen,
+    selectedTask,
+    setSelectedTask,
+    isEditDialogOpen,
+    setIsEditDialogOpen,
+    isDeleteDialogOpen,
+    setIsDeleteDialogOpen,
+    handleAddTask,
+    handleDeleteTask,
+    handleTaskEdit,
+  } = useTaskState(milestones, setMilestones);
 
   const {
     isMilestoneDialogOpen,
@@ -55,6 +66,38 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     setMilestones(updatedMilestones);
   };
 
+  const handleAddSubtask = (taskId: number, subtask: { id: number; title: string; status: string }) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            subtasks: [...(task.subtasks || []), subtask],
+          };
+        }
+        return task;
+      }),
+    }));
+    setMilestones(updatedMilestones);
+  };
+
+  const handleDeleteSubtask = (taskId: number, subtaskId: number) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task => {
+        if (task.id === taskId && task.subtasks) {
+          return {
+            ...task,
+            subtasks: task.subtasks.filter(subtask => subtask.id !== subtaskId),
+          };
+        }
+        return task;
+      }),
+    }));
+    setMilestones(updatedMilestones);
+  };
+
   return (
     <div className="h-full flex flex-col">
       <ViewControlsContainer
@@ -81,6 +124,8 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
               }
             }}
             onSubtaskStatusChange={handleSubtaskStatusChange}
+            onAddSubtask={handleAddSubtask}
+            onDeleteSubtask={handleDeleteSubtask}
             onAddTask={() => setIsAddDialogOpen(true)}
           />
         ) : (
