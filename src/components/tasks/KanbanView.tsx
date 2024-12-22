@@ -109,6 +109,8 @@ export const KanbanView = ({
     }
   };
 
+  const currentItems = viewMode === 'tasks' ? filteredTasks : flattenedSubtasks;
+
   return (
     <div className="space-y-4">
       <MilestoneFilter
@@ -125,7 +127,7 @@ export const KanbanView = ({
             <KanbanColumn
               key={column.status}
               {...column}
-              items={items.filter(item => item.status === column.status)}
+              items={currentItems.filter(item => item.status === column.status)}
               onTaskClick={onTaskClick}
               viewMode={viewMode}
             />
