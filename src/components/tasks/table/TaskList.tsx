@@ -118,6 +118,8 @@ export const TaskList = ({
               taskId={task.id}
               onStatusChange={onSubtaskStatusChange!}
               onDelete={handleDeleteSubtask}
+              canChangeStatus={!!onSubtaskStatusChange}
+              canDelete={!!onDeleteSubtask}
             />
           ))}
           {expandedTasks.has(task.id) && (
