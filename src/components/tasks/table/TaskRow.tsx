@@ -23,6 +23,11 @@ export const TaskRow = ({
 }: TaskRowProps) => {
   const hasSubtasks = task.subtasks && task.subtasks.length > 0;
 
+  const handleTaskClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onTaskClick(task);
+  };
+
   return (
     <TableRow className="group">
       <TableCell className="w-[300px]">
@@ -31,7 +36,10 @@ export const TaskRow = ({
             variant="ghost"
             size="icon"
             className="h-4 w-4"
-            onClick={() => onToggleExpand(task.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleExpand(task.id);
+            }}
           >
             {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
@@ -41,7 +49,7 @@ export const TaskRow = ({
           </Button>
           <span
             className="cursor-pointer hover:underline truncate"
-            onClick={() => onTaskClick(task)}
+            onClick={handleTaskClick}
           >
             {task.title}
           </span>
@@ -50,7 +58,7 @@ export const TaskRow = ({
               variant="ghost"
               size="sm"
               className="h-6 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => onTaskClick(task)}
+              onClick={handleTaskClick}
             >
               <Plus className="h-3 w-3 mr-1" />
               Add Subtask
@@ -66,18 +74,19 @@ export const TaskRow = ({
       </TableCell>
       <TableCell className="w-[150px]">{task.dueDate}</TableCell>
       <TableCell className="w-[100px] text-right">
-        <div className="flex justify-end">
-          {onDeleteTask && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onDeleteTask(task.id)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
-          )}
-        </div>
+        {onDeleteTask && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteTask(task.id);
+            }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        )}
       </TableCell>
     </TableRow>
   );
