@@ -11,7 +11,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
 const Settings = () => {
-  // Define roles and permissions
   const roles = ["Admin", "Manager", "Designer", "Client"];
   const permissions = [
     {
@@ -73,10 +72,7 @@ const Settings = () => {
   const handlePermissionChange = (category: string, action: string, role: string) => {
     // Skip if trying to modify Admin permissions
     if (role === "Admin") {
-      toast({
-        title: "Permission Change Denied",
-        description: "Admin permissions cannot be modified",
-      });
+      toast.error("Admin permissions cannot be modified");
       return;
     }
 
