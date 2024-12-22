@@ -1,8 +1,17 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
-import { TaskRowProps } from "../types/table";
+import { Task } from "@/types/project";
+
+interface TaskRowProps {
+  task: Task;
+  isExpanded: boolean;
+  onToggleExpand: (taskId: number) => void;
+  onStatusChange: (taskId: number, newStatus: string) => void;
+  onTaskClick: (task: Task) => void;
+  onDeleteTask?: (taskId: number) => void;
+}
 
 export const TaskRow = ({
   task,
@@ -12,6 +21,8 @@ export const TaskRow = ({
   onTaskClick,
   onDeleteTask,
 }: TaskRowProps) => {
+  const hasSubtasks = task.subtasks && task.subtasks.length > 0;
+
   return (
     <TableRow className="group">
       <TableCell className="w-[300px]">
@@ -22,14 +33,10 @@ export const TaskRow = ({
             className="h-4 w-4"
             onClick={() => onToggleExpand(task.id)}
           >
-            {task.subtasks && task.subtasks.length > 0 ? (
-              isExpanded ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )
+            {isExpanded ? (
+              <ChevronDown className="h-4 w-4" />
             ) : (
-              <div className="w-4" />
+              <ChevronRight className="h-4 w-4" />
             )}
           </Button>
           <span
@@ -38,6 +45,17 @@ export const TaskRow = ({
           >
             {task.title}
           </span>
+          {isExpanded && !hasSubtasks && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => onTaskClick(task)}
+            >
+              <Plus className="h-3 w-3 mr-1" />
+              Add Subtask
+            </Button>
+          )}
         </div>
       </TableCell>
       <TableCell className="w-[200px]">
