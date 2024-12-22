@@ -1,9 +1,10 @@
 import React from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AddTeamMemberDialog } from "@/components/team/AddTeamMemberDialog";
 import { EditTeamMemberDialog } from "@/components/team/EditTeamMemberDialog";
 import { toast } from "sonner";
+import { useImpersonation } from "@/contexts/ImpersonationContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,6 +19,7 @@ import {
 
 const Team = () => {
   const [members, setMembers] = React.useState<Array<{ id: number; name: string; role: string }>>([]);
+  const { startImpersonation, impersonatedUser } = useImpersonation();
 
   const loadMembers = () => {
     const storedMembers = JSON.parse(localStorage.getItem('teamMembers') || '[]');
@@ -33,6 +35,10 @@ const Team = () => {
     localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
     setMembers(updatedMembers);
     toast.success("Team member deleted successfully");
+  };
+
+  const handleImpersonation = (member: { id: number; name: string; role: string }) => {
+    startImpersonation(member);
   };
 
   return (
@@ -62,6 +68,15 @@ const Team = () => {
               <p className="text-sm text-muted-foreground">{member.role}</p>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleImpersonation(member)}
+                disabled={impersonatedUser?.id === member.id}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View As
+              </Button>
               <EditTeamMemberDialog member={member} onMemberUpdated={loadMembers} />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
