@@ -68,6 +68,28 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     setMilestones(updatedMilestones);
   };
 
+  const handleSubtaskStatusChange = (taskId: number, subtaskId: number, newStatus: string) => {
+    const updatedMilestones = milestones.map(milestone => ({
+      ...milestone,
+      tasks: milestone.tasks.map(task => {
+        if (task.id === taskId && task.subtasks) {
+          return {
+            ...task,
+            subtasks: task.subtasks.map(subtask =>
+              subtask.id === subtaskId ? { ...subtask, status: newStatus } : subtask
+            ),
+          };
+        }
+        return task;
+      }),
+    }));
+    setMilestones(updatedMilestones);
+    toast({
+      title: "Status Updated",
+      description: "Subtask status has been updated successfully.",
+    });
+  };
+
   return (
     <div className="h-full flex flex-col">
       <ViewControls
@@ -95,6 +117,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
                 setIsDeleteDialogOpen(true);
               }
             }}
+            onSubtaskStatusChange={handleSubtaskStatusChange}
           />
         ) : (
           <KanbanView
@@ -104,6 +127,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
               setSelectedTask({ ...task, subtasks: task.subtasks || [] });
               setIsEditDialogOpen(true);
             }}
+            onSubtaskStatusChange={handleSubtaskStatusChange}
           />
         )}
       </div>

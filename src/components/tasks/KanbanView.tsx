@@ -10,6 +10,7 @@ interface KanbanViewProps {
   milestones: Milestone[];
   onStatusChange: (taskId: number, newStatus: string) => void;
   onTaskClick: (task: any) => void;
+  onSubtaskStatusChange: (taskId: number, subtaskId: number, newStatus: string) => void;
 }
 
 const columns = [
@@ -20,7 +21,12 @@ const columns = [
   { status: "completed", label: "Completed", bgColor: "bg-green-100", textColor: "text-green-700" }
 ];
 
-export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanViewProps) => {
+export const KanbanView = ({ 
+  milestones, 
+  onStatusChange, 
+  onTaskClick,
+  onSubtaskStatusChange 
+}: KanbanViewProps) => {
   const [selectedMilestoneIds, setSelectedMilestoneIds] = useState<Set<number>>(new Set());
   const [viewMode, setViewMode] = useState<'tasks' | 'subtasks'>('tasks');
   const { toast } = useToast();
@@ -72,27 +78,7 @@ export const KanbanView = ({ milestones, onStatusChange, onTaskClick }: KanbanVi
     if (viewMode === 'subtasks') {
       const subtask = flattenedSubtasks.find(st => st.id === taskId);
       if (subtask) {
-        const parentTask = filteredTasks.find(t => t.id === subtask.parentTaskId);
-        if (parentTask && parentTask.subtasks) {
-          // Update the subtask status
-          const updatedSubtasks = parentTask.subtasks.map(st =>
-            st.id === taskId ? { ...st, status: newStatus } : st
-          );
-          
-          // Update the parent task with the modified subtasks
-          const updatedParentTask = {
-            ...parentTask,
-            subtasks: updatedSubtasks
-          };
-
-          // Call onStatusChange with the updated parent task
-          onStatusChange(parentTask.id, updatedParentTask.status);
-          
-          toast({
-            title: "Status Updated",
-            description: `Subtask status changed to ${columns.find(c => c.status === newStatus)?.label}`,
-          });
-        }
+        onSubtaskStatusChange(subtask.parentTaskId, subtask.id, newStatus);
       }
     } else {
       onStatusChange(taskId, newStatus);
