@@ -76,9 +76,19 @@ export const KanbanView = ({
     const newStatus = destination.droppableId;
     const numericId = parseInt(idStr, 10);
 
+    console.log('Drag end:', { type, numericId, newStatus });
+
     if (type === 'subtask') {
       const subtask = flattenedSubtasks.find(st => st.id === numericId);
+      console.log('Found subtask:', subtask);
+      
       if (subtask) {
+        console.log('Updating subtask status:', {
+          parentTaskId: subtask.parentTaskId,
+          subtaskId: numericId,
+          newStatus
+        });
+        
         onSubtaskStatusChange(subtask.parentTaskId, numericId, newStatus);
         toast({
           title: "Subtask Updated",
@@ -86,11 +96,16 @@ export const KanbanView = ({
         });
       }
     } else {
-      onStatusChange(numericId, newStatus);
-      toast({
-        title: "Task Updated",
-        description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
-      });
+      const task = filteredTasks.find(t => t.id === numericId);
+      console.log('Found task:', task);
+      
+      if (task) {
+        onStatusChange(numericId, newStatus);
+        toast({
+          title: "Task Updated",
+          description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
+        });
+      }
     }
   };
 
