@@ -62,7 +62,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
       tasks: milestone.tasks.map(task =>
-        task.id === taskId ? { ...task, status: newStatus } : task
+        task.id === taskId ? { ...task, status: newStatus, subtasks: task.subtasks || [] } : task
       ),
     }));
     setMilestones(updatedMilestones);
@@ -82,8 +82,8 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
           <MilestoneTasks
             milestones={milestones}
             onStatusChange={handleStatusChange}
-            onTaskClick={(task) => {
-              setSelectedTask(task);
+            onTaskClick={(task: Task) => {
+              setSelectedTask({ ...task, subtasks: task.subtasks || [] });
               setIsEditDialogOpen(true);
             }}
             onDeleteTask={(taskId) => {
@@ -91,7 +91,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
                 .flatMap(m => m.tasks)
                 .find(t => t.id === taskId);
               if (taskToDelete) {
-                setSelectedTask(taskToDelete);
+                setSelectedTask({ ...taskToDelete, subtasks: taskToDelete.subtasks || [] });
                 setIsDeleteDialogOpen(true);
               }
             }}
@@ -100,8 +100,8 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
           <KanbanView
             milestones={milestones}
             onStatusChange={handleStatusChange}
-            onTaskClick={(task) => {
-              setSelectedTask(task);
+            onTaskClick={(task: Task) => {
+              setSelectedTask({ ...task, subtasks: task.subtasks || [] });
               setIsEditDialogOpen(true);
             }}
           />
