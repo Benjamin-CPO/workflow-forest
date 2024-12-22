@@ -40,7 +40,7 @@ export const TaskRow = ({
           </span>
         </div>
       </TableCell>
-      <TableCell className="w-[200px]">
+      <TableCell className="w-[200px] pl-0">
         <TaskStatusSelect
           status={task.status}
           onStatusChange={(newStatus) => onStatusChange(task.id, newStatus)}
