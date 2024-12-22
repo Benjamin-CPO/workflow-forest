@@ -10,39 +10,25 @@ export const TaskStatusSelect = ({ status, onStatusChange }: TaskStatusSelectPro
     <Select defaultValue={status} onValueChange={onStatusChange}>
       <SelectTrigger className="w-[180px]">
         <SelectValue>
-          <div className="flex w-full">
+          <div className="flex items-center">
             <span className={`inline-flex items-center px-2 py-1 rounded ${
               status === "pending" ? "bg-gray-100 text-gray-700" :
               status === "need-revision" ? "bg-red-100 text-red-700" :
-              status === "in-progress" ? "bg-orange-100 text-orange-700" :
-              status === "need-feedback" ? "bg-blue-100 text-blue-700" :
-              status === "completed" ? "bg-green-100 text-green-700" : ""
+              status === "in-progress" ? "bg-blue-100 text-blue-700" :
+              status === "in-review" ? "bg-yellow-100 text-yellow-700" :
+              "bg-green-100 text-green-700"
             }`}>
-              {status === "pending" ? "Pending" :
-               status === "need-revision" ? "Need Revision" :
-               status === "in-progress" ? "In Progress" :
-               status === "need-feedback" ? "Need Feedback" :
-               status === "completed" ? "Completed" : status}
+              {status}
             </span>
           </div>
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="pending">
-          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded">Pending</span>
-        </SelectItem>
-        <SelectItem value="need-revision">
-          <span className="bg-red-100 text-red-700 px-2 py-1 rounded">Need Revision</span>
-        </SelectItem>
-        <SelectItem value="in-progress">
-          <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded">In Progress</span>
-        </SelectItem>
-        <SelectItem value="need-feedback">
-          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">Need Feedback</span>
-        </SelectItem>
-        <SelectItem value="completed">
-          <span className="bg-green-100 text-green-700 px-2 py-1 rounded">Completed</span>
-        </SelectItem>
+        <SelectItem value="pending">Pending</SelectItem>
+        <SelectItem value="in-progress">In Progress</SelectItem>
+        <SelectItem value="in-review">In Review</SelectItem>
+        <SelectItem value="need-revision">Need Revision</SelectItem>
+        <SelectItem value="completed">Completed</SelectItem>
       </SelectContent>
     </Select>
   );
