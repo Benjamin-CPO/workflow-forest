@@ -9,6 +9,8 @@ interface SubtaskRowProps {
   taskId: number;
   onStatusChange: (taskId: number, subtaskId: number, newStatus: string) => void;
   onDelete: (taskId: number, subtaskId: number) => void;
+  canChangeStatus: boolean;
+  canDelete: boolean;
 }
 
 export const SubtaskRow = ({
@@ -16,6 +18,8 @@ export const SubtaskRow = ({
   taskId,
   onStatusChange,
   onDelete,
+  canChangeStatus,
+  canDelete,
 }: SubtaskRowProps) => {
   return (
     <TableRow className="group bg-muted/20 hover:bg-muted/30 transition-colors">
@@ -28,24 +32,30 @@ export const SubtaskRow = ({
         </div>
       </TableCell>
       <TableCell className="w-[200px]">
-        <TaskStatusSelect
-          status={subtask.status}
-          onStatusChange={(newStatus) =>
-            onStatusChange(taskId, subtask.id, newStatus)
-          }
-          className="h-8 text-sm"
-        />
+        {canChangeStatus ? (
+          <TaskStatusSelect
+            status={subtask.status}
+            onStatusChange={(newStatus) =>
+              onStatusChange(taskId, subtask.id, newStatus)
+            }
+            className="h-8 text-sm"
+          />
+        ) : (
+          <span className="text-muted-foreground">{subtask.status}</span>
+        )}
       </TableCell>
       <TableCell className="w-[150px]" />
       <TableCell className="w-[100px] text-right">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onDelete(taskId, subtask.id)}
-          className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
-        >
-          <Trash2 className="h-4 w-4 text-destructive" />
-        </Button>
+        {canDelete && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onDelete(taskId, subtask.id)}
+            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        )}
       </TableCell>
     </TableRow>
   );

@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Milestone } from "@/types/project";
+import { useImpersonation } from "@/contexts/ImpersonationContext";
+import { toast } from "sonner";
 
 interface AddTaskDialogProps {
   isOpen: boolean;
@@ -22,6 +24,9 @@ const formSchema = z.object({
 });
 
 export const AddTaskDialog = ({ isOpen, onOpenChange, onSubmit, milestones }: AddTaskDialogProps) => {
+  const { impersonatedUser } = useImpersonation();
+  const canCreateTask = !impersonatedUser || ["Admin", "Manager", "Designer"].includes(impersonatedUser.role);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,6 +37,11 @@ export const AddTaskDialog = ({ isOpen, onOpenChange, onSubmit, milestones }: Ad
   });
 
   const handleSubmit = (data: { title: string; dueDate: string; milestoneId: string }) => {
+    if (!canCreateTask) {
+      toast.error("You don't have permission to create tasks");
+      return;
+    }
+
     onSubmit({
       title: data.title,
       dueDate: data.dueDate,
@@ -40,6 +50,10 @@ export const AddTaskDialog = ({ isOpen, onOpenChange, onSubmit, milestones }: Ad
     form.reset();
     onOpenChange(false);
   };
+
+  if (!canCreateTask) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
