@@ -103,6 +103,8 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       <ViewControlsContainer
         onAddTask={() => setIsAddDialogOpen(true)}
         onAddMilestone={() => setIsMilestoneDialogOpen(true)}
+        view={view}
+        setView={setView}
       />
 
       <div className="flex-1 overflow-auto">

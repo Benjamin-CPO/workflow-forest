@@ -1,17 +1,18 @@
-import { useState } from "react";
 import { ViewControls } from "../ViewControls";
 
 interface ViewControlsContainerProps {
   onAddTask: () => void;
   onAddMilestone: () => void;
+  view: "list" | "kanban";
+  setView: (view: "list" | "kanban") => void;
 }
 
 export const ViewControlsContainer = ({
   onAddTask,
   onAddMilestone,
+  view,
+  setView,
 }: ViewControlsContainerProps) => {
-  const [view, setView] = useState<"list" | "kanban">("list");
-
   return (
     <ViewControls
       view={view}
