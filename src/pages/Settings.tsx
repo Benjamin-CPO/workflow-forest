@@ -23,6 +23,10 @@ const Settings = () => {
       actions: ["View", "Create", "Edit", "Delete", "Change Status"],
     },
     {
+      category: "Subtasks",
+      actions: ["View", "Create", "Edit", "Delete", "Change Status"],
+    },
+    {
       category: "Team Members",
       actions: ["View", "Add", "Edit", "Remove"],
     },
