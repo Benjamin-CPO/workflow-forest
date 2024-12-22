@@ -57,19 +57,28 @@ export const KanbanView = ({
   );
 
   const handleDragEnd = (result: any) => {
-    if (!result.destination || viewMode === 'subtasks') return;
+    if (!result.destination) return;
 
     const { draggableId, destination } = result;
     const [type, idStr] = draggableId.split('-');
     const newStatus = destination.droppableId;
     const numericId = parseInt(idStr, 10);
 
-    if (type === 'task') {
+    if (type === 'task' && viewMode === 'tasks') {
       onStatusChange(numericId, newStatus);
       toast({
         title: "Task Updated",
         description: `Task status changed to ${columns.find(c => c.status === newStatus)?.label}`,
       });
+    } else if (type === 'subtask' && viewMode === 'subtasks') {
+      const subtask = flattenedSubtasks.find(st => st.id === numericId);
+      if (subtask) {
+        onSubtaskStatusChange(subtask.parentTaskId, numericId, newStatus);
+        toast({
+          title: "Subtask Updated",
+          description: `Subtask status changed to ${columns.find(c => c.status === newStatus)?.label}`,
+        });
+      }
     }
   };
 
