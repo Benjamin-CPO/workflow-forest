@@ -75,7 +75,7 @@ export const TasksTable = ({
       <TableHeader>
         <TableRow>
           <TableCell>Title</TableCell>
-          <TableCell>Status</TableCell>
+          <TableCell className="text-right">Status</TableCell>
           <TableCell>Due Date</TableCell>
           <TableCell>Actions</TableCell>
         </TableRow>
