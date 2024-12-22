@@ -31,7 +31,7 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
       title: data.title,
       status: "pending",
       dueDate: data.dueDate,
-      subtasks: [],
+      subtasks: [], // Initialize empty subtasks array
     };
 
     const updatedMilestones = milestones.map(milestone =>
