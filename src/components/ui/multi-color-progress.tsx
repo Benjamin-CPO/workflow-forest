@@ -18,16 +18,16 @@ const MultiColorProgress = React.forwardRef<
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
+      "relative h-4 w-full overflow-hidden rounded-full bg-secondary transition-all",
       className
     )}
     {...props}
   >
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full transition-all">
       {segments.map((segment, index) => (
         <div
           key={index}
-          className={cn("h-full transition-all", segment.color)}
+          className={cn("h-full transition-all duration-300 ease-in-out", segment.color)}
           style={{ width: `${segment.percentage}%` }}
         />
       ))}
@@ -35,6 +35,6 @@ const MultiColorProgress = React.forwardRef<
   </ProgressPrimitive.Root>
 ))
 
-MultiColorProgress.displayName = ProgressPrimitive.Root.displayName
+MultiColorProgress.displayName = "MultiColorProgress"
 
 export { MultiColorProgress }
