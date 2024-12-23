@@ -5,6 +5,7 @@ interface ViewControlsContainerProps {
   onAddMilestone: () => void;
   view: "list" | "kanban";
   setView: (view: "list" | "kanban") => void;
+  showAddTask?: boolean;
 }
 
 export const ViewControlsContainer = ({
@@ -12,13 +13,15 @@ export const ViewControlsContainer = ({
   onAddMilestone,
   view,
   setView,
+  showAddTask = true,
 }: ViewControlsContainerProps) => {
   return (
     <ViewControls
-      view={view}
-      setView={setView}
       onAddTask={onAddTask}
       onAddMilestone={onAddMilestone}
+      view={view}
+      setView={setView}
+      showAddTask={showAddTask}
     />
   );
 };

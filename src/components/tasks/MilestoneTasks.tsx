@@ -12,8 +12,6 @@ interface MilestoneTasksProps {
   onAddTask?: () => void;
   onAddSubtask?: (taskId: number, subtask: SubTask) => void;
   onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
-  onAssigneeChange?: (taskId: number, assigneeId: number | undefined) => void;
-  onSubtaskAssigneeChange?: (taskId: number, subtaskId: number, assigneeId: number | undefined) => void;
 }
 
 export const MilestoneTasks = ({
@@ -25,8 +23,6 @@ export const MilestoneTasks = ({
   onAddTask,
   onAddSubtask,
   onDeleteSubtask,
-  onAssigneeChange,
-  onSubtaskAssigneeChange,
 }: MilestoneTasksProps) => {
   const getMilestoneProgress = (tasks: Task[]) => {
     const completedTasks = tasks.filter(task => task.status === "completed").length;
@@ -59,8 +55,6 @@ export const MilestoneTasks = ({
               onDeleteSubtask={onDeleteSubtask}
               onSubtaskStatusChange={onSubtaskStatusChange}
               onAddTask={onAddTask}
-              onAssigneeChange={onAssigneeChange || (() => {})}
-              onSubtaskAssigneeChange={onSubtaskAssigneeChange || (() => {})}
             />
           </AccordionContent>
         </AccordionItem>

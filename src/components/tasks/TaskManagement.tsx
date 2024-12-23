@@ -7,6 +7,8 @@ import { TaskViewContent } from "./TaskViewContent";
 import { useMilestoneManagement } from "@/hooks/useMilestoneManagement";
 import { useTaskState } from "@/hooks/useTaskState";
 import { useTaskOperations } from "@/hooks/useTaskOperations";
+import { useTaskPermissions } from "@/hooks/useTaskPermissions";
+import { useToast } from "@/hooks/use-toast";
 
 interface TaskManagementProps {
   milestones: Milestone[];
@@ -15,6 +17,8 @@ interface TaskManagementProps {
 
 export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProps) => {
   const [view, setView] = useState<"list" | "kanban">("list");
+  const { hasPermission } = useTaskPermissions();
+  const { toast } = useToast();
   
   const {
     isAddDialogOpen,
@@ -31,6 +35,13 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
   } = useTaskState(milestones, setMilestones);
 
   const {
+    handleStatusChange,
+    handleSubtaskStatusChange,
+    handleAddSubtask,
+    handleDeleteSubtask,
+  } = useTaskOperations(milestones, setMilestones);
+
+  const {
     isMilestoneDialogOpen,
     setIsMilestoneDialogOpen,
     newMilestoneTitle,
@@ -38,43 +49,95 @@ export const TaskManagement = ({ milestones, setMilestones }: TaskManagementProp
     handleAddMilestone,
   } = useMilestoneManagement(milestones, setMilestones);
 
-  const {
-    handleStatusChange,
-    handleSubtaskStatusChange,
-    handleAddSubtask,
-    handleDeleteSubtask,
-  } = useTaskOperations(milestones, setMilestones);
+  const handleTaskClick = (task: Task) => {
+    if (!hasPermission("edit_task")) {
+      toast({
+        title: "Permission Denied",
+        description: "You don't have permission to edit tasks",
+        variant: "destructive",
+      });
+      return;
+    }
+    setSelectedTask(task);
+    setIsEditDialogOpen(true);
+  };
+
+  const wrappedHandleStatusChange = (taskId: number, newStatus: string) => {
+    if (!hasPermission("change_status")) {
+      toast({
+        title: "Permission Denied",
+        description: "You don't have permission to change task status",
+        variant: "destructive",
+      });
+      return;
+    }
+    handleStatusChange(taskId, newStatus);
+  };
+
+  const wrappedHandleAddSubtask = (taskId: number, subtask: any) => {
+    if (!hasPermission("add_subtask")) {
+      toast({
+        title: "Permission Denied",
+        description: "You don't have permission to add subtasks",
+        variant: "destructive",
+      });
+      return;
+    }
+    handleAddSubtask(taskId, subtask);
+  };
+
+  const wrappedHandleDeleteTask = (taskId: number) => {
+    if (!hasPermission("delete_task")) {
+      toast({
+        title: "Permission Denied",
+        description: "You don't have permission to delete tasks",
+        variant: "destructive",
+      });
+      return;
+    }
+    handleDeleteTask();
+  };
 
   return (
     <div className="h-full flex flex-col">
       <ViewControlsContainer
-        onAddTask={() => setIsAddDialogOpen(true)}
+        onAddTask={() => {
+          if (!hasPermission("create_task")) {
+            toast({
+              title: "Permission Denied",
+              description: "You don't have permission to create tasks",
+              variant: "destructive",
+            });
+            return;
+          }
+          setIsAddDialogOpen(true);
+        }}
         onAddMilestone={() => setIsMilestoneDialogOpen(true)}
         view={view}
         setView={setView}
+        showAddTask={hasPermission("create_task")}
       />
 
       <TaskViewContent
         view={view}
         milestones={milestones}
-        onStatusChange={handleStatusChange}
-        onTaskClick={(task: Task) => {
-          setSelectedTask(task);
-          setIsEditDialogOpen(true);
-        }}
-        onDeleteTask={(taskId: number) => {
-          const taskToDelete = milestones
-            .flatMap(m => m.tasks)
-            .find(t => t.id === taskId);
-          if (taskToDelete) {
-            setSelectedTask(taskToDelete);
-            setIsDeleteDialogOpen(true);
-          }
-        }}
+        onStatusChange={wrappedHandleStatusChange}
+        onTaskClick={handleTaskClick}
+        onDeleteTask={wrappedHandleDeleteTask}
         onSubtaskStatusChange={handleSubtaskStatusChange}
-        onAddSubtask={handleAddSubtask}
+        onAddSubtask={wrappedHandleAddSubtask}
         onDeleteSubtask={handleDeleteSubtask}
-        onAddTask={() => setIsAddDialogOpen(true)}
+        onAddTask={() => {
+          if (!hasPermission("create_task")) {
+            toast({
+              title: "Permission Denied",
+              description: "You don't have permission to create tasks",
+              variant: "destructive",
+            });
+            return;
+          }
+          setIsAddDialogOpen(true);
+        }}
       />
 
       <TaskDialogsContainer

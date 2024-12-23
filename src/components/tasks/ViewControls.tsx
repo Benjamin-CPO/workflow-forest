@@ -1,39 +1,52 @@
 import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { List, Kanban } from "lucide-react";
+import { Plus, List, Kanban } from "lucide-react";
 
 interface ViewControlsProps {
-  view: "list" | "kanban";
-  setView: (view: "list" | "kanban") => void;
   onAddTask: () => void;
   onAddMilestone: () => void;
+  view: "list" | "kanban";
+  setView: (view: "list" | "kanban") => void;
+  showAddTask?: boolean;
 }
 
-export const ViewControls = ({ view, setView, onAddTask, onAddMilestone }: ViewControlsProps) => {
+export const ViewControls = ({
+  onAddTask,
+  onAddMilestone,
+  view,
+  setView,
+  showAddTask = true,
+}: ViewControlsProps) => {
   return (
-    <div className="sticky top-0 bg-background z-10 border-b">
-      <div className="flex justify-between items-center p-4 h-[72px]">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold">Tasks</h2>
-          <ToggleGroup 
-            type="single" 
-            value={view} 
-            onValueChange={(value) => value && setView(value as "list" | "kanban")}
-          >
-            <ToggleGroupItem value="list" aria-label="List view">
-              <List className="h-4 w-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="kanban" aria-label="Kanban view">
-              <Kanban className="h-4 w-4" />
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={onAddTask}>Add Task</Button>
-          <Button variant="outline" onClick={onAddMilestone}>
-            Add Milestone
+    <div className="flex justify-between items-center mb-4">
+      <div className="space-x-2">
+        {showAddTask && (
+          <Button onClick={onAddTask} size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Task
           </Button>
-        </div>
+        )}
+        <Button onClick={onAddMilestone} variant="outline" size="sm">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Milestone
+        </Button>
+      </div>
+      <div className="space-x-2">
+        <Button
+          variant={view === "list" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setView("list")}
+        >
+          <List className="h-4 w-4 mr-2" />
+          List
+        </Button>
+        <Button
+          variant={view === "kanban" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setView("kanban")}
+        >
+          <Kanban className="h-4 w-4 mr-2" />
+          Kanban
+        </Button>
       </div>
     </div>
   );

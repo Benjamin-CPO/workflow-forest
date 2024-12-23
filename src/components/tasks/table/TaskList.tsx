@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskPermissions } from "@/hooks/useTaskPermissions";
 import { Task, SubTask } from "@/types/project";
 import { TaskRow } from "./TaskRow";
 import { SubtaskRow } from "./SubtaskRow";
@@ -13,8 +14,6 @@ interface TaskListProps {
   onAddSubtask?: (taskId: number, subtask: SubTask) => void;
   onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
   onSubtaskStatusChange?: (taskId: number, subtaskId: number, newStatus: string) => void;
-  onAssigneeChange: (taskId: number, assigneeId: number | undefined) => void;
-  onSubtaskAssigneeChange: (taskId: number, subtaskId: number, assigneeId: number | undefined) => void;
 }
 
 export const TaskList = ({
@@ -25,12 +24,11 @@ export const TaskList = ({
   onAddSubtask,
   onDeleteSubtask,
   onSubtaskStatusChange,
-  onAssigneeChange,
-  onSubtaskAssigneeChange,
 }: TaskListProps) => {
   const [expandedTasks, setExpandedTasks] = useState<Set<number>>(new Set());
   const [newSubtaskTitles, setNewSubtaskTitles] = useState<{ [key: number]: string }>({});
   const { toast } = useToast();
+  const { hasPermission } = useTaskPermissions();
 
   const toggleTaskExpansion = (taskId: number) => {
     const newExpanded = new Set(expandedTasks);
@@ -43,6 +41,15 @@ export const TaskList = ({
   };
 
   const handleAddSubtask = (taskId: number) => {
+    if (!hasPermission('add_subtask')) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to add subtasks.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!newSubtaskTitles[taskId]?.trim()) {
       toast({
         title: "Error",
@@ -86,6 +93,44 @@ export const TaskList = ({
     }));
   };
 
+  const handleDeleteSubtask = (taskId: number, subtaskId: number) => {
+    if (!hasPermission('delete_task')) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to delete subtasks.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!onDeleteSubtask) {
+      toast({
+        title: "Error",
+        description: "Delete subtask functionality is not available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onDeleteSubtask(taskId, subtaskId);
+    toast({
+      title: "Success",
+      description: "Subtask deleted successfully",
+    });
+  };
+
+  const handleStatusChange = (taskId: number, newStatus: string) => {
+    if (!hasPermission('change_status')) {
+      toast({
+        title: "Permission denied",
+        description: "You don't have permission to change task status.",
+        variant: "destructive",
+      });
+      return;
+    }
+    onStatusChange(taskId, newStatus);
+  };
+
   return (
     <>
       {tasks.map((task) => (
@@ -94,10 +139,9 @@ export const TaskList = ({
             task={task}
             isExpanded={expandedTasks.has(task.id)}
             onToggleExpand={toggleTaskExpansion}
-            onStatusChange={onStatusChange}
+            onStatusChange={handleStatusChange}
             onTaskClick={onTaskClick}
             onDeleteTask={onDeleteTask}
-            onAssigneeChange={onAssigneeChange}
           />
           {expandedTasks.has(task.id) && task.subtasks?.map((subtask) => (
             <SubtaskRow
@@ -105,11 +149,10 @@ export const TaskList = ({
               subtask={subtask}
               taskId={task.id}
               onStatusChange={onSubtaskStatusChange!}
-              onDelete={onDeleteSubtask!}
-              onAssigneeChange={onSubtaskAssigneeChange}
+              onDelete={handleDeleteSubtask}
             />
           ))}
-          {expandedTasks.has(task.id) && (
+          {expandedTasks.has(task.id) && hasPermission('add_subtask') && (
             <NewSubtaskRow
               taskId={task.id}
               newSubtaskTitle={newSubtaskTitles[task.id] || ""}
