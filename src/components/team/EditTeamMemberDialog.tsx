@@ -21,7 +21,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
 
-const ROLES = ["admin", "project_manager", "designer", "client"] as const;
+const ROLES = ["Admin", "Manager", "Designer"] as const;
 type Role = typeof ROLES[number];
 
 interface EditTeamMemberDialogProps {
@@ -100,7 +100,7 @@ export function EditTeamMemberDialog({ member, onMemberUpdated }: EditTeamMember
                 <SelectContent>
                   {ROLES.map((role) => (
                     <SelectItem key={role} value={role}>
-                      {role.replace('_', ' ').toUpperCase()}
+                      {role}
                     </SelectItem>
                   ))}
                 </SelectContent>
