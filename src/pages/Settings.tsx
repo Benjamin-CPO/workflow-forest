@@ -1,5 +1,4 @@
 import React from "react";
-import { TaskPermissionsTable } from "@/components/settings/TaskPermissionsTable";
 
 const Settings = () => {
   return (
@@ -8,11 +7,10 @@ const Settings = () => {
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">Manage your application settings</p>
       </div>
-      <div className="grid gap-6">
-        <div className="p-6 border rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Task Permissions</h2>
-          <p className="text-muted-foreground mb-6">Configure role-based permissions for task management.</p>
-          <TaskPermissionsTable />
+      <div className="grid gap-4">
+        <div className="p-4 border rounded-lg">
+          <h2 className="text-xl font-semibold mb-2">Application Settings</h2>
+          <p className="text-muted-foreground">Configure your application preferences here.</p>
         </div>
       </div>
     </div>

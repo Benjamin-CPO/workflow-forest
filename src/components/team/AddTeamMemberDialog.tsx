@@ -20,13 +20,13 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 
-const ROLES = ["admin", "project_manager", "designer", "client"] as const;
+const ROLES = ["Admin", "Manager", "Designer"] as const;
 type Role = typeof ROLES[number];
 
 export function AddTeamMemberDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [role, setRole] = useState<Role>("designer");
+  const [role, setRole] = useState<Role>("Designer");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +45,7 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
     
     setOpen(false);
     setName("");
-    setRole("designer");
+    setRole("Designer");
     toast.success("Team member added successfully");
   };
 
@@ -56,7 +56,7 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
         setOpen(newOpen);
         if (!newOpen) {
           setName("");
-          setRole("designer");
+          setRole("Designer");
         }
       }}
     >
@@ -92,7 +92,7 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
                 <SelectContent>
                   {ROLES.map((role) => (
                     <SelectItem key={role} value={role}>
-                      {role.replace('_', ' ').toUpperCase()}
+                      {role}
                     </SelectItem>
                   ))}
                 </SelectContent>

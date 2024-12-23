@@ -1,7 +1,6 @@
 import { Task, Milestone } from "@/types/project";
 import { TaskDialogs } from "../TaskDialogs";
 import { useToast } from "@/hooks/use-toast";
-import { useTaskPermissions } from "@/hooks/useTaskPermissions";
 
 interface TaskDialogsContainerProps {
   milestones: Milestone[];
@@ -29,18 +28,8 @@ export const TaskDialogsContainer = ({
   setSelectedTask,
 }: TaskDialogsContainerProps) => {
   const { toast } = useToast();
-  const { hasPermission } = useTaskPermissions();
 
   const handleAddTask = (data: { title: string; dueDate: string; milestoneId: number }) => {
-    if (!hasPermission('create_task')) {
-      toast({
-        title: "Permission denied",
-        description: "You don't have permission to create tasks.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const newTask: Task = {
       id: Math.max(0, ...milestones.flatMap(m => m.tasks.map(t => t.id))) + 1,
       title: data.title,
@@ -63,15 +52,6 @@ export const TaskDialogsContainer = ({
   };
 
   const handleEditTask = (taskId: number, data: { title: string; status: string; dueDate: string }) => {
-    if (!hasPermission('edit_task')) {
-      toast({
-        title: "Permission denied",
-        description: "You don't have permission to edit tasks.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
       tasks: milestone.tasks.map(task =>
@@ -87,15 +67,6 @@ export const TaskDialogsContainer = ({
 
   const handleDeleteTask = () => {
     if (!selectedTask) return;
-
-    if (!hasPermission('delete_task')) {
-      toast({
-        title: "Permission denied",
-        description: "You don't have permission to delete tasks.",
-        variant: "destructive",
-      });
-      return;
-    }
     
     const updatedMilestones = milestones.map(milestone => ({
       ...milestone,
