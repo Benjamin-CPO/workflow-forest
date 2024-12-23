@@ -20,8 +20,16 @@ export const TeamMemberSelect = ({ value, onValueChange, className }: TeamMember
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
   useEffect(() => {
-    const storedTeamMembers = JSON.parse(localStorage.getItem('team-members') || '[]');
-    setTeamMembers(storedTeamMembers);
+    const storedTeamMembers = localStorage.getItem('team-members');
+    if (storedTeamMembers) {
+      try {
+        const parsedMembers = JSON.parse(storedTeamMembers);
+        setTeamMembers(Array.isArray(parsedMembers) ? parsedMembers : []);
+      } catch (error) {
+        console.error('Error parsing team members:', error);
+        setTeamMembers([]);
+      }
+    }
   }, []);
 
   const getInitials = (name: string) => {
@@ -37,7 +45,7 @@ export const TeamMemberSelect = ({ value, onValueChange, className }: TeamMember
   return (
     <div className={cn("w-[200px]", className)}>
       <Select
-        value={value?.toString()}
+        value={value?.toString() || "unassigned"}
         onValueChange={(val) => onValueChange(val === 'unassigned' ? undefined : Number(val))}
       >
         <SelectTrigger>
