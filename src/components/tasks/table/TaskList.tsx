@@ -13,6 +13,8 @@ interface TaskListProps {
   onAddSubtask?: (taskId: number, subtask: SubTask) => void;
   onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
   onSubtaskStatusChange?: (taskId: number, subtaskId: number, newStatus: string) => void;
+  onAssigneeChange: (taskId: number, assigneeId: number | undefined) => void;
+  onSubtaskAssigneeChange: (taskId: number, subtaskId: number, assigneeId: number | undefined) => void;
 }
 
 export const TaskList = ({
@@ -23,6 +25,8 @@ export const TaskList = ({
   onAddSubtask,
   onDeleteSubtask,
   onSubtaskStatusChange,
+  onAssigneeChange,
+  onSubtaskAssigneeChange,
 }: TaskListProps) => {
   const [expandedTasks, setExpandedTasks] = useState<Set<number>>(new Set());
   const [newSubtaskTitles, setNewSubtaskTitles] = useState<{ [key: number]: string }>({});
@@ -82,23 +86,6 @@ export const TaskList = ({
     }));
   };
 
-  const handleDeleteSubtask = (taskId: number, subtaskId: number) => {
-    if (!onDeleteSubtask) {
-      toast({
-        title: "Error",
-        description: "Delete subtask functionality is not available",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    onDeleteSubtask(taskId, subtaskId);
-    toast({
-      title: "Success",
-      description: "Subtask deleted successfully",
-    });
-  };
-
   return (
     <>
       {tasks.map((task) => (
@@ -110,6 +97,7 @@ export const TaskList = ({
             onStatusChange={onStatusChange}
             onTaskClick={onTaskClick}
             onDeleteTask={onDeleteTask}
+            onAssigneeChange={onAssigneeChange}
           />
           {expandedTasks.has(task.id) && task.subtasks?.map((subtask) => (
             <SubtaskRow
@@ -117,7 +105,8 @@ export const TaskList = ({
               subtask={subtask}
               taskId={task.id}
               onStatusChange={onSubtaskStatusChange!}
-              onDelete={handleDeleteSubtask}
+              onDelete={onDeleteSubtask!}
+              onAssigneeChange={onSubtaskAssigneeChange}
             />
           ))}
           {expandedTasks.has(task.id) && (

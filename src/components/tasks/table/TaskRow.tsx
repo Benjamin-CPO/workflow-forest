@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
 import { Task } from "@/types/project";
+import { TeamMemberSelect } from "../TeamMemberSelect";
 
 interface TaskRowProps {
   task: Task;
@@ -11,6 +12,7 @@ interface TaskRowProps {
   onStatusChange: (taskId: number, newStatus: string) => void;
   onTaskClick: (task: Task) => void;
   onDeleteTask?: (taskId: number) => void;
+  onAssigneeChange: (taskId: number, assigneeId: number | undefined) => void;
 }
 
 export const TaskRow = ({
@@ -20,6 +22,7 @@ export const TaskRow = ({
   onStatusChange,
   onTaskClick,
   onDeleteTask,
+  onAssigneeChange,
 }: TaskRowProps) => {
   const hasSubtasks = task.subtasks && task.subtasks.length > 0;
 
@@ -72,6 +75,12 @@ export const TaskRow = ({
         <TaskStatusSelect
           status={task.status}
           onStatusChange={(newStatus) => onStatusChange(task.id, newStatus)}
+        />
+      </TableCell>
+      <TableCell className="w-[200px]">
+        <TeamMemberSelect
+          value={task.assigneeId}
+          onValueChange={(assigneeId) => onAssigneeChange(task.id, assigneeId)}
         />
       </TableCell>
       <TableCell className="w-[150px]">{task.dueDate}</TableCell>

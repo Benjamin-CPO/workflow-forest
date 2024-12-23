@@ -7,6 +7,7 @@ import { Task, SubTask } from "@/types/project";
 import { SubtaskRow } from "./SubtaskRow";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { TeamMemberSelect } from "../TeamMemberSelect";
 
 interface TaskTableRowProps {
   task: Task;
@@ -16,6 +17,8 @@ interface TaskTableRowProps {
   onAddSubtask?: (taskId: number, subtask: SubTask) => void;
   onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
   onSubtaskStatusChange?: (taskId: number, subtaskId: number, newStatus: string) => void;
+  onAssigneeChange: (taskId: number, assigneeId: number | undefined) => void;
+  onSubtaskAssigneeChange: (taskId: number, subtaskId: number, assigneeId: number | undefined) => void;
 }
 
 export const TaskTableRow = ({
@@ -26,6 +29,8 @@ export const TaskTableRow = ({
   onAddSubtask,
   onDeleteSubtask,
   onSubtaskStatusChange,
+  onAssigneeChange,
+  onSubtaskAssigneeChange,
 }: TaskTableRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
@@ -107,6 +112,12 @@ export const TaskTableRow = ({
             onStatusChange={(newStatus) => onStatusChange(task.id, newStatus)}
           />
         </TableCell>
+        <TableCell className="w-[200px]">
+          <TeamMemberSelect
+            value={task.assigneeId}
+            onValueChange={(assigneeId) => onAssigneeChange(task.id, assigneeId)}
+          />
+        </TableCell>
         <TableCell className="w-[150px]">{task.dueDate}</TableCell>
         <TableCell className="w-[100px] text-right">
           {onDeleteTask && (
@@ -130,6 +141,7 @@ export const TaskTableRow = ({
               taskId={task.id}
               onStatusChange={onSubtaskStatusChange!}
               onDelete={onDeleteSubtask!}
+              onAssigneeChange={onSubtaskAssigneeChange}
             />
           ))}
           <TableRow className="bg-muted/30">
@@ -153,6 +165,7 @@ export const TaskTableRow = ({
                 </Button>
               </div>
             </TableCell>
+            <TableCell className="w-[200px]" />
             <TableCell className="w-[200px]" />
             <TableCell className="w-[150px]" />
             <TableCell className="w-[100px]" />

@@ -18,6 +18,7 @@ export interface SubTask {
   id: number;
   title: string;
   status: string;
+  assigneeId?: number;
 }
 
 export interface Task {
@@ -27,10 +28,18 @@ export interface Task {
   dueDate: string;
   projectId?: number;
   subtasks: SubTask[];
+  assigneeId?: number;
 }
 
 export interface Milestone {
   id: number;
   title: string;
   tasks: Task[];
+}
+
+export interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  email: string;
 }

@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Trash2, ArrowRight } from "lucide-react";
 import { TaskStatusSelect } from "@/components/TaskStatusSelect";
 import { SubTask } from "@/types/project";
+import { TeamMemberSelect } from "../TeamMemberSelect";
 
 interface SubtaskRowProps {
   subtask: SubTask;
   taskId: number;
   onStatusChange: (taskId: number, subtaskId: number, newStatus: string) => void;
   onDelete: (taskId: number, subtaskId: number) => void;
+  onAssigneeChange: (taskId: number, subtaskId: number, assigneeId: number | undefined) => void;
 }
 
 export const SubtaskRow = ({
@@ -16,6 +18,7 @@ export const SubtaskRow = ({
   taskId,
   onStatusChange,
   onDelete,
+  onAssigneeChange,
 }: SubtaskRowProps) => {
   return (
     <TableRow className="group bg-muted/20 hover:bg-muted/30 transition-colors">
@@ -33,6 +36,13 @@ export const SubtaskRow = ({
           onStatusChange={(newStatus) =>
             onStatusChange(taskId, subtask.id, newStatus)
           }
+          className="h-8 text-sm"
+        />
+      </TableCell>
+      <TableCell className="w-[200px]">
+        <TeamMemberSelect
+          value={subtask.assigneeId}
+          onValueChange={(assigneeId) => onAssigneeChange(taskId, subtask.id, assigneeId)}
           className="h-8 text-sm"
         />
       </TableCell>

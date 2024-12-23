@@ -13,6 +13,8 @@ interface TasksTableProps {
   onDeleteSubtask?: (taskId: number, subtaskId: number) => void;
   onSubtaskStatusChange?: (taskId: number, subtaskId: number, newStatus: string) => void;
   onAddTask?: () => void;
+  onAssigneeChange: (taskId: number, assigneeId: number | undefined) => void;
+  onSubtaskAssigneeChange: (taskId: number, subtaskId: number, assigneeId: number | undefined) => void;
 }
 
 export const TasksTable = ({
@@ -23,7 +25,9 @@ export const TasksTable = ({
   onAddSubtask,
   onDeleteSubtask,
   onSubtaskStatusChange,
-  onAddTask
+  onAddTask,
+  onAssigneeChange,
+  onSubtaskAssigneeChange,
 }: TasksTableProps) => {
   return (
     <div className="w-full border rounded-md">
@@ -40,6 +44,8 @@ export const TasksTable = ({
               onAddSubtask={onAddSubtask}
               onDeleteSubtask={onDeleteSubtask}
               onSubtaskStatusChange={onSubtaskStatusChange}
+              onAssigneeChange={onAssigneeChange}
+              onSubtaskAssigneeChange={onSubtaskAssigneeChange}
             />
           ))}
           <AddTaskButton onAddTask={onAddTask} />
