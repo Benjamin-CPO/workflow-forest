@@ -50,13 +50,15 @@ export const TeamMemberSelect = ({ value, onValueChange, className }: TeamMember
       >
         <SelectTrigger>
           <SelectValue placeholder="Unassigned">
-            {selectedMember && (
+            {selectedMember ? (
               <div className="flex items-center gap-2">
                 <Avatar className="h-6 w-6">
                   <AvatarFallback>{getInitials(selectedMember.name)}</AvatarFallback>
                 </Avatar>
                 <span>{selectedMember.name}</span>
               </div>
+            ) : (
+              "Unassigned"
             )}
           </SelectValue>
         </SelectTrigger>
