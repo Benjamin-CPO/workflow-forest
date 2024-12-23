@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { TeamMember } from "@/types/project";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 interface TeamMemberSelectProps {
   value?: number;
@@ -34,36 +35,37 @@ export const TeamMemberSelect = ({ value, onValueChange, className }: TeamMember
   const selectedMember = teamMembers.find(member => member.id === value);
 
   return (
-    <Select
-      value={value?.toString()}
-      onValueChange={(val) => onValueChange(val === 'unassigned' ? undefined : Number(val))}
-      className={className}
-    >
-      <SelectTrigger className="w-[200px]">
-        <SelectValue placeholder="Unassigned">
-          {selectedMember && (
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback>{getInitials(selectedMember.name)}</AvatarFallback>
-              </Avatar>
-              <span>{selectedMember.name}</span>
-            </div>
-          )}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="unassigned">Unassigned</SelectItem>
-        {teamMembers.map((member) => (
-          <SelectItem key={member.id} value={member.id.toString()}>
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
-              </Avatar>
-              <span>{member.name}</span>
-            </div>
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className={cn("w-[200px]", className)}>
+      <Select
+        value={value?.toString()}
+        onValueChange={(val) => onValueChange(val === 'unassigned' ? undefined : Number(val))}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Unassigned">
+            {selectedMember && (
+              <div className="flex items-center gap-2">
+                <Avatar className="h-6 w-6">
+                  <AvatarFallback>{getInitials(selectedMember.name)}</AvatarFallback>
+                </Avatar>
+                <span>{selectedMember.name}</span>
+              </div>
+            )}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="unassigned">Unassigned</SelectItem>
+          {teamMembers.map((member) => (
+            <SelectItem key={member.id} value={member.id.toString()}>
+              <div className="flex items-center gap-2">
+                <Avatar className="h-6 w-6">
+                  <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
+                </Avatar>
+                <span>{member.name}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
