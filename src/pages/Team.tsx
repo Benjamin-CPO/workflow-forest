@@ -17,34 +17,47 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+interface TeamMember {
+  id: string;
+  name: string | null;
+  role: string;
+}
+
 const Team = () => {
-  const [members, setMembers] = React.useState<Array<{ id: string; name: string; role: string }>>([]);
+  const [members, setMembers] = React.useState<TeamMember[]>([]);
   const [userRole, setUserRole] = React.useState<string | null>(null);
 
   const loadMembers = async () => {
-    const { data: profiles, error } = await supabase
-      .from('profiles')
-      .select('id, name, role');
-    
-    if (error) {
-      toast.error("Failed to load team members");
+    try {
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('id, name, role');
+      
+      if (error) throw error;
+      
+      setMembers(profiles || []);
+    } catch (error) {
       console.error('Error:', error);
-      return;
+      toast.error("Failed to load team members");
     }
-
-    setMembers(profiles || []);
   };
 
   const getCurrentUserRole = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-      
-      setUserRole(profile?.role || null);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) throw error;
+        setUserRole(profile?.role || null);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error("Failed to get user role");
     }
   };
 
@@ -54,19 +67,20 @@ const Team = () => {
   }, []);
 
   const handleDeleteMember = async (memberId: string) => {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role: 'user' })
-      .eq('id', memberId);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: 'user' })
+        .eq('id', memberId);
 
-    if (error) {
-      toast.error("Failed to remove team member");
+      if (error) throw error;
+
+      toast.success("Team member removed successfully");
+      loadMembers();
+    } catch (error) {
       console.error('Error:', error);
-      return;
+      toast.error("Failed to remove team member");
     }
-
-    toast.success("Team member removed successfully");
-    loadMembers();
   };
 
   // Only admin and manager can see the add member button
@@ -97,7 +111,7 @@ const Team = () => {
             className="flex items-center justify-between p-4 border rounded-lg"
           >
             <div>
-              <span className="font-medium">{member.name}</span>
+              <span className="font-medium">{member.name || 'Unnamed Member'}</span>
               <p className="text-sm text-muted-foreground">{member.role}</p>
             </div>
             {canManageTeam && (
@@ -113,7 +127,7 @@ const Team = () => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to remove {member.name} from the team? This will reset their role to 'user'.
+                        Are you sure you want to remove {member.name || 'this member'} from the team? This will reset their role to 'user'.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
