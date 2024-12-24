@@ -20,13 +20,14 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-const ROLES = ["Admin", "Manager", "Designer"] as const;
+const ROLES = ["admin", "manager", "user"] as const;
 type Role = typeof ROLES[number];
 
 interface EditTeamMemberDialogProps {
   member: {
-    id: number;
+    id: string;
     name: string;
     role: string;
   };
@@ -38,15 +39,19 @@ export function EditTeamMemberDialog({ member, onMemberUpdated }: EditTeamMember
   const [name, setName] = useState(member.name);
   const [role, setRole] = useState<Role>(member.role as Role);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const teamMembers = JSON.parse(localStorage.getItem('teamMembers') || '[]');
-    const updatedMembers = teamMembers.map((m: typeof member) => 
-      m.id === member.id ? { ...m, name, role } : m
-    );
+    const { error } = await supabase
+      .from('profiles')
+      .update({ name, role })
+      .eq('id', member.id);
     
-    localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
+    if (error) {
+      toast.error("Failed to update team member");
+      console.error('Error:', error);
+      return;
+    }
     
     setOpen(false);
     onMemberUpdated();

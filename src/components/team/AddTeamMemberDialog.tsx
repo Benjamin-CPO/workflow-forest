@@ -19,34 +19,47 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
-const ROLES = ["Admin", "Manager", "Designer"] as const;
+const ROLES = ["admin", "manager", "user"] as const;
 type Role = typeof ROLES[number];
 
-export function AddTeamMemberDialog({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [role, setRole] = useState<Role>("Designer");
+interface AddTeamMemberDialogProps {
+  children: React.ReactNode;
+  onMemberAdded: () => void;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
+export function AddTeamMemberDialog({ children, onMemberAdded }: AddTeamMemberDialogProps) {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<Role>("user");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const teamMembers = JSON.parse(localStorage.getItem('teamMembers') || '[]');
-    const newMember = {
-      id: Math.floor(Math.random() * 1000),
-      name,
-      role
-    };
-    
-    teamMembers.push(newMember);
-    localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
-    
-    window.location.reload();
-    
-    setOpen(false);
-    setName("");
-    setRole("Designer");
-    toast.success("Team member added successfully");
+    try {
+      // First, invite the user via email
+      const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(email);
+      
+      if (inviteError) throw inviteError;
+
+      // Update the user's role in the profiles table
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ role })
+        .eq('email', email);
+      
+      if (updateError) throw updateError;
+      
+      setOpen(false);
+      setEmail("");
+      setRole("user");
+      onMemberAdded();
+      toast.success("Team member invited successfully");
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error("Failed to add team member");
+    }
   };
 
   return (
@@ -55,8 +68,8 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
       onOpenChange={(newOpen) => {
         setOpen(newOpen);
         if (!newOpen) {
-          setName("");
-          setRole("Designer");
+          setEmail("");
+          setRole("user");
         }
       }}
     >
@@ -66,17 +79,18 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
           <DialogHeader>
             <DialogTitle>Add New Team Member</DialogTitle>
             <DialogDescription>
-              Add a new member to your team.
+              Invite a new member to your team.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter team member name"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter team member email"
                 required
               />
             </div>
@@ -100,7 +114,7 @@ export function AddTeamMemberDialog({ children }: { children: React.ReactNode })
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Add Member</Button>
+            <Button type="submit">Invite Member</Button>
           </DialogFooter>
         </form>
       </DialogContent>
